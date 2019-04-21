@@ -14,11 +14,13 @@ const createEditor = settings => {
   
   class jTree {
     
-    constructor(settings){
+    constructor(){
+      this.Types = new Types(settings.types)
+      this.element = settings.element
+      settings.Editor = this
       if(settings.data)
-        this.Types = new Types(settings.types)
-        this.element = settings.element
         this.setSource(settings.data)
+      
     }
     
     setSource = data => {
@@ -31,7 +33,7 @@ const createEditor = settings => {
           'error',
         )
       
-      this.tree = buildTypes(data, this)
+      this.tree = buildTypes(data, settings)
     }
 
     forceUpdate = data => {
@@ -40,14 +42,14 @@ const createEditor = settings => {
     
     destroy = () => {
       clearTypeCache()
-      cleanUp(settings, this)
+      cleanUp(settings)
 
       this.element = undefined
       this.tree = undefined
     }
   }
   
-  return new jTree(settings)
+  return new jTree()
 }
 
 

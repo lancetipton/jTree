@@ -55,3 +55,5 @@ export const LOG_TYPES = Object.freeze([
   'log',
   'warn'
 ])
+
+export const MAP_TYPES = 'MAP_TYPES'

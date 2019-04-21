@@ -3,6 +3,7 @@ import {
   buildSubTypes,
   buildTypeCache,
   clearObj,
+  deepMerge,
   isObj,
   logData,
   mapCb,
@@ -10,9 +11,28 @@ import {
   isConstructor,
   validateNewType,
 } from '../utils'
+import { MAP_TYPES } from '../constants'
 
 let TYPE_CACHE = {}
 
+const getMatchTypes = (value, parent=TYPE_CACHE, settings, matches={}) => {
+  TYPE_CACHE[MAP_TYPES]((name, meta) => {
+    const { factory } = meta
+    if(!factory || !factory.eval) return
+    const isValid = factory.eval(value)
+    if(!isValid) return
+    const match = new factory(settings)
+    const priority = match.getPriority() || settings.priorities.default || 0
+    matches[priority] = matches[priority] || {}
+    matches[priority][name] = { meta, match }
+    
+    if(isObj(meta.children))
+      getMatchTypes(value, meta.children, settings, matches)
+
+  }, parent)
+  
+  return matches
+}
 
 export class Types {
   
@@ -26,7 +46,8 @@ export class Types {
   
   clear = () => {
     clearObj(TYPE_CACHE)
-    TYPE_CACHE = {}
+    TYPE_CACHE = undefined
+    TYPE_CACHE = buildTypeCache({}, {})
   }
   
   register = newType => {
@@ -34,23 +55,11 @@ export class Types {
       return null
   }
 
-  getTypes = value => {
-    TYPE_CACHE.mapTypes((name, meta) => {
-      const { factory } = meta
-      if(!factory || !factory.eval) return
-      isValid = factory.eval(value)
-    })
-    
-    // const rootType = isObj(value)
-    //   ? TYPE_CACHE.map
-    //   : Array.isArray(value)
-    //     ? TYPE_CACHE.colletion
-    //     : TYPE_CACHE[typeof value]
-    
-    // if(!rootType) rootType = TYPE_CACHE.string
-    // if(!rootType.descendants)
-    //   return rootType
-    
+  getTypes = (value, settings) => {
+    const matchTypes = getMatchTypes(value, TYPE_CACHE, settings, {})
+    return !isObj(matchTypes)
+      ? logData(`Could not find any types to match value ${value}`, 'warn')
+      : matchTypes
   }
 
 }

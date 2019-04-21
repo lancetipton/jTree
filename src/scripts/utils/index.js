@@ -1,3 +1,4 @@
+export { default as cloneDeep } from 'lodash.clonedeep'
 export * from './builders'
 export * from './dom'
 export * from './methods'

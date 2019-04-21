@@ -4,6 +4,8 @@ class ColorType extends StringType {
 
   constructor(settings){
     super(settings)
+    if(settings.priorities && settings.priorities.color)
+      this.#priority = settings.priorities.color
   }
 
   #priority = 2

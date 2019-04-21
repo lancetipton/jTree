@@ -1,6 +1,5 @@
 import { clearObj } from './utils'
 
-export const cleanUp = (settings, Editor) => {
+export const cleanUp = (settings) => {
   clearObj(settings)
-  clearObj(Editor)
 }

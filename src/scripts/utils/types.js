@@ -4,9 +4,10 @@ import {
   isObj,
   mapCb
 } from './methods'
+import { MAP_TYPES } from '../constants'
 
 export const buildTypeCache = (rootTypes, subTypes) => {
-  TYPE_CACHE = Object
+  const typeCache = Object
     .entries(rootTypes)
     .reduce((allTypes, [ name, factory ]) => {
       allTypes[name] = {
@@ -14,15 +15,20 @@ export const buildTypeCache = (rootTypes, subTypes) => {
         factory
       }
       if(subTypes[name])
-        allTypes[name].descendants = buildSubTypes(subTypes[name], allTypes[name])
-
+        allTypes[name].children = Object.freeze(
+          buildSubTypes(subTypes[name], allTypes[name])
+        )
+      Object.freeze(allTypes[name])
+      
       return allTypes
     }, {})
 
-  Object.defineProperty(TYPE_CACHE, 'mapTypes', {
-    value: (cb, parent=TYPE_CACHE) => mapCb(parent, cb),
+  Object.defineProperty(typeCache, MAP_TYPES, {
+    value: (cb, parent) => mapCb(parent, cb),
     enumerable: false,
   })
+
+  return Object.freeze(typeCache)
 }
 
 const getParentName = (subType, parentType) =>

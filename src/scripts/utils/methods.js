@@ -21,7 +21,7 @@ export const deepMerge = (...sources) => (
       source instanceof Array
         ? // Check if it's array, and join the arrays
         [ ...((merged instanceof Array && merged) || []), ...source ]
-        : // Check if it's an oject, and loop the properties
+        : // Check if it's an object, and loop the properties
         source instanceof Object
           ? Object.entries(source)
             // Loop the entries of the object, and add them to the merged object
@@ -73,6 +73,7 @@ export const checkCall = (method, ...params) => {
 
 export const isObj = obj => typeof obj === 'object' && !Array.isArray(obj)
 
+export const isFunc = func => typeof func === 'function'
 
 export const parseJSONString = str => {
   try {
@@ -82,6 +83,8 @@ export const parseJSONString = str => {
     return e.message
   }
 }
+
+export const jsonCopy = obj => JSON.parse(JSON.strigify(obj))
 
 export const clearObj = obj => (
   Object
@@ -110,9 +113,9 @@ export const isConstructor = test => {
 export const uuid = a => a ? (a ^ Math.random() * 16 >> a / 4).toString(16) : ([ 1e7 ] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g,uuid)
 
 
-export const mapCb = (obj, cb) => {
+export const mapCb = (obj, cb) => (
   isObj(obj) && typeof cb === 'function' &&
   Object
     .entries(obj)
     .map(([ key, value ]) => cb(key, value))
-}
+)
