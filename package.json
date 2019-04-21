@@ -1,0 +1,55 @@
+{
+  "name": "compose-it",
+  "version": "1.1.1",
+  "description": "Simple WYSIWYG",
+  "author": "Lance Tipton <ltipton@tiptondigital.com>",
+  "main": "build/ComposeIt.min.js",
+  "module": "build/ComposeIt.min.js",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lancetipton/Compose-It.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lancetipton/Compose-It/issues"
+  },
+  "keywords": [
+    "wysiwyg",
+    "editor",
+    "content",
+    "cms"
+  ],
+  "scripts": {
+    "test": "NODE_ENV=test jest --verbose",
+    "dev": "ENV=development webpack --watch --progress",
+    "build": "ENV=production webpack --mode production",
+    "deploy": "gh-pages -d build"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-object-assign": "^7.2.0",
+    "@babel/plugin-transform-property-literals": "^7.2.0",
+    "@babel/polyfill": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@fortawesome/fontawesome-free": "^5.8.1",
+    "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^1.0.0",
+    "copy-webpack-plugin": "^4.6.0",
+    "gh-pages": "^2.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^2.0.0",
+    "remove-comments-loader": "^0.1.2",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "dependencies": {
+    "popper.js": "^1.14.7"
+  },
+  "peerDependencies": {
+    "@fortawesome/fontawesome-free": "^5.8.1"
+  }
+}
