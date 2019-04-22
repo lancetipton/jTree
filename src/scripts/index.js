@@ -35,7 +35,7 @@ const createEditor = (settings, domContainer) => {
       // cleanSettingsObj(settings)
     }
 
-    buildTypes = async source => {
+    buildTypes = source => {
       if(source && source !== ACT_SOURCE)
         return this.setSource(source)
       
@@ -43,17 +43,17 @@ const createEditor = (settings, domContainer) => {
         return logData(`Could build types, source data is incalid!`, ACT_SOURCE, 'warn')
       
       if(isObj(ACT_SOURCE))
-        this.tree = await buildTypes(ACT_SOURCE, settings)
+        this.tree = buildTypes(ACT_SOURCE, settings)
     }
 
-    setSource = async (source, update) => {
+    setSource = (source, update) => {
       if(typeof source === 'string')
         source = parseJSONString(source)
 
       if(!validateSource(source)) return undefined
 
       ACT_SOURCE = cloneDeep(source)
-      update && await this.buildTypes()
+      update && this.buildTypes()
     }
     
     forceUpdate = source => {

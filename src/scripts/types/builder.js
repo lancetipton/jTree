@@ -96,7 +96,7 @@ const buildPos = (key, parent) => (
     : `${parent.schema.pos}.${key}`
 )
 
-const loopDataObj = async (value, key, tree, parent, settings) => {
+const loopDataObj = (value, key, tree, parent, settings) => {
   const matchTypes = settings.Editor.Types.getTypes(value, settings)  
   const type = checkMultiMatches(matchTypes, value, key, tree, parent, settings)
 
@@ -127,7 +127,7 @@ const loopDataObj = async (value, key, tree, parent, settings) => {
     settings
   }
 
-  const built = isFunc(instance.build) && await instance.build(props)
+  const built = isFunc(instance.build) && instance.build(props)
   if(built) props.schema.built = built
 
   // Only render if built is not equal to false
@@ -145,12 +145,12 @@ const loopDataObj = async (value, key, tree, parent, settings) => {
   if(isObj(value))
     Object
       .entries(value)
-      .map(async ([ childKey, data ]) => {
-        await loopDataObj(data, childKey, tree, parentData, settings)
+      .map(([ childKey, data ]) => {
+        loopDataObj(data, childKey, tree, parentData, settings)
       })
   else if(Array.isArray(value))
-    value.map(async (data, index) => {
-      await loopDataObj(data, index, tree, parentData, settings)
+    value.map((data, index) => {
+      loopDataObj(data, index, tree, parentData, settings)
     })
 
   return tree
