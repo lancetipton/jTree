@@ -1,24 +1,20 @@
 import BaseType from '../base'
+import { typesOverride, uuid } from '../../utils'
+
 
 class MapType extends BaseType {
 
-   constructor(settings){
-     super(settings)
-    if(settings.priorities && settings.priorities.map)
-      this.#priority = settings.priorities.map
-   }
-  
+  static priority = 1
   static eval = value => typeof value === 'object' && !Array.isArray(value)
 
-  #priority = 1
-  
-  build = (value, key, meta, tree, parent, settings) => {
-    // console.log('------------------key------------------');
-    // console.log(key);
-    // console.log('------------------value------------------');
-    // console.log(value);
-    // console.log('------------------parent------------------');
-    // console.log(parent);
+   constructor(config){
+     super(config)
+      typesOverride(this, config)
+   }
+
+  build = (params) => {
+    // console.log('------------------params------------------');
+    // console.log(params.schema);
   }
   
 }

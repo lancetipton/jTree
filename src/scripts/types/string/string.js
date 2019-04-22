@@ -1,24 +1,21 @@
 import BaseType from '../base'
+import { typesOverride } from '../../utils'
+
 
 class StringType extends BaseType {
 
-   constructor(settings){
-     super(settings)
-     if(settings.priorities && settings.priorities.string)
-      this.#priority = settings.priorities.string
-   }
+  static priority = 1
+  static eval = (value) => (typeof value === 'string')
   
-  #priority = 1
+  constructor(config){
+    super(config)
+    typesOverride(this, config)
+  }
 
-  static eval = value => typeof value === 'string'
   
-  build = (value, key, meta, tree, parent, settings) => {
-    // console.log('------------------key------------------');
-    // console.log(key);
-    // console.log('------------------value------------------');
-    // console.log(value);
-    // console.log('------------------parent------------------');
-    // console.log(parent);
+  build = (params) => {
+    // console.log('------------------params------------------');
+    // console.log(params.schema);
   }
   
 }

@@ -36,8 +36,8 @@ class CardType extends StringType {
 
   constructor(settings){
     super(settings)
-    if(settings.priorities && settings.priorities.card)
-      this.#priority = settings.priorities.card
+    // if(settings.priorities && settings.priorities.card)
+    //   this.#priority = settings.priorities.card
   }
   
   #priority = 2

@@ -1,4 +1,3 @@
-export const KEY_MODS = [ 'shift', 'alt', 'ctrl', 'cmd' ]
 const themes = {
   light: {
     toolBorder: '#40413C',
@@ -20,7 +19,6 @@ const themes = {
   }
 }
 
-
 export const DEF_THEME = Object.freeze({
   themes: themes,
   colors: Object.freeze({ ...themes.dark }),
@@ -33,27 +31,3 @@ export const DEF_THEME = Object.freeze({
   shadow: '2px 4px 4px rgba(0,0,0,0.2)',
   maxToolsHeight: 29,
 })
-
-
-export const DEF_SETTINGS =  Object.freeze({
-  destroyOnSave: true,
-  destroyOnCancel: true,
-  changeDebounce: 50,
-  iconType: 'far',
-  styles: Object.freeze({}),
-  popper: {
-    eventsEnabled: false,
-    removeOnDestroy: true,
-    placement: 'bottom-start',
-    modifiers: {},
-  }
-})
-
-export const LOG_TYPES = Object.freeze([
-  'error',
-  'dir',
-  'log',
-  'warn'
-])
-
-export const MAP_TYPES = 'MAP_TYPES'

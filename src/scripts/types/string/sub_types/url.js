@@ -3,8 +3,8 @@ import StringType from '../string'
 class UrlType extends StringType {
   constructor(props){
     super(props)
-    if(settings.priorities && settings.priorities.url)
-      this.#priority = settings.priorities.url
+    // if(settings.priorities && settings.priorities.url)
+    //   this.#priority = settings.priorities.url
   }
 
   #priority = 2

@@ -32,24 +32,25 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/plugin-transform-property-literals": "^7.2.0",
+    "@babel/plugin-transform-regenerator": "^7.4.3",
     "@babel/polyfill": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@fortawesome/fontawesome-free": "^5.8.1",
     "babel-loader": "^8.0.5",
     "clean-webpack-plugin": "^1.0.0",
     "copy-webpack-plugin": "^4.6.0",
+    "core-js": "3",
     "gh-pages": "^2.0.1",
     "html-webpack-plugin": "^3.2.0",
+    "lodash.clonedeep": "^4.5.0",
+    "popper.js": "^1.14.7",
     "raw-loader": "^2.0.0",
     "remove-comments-loader": "^0.1.2",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10",
-    "lodash.clonedeep": "^4.5.0",
-    "popper.js": "^1.14.7"
+    "webpack-dev-server": "^3.1.10"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1"
   }

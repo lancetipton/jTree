@@ -4,8 +4,8 @@ class UuidType extends StringType {
 
   constructor(settings){
     super(settings)
-    if(settings.priorities && settings.priorities.uuid)
-      this.#priority = settings.priorities.uuid
+    // if(settings.priorities && settings.priorities.uuid)
+    //   this.#priority = settings.priorities.uuid
   }
 
   #priority = 2

@@ -4,8 +4,8 @@ class PhoneType extends StringType {
 
   constructor(settings){
     super(settings)
-    if(settings.priorities && settings.priorities.phone)
-      this.#priority = settings.priorities.phone
+    // if(settings.priorities && settings.priorities.phone)
+    //   this.#priority = settings.priorities.phone
   }
 
   #priority = 2

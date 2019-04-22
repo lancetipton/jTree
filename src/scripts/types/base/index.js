@@ -1,26 +1,26 @@
-class BaseType {
+import { Values } from '../../constants'
 
-   constructor(settings){
-    if(settings.priorities && settings.priorities.base)
-      this.#priority = settings.priorities.base
-   }
-   
-   static eval = value => typeof value == 'string'
-
-   #priority = 0
-   
-   setPriority = num => {
-     if(typeof num === 'number' && num > -1)
-      this.#priority = num
-   }
-
-   getPriority = () => this.#priority
-  
-    build = (value, key, meta, tree, parent, settings) => {
-      
-    }
+const updateParentConstruct = (config, parent) => {
+  Object.entries(Values.PARENT_OVERWRITE).map(([ key, type ]) => {
+    if(typeof config[key] === type && parent[key] !== config[key])
+      parent[key] = config[key]
+  })
 }
 
+class BaseType {
+
+  static priority = 0
+  static matchHelper = () => {}
+  static eval = (value) => (typeof value === 'string')
+
+  constructor(config){
+    config && updateParentConstruct(config, this.constructor)
+  }
+
+  build = (params) => {
+    
+  }
+}
 
 
 export default BaseType

@@ -3,8 +3,8 @@ import StringType from '../string'
 class EmailType extends StringType {
   constructor(settings){
     super(settings)
-    if(settings.priorities && settings.priorities.email)
-      this.#priority = settings.priorities.email
+    // if(settings.priorities && settings.priorities.email)
+    //   this.#priority = settings.priorities.email
   }
 
   #priority = 2

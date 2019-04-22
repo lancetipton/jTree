@@ -1,45 +1,54 @@
-import { types, subTypes } from  './default_types'
+import { types, subTypes, BaseType } from  './default_types'
 import {
   buildSubTypes,
   buildTypeCache,
   clearObj,
   deepMerge,
+  isConstructor,
   isObj,
   logData,
   mapCb,
   parseJSONString,
-  isConstructor,
+  registerTypeRender,
   validateNewType,
 } from '../utils'
-import { MAP_TYPES } from '../constants'
+import { Values } from '../constants'
 
 let TYPE_CACHE = {}
 
-const getMatchTypes = (value, parent=TYPE_CACHE, settings, matches={}) => {
-  TYPE_CACHE[MAP_TYPES]((name, meta) => {
+const getMatchTypes = function(value, parent, settings, matches={}){
+  TYPE_CACHE.children[Values.MAP_TYPES]((name, meta) => {
     const { factory } = meta
-    if(!factory || !factory.eval) return
-    const isValid = factory.eval(value)
-    if(!isValid) return
-    const match = new factory(settings)
-    const priority = match.getPriority() || settings.priorities.default || 0
+    // Check if there is a match to the value
+    if(!factory || !factory.eval || !factory.eval(value)) return
+    // Gets the priority from the factory class
+    // Or the base priority if none exists for factory
+    const priority = factory.priority || this.BaseType.constructor.priority
+    // Sets the meta to the matches object
     matches[priority] = matches[priority] || {}
-    matches[priority][name] = { meta, match }
-    
-    if(isObj(meta.children))
-      getMatchTypes(value, meta.children, settings, matches)
+    matches[priority][name] = meta
 
-  }, parent)
+    // Check If the type have children, nad check them as well
+    if(isObj(meta.children))
+      getMatchTypes.apply(this, [value, meta.children, settings, matches])
+
+  }, parent || TYPE_CACHE.children)
   
   return matches
 }
 
+const buildCache = (Types, settings) => {
+  const joinedTypes = { ...types }
+  const joinedSubTypes = { ...subTypes, ...settings.customTypes }
+  Types.BaseType = new BaseType(settings.types.base)
+  TYPE_CACHE = buildTypeCache(joinedTypes, joinedSubTypes, Types.BaseType)
+}
+
 export class Types {
   
-  constructor(custom = {}){
-    const joinedTypes = { ...types, ...custom.types }
-    const joinedSubTypes = { ...subTypes, ...custom.subTypes }
-    TYPE_CACHE = buildTypeCache(joinedTypes, joinedSubTypes)
+  constructor(settings){
+    registerTypeRender()
+    buildCache(this, settings)
   }
 
   get = () => TYPE_CACHE
@@ -47,7 +56,7 @@ export class Types {
   clear = () => {
     clearObj(TYPE_CACHE)
     TYPE_CACHE = undefined
-    TYPE_CACHE = buildTypeCache({}, {})
+    
   }
   
   register = newType => {
@@ -55,11 +64,31 @@ export class Types {
       return null
   }
 
+  rebuild = settings => {
+    this.clear()
+    buildCache(this, settings)
+  }
+  
   getTypes = (value, settings) => {
-    const matchTypes = getMatchTypes(value, TYPE_CACHE, settings, {})
-    return !isObj(matchTypes)
-      ? logData(`Could not find any types to match value ${value}`, 'warn')
-      : matchTypes
+    const matchTypes = getMatchTypes.apply(
+      this, 
+      [
+        value,
+        TYPE_CACHE.children,
+        settings,
+        {}
+      ]
+    )
+
+    const firstKey =  isObj(matchTypes) && Object.keys(matchTypes)[0]
+    return firstKey && matchTypes[firstKey]
+  }
+  
+  destroy = (Editor) => {
+    clearObj(TYPE_CACHE)
+    TYPE_CACHE = undefined
+    this.BaseType = undefined
+    delete this.BaseType
   }
 
 }

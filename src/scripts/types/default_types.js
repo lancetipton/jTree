@@ -2,6 +2,7 @@ import { CollectionType, collSubTypes } from  './collection'
 import { MapType, mapSubTypes } from  './map'
 import { NumberType, numberSubTypes  } from  './number'
 import { StringType, stringSubTypes } from  './string'
+import BaseType from  './base'
 
 const types = {
   collection: CollectionType,
@@ -18,6 +19,7 @@ const subTypes = {
 
 
 export {
+  BaseType,
   types,
   subTypes
 }

@@ -1,5 +1,5 @@
 import { DEF_SETTINGS } from '../constants'
-import { deepMerge } from './methods'
+import { deepMerge } from './object_util'
 /**
  * Merges the def settings with the passed in settings
  * @param  {any} settings 
