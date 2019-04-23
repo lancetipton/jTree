@@ -14,8 +14,10 @@ const SVG_NAMESPACE = "http://www.w3.org/2000/svg"
 const PROPS_TYPES = ['string', 'number', 'object']
 const NO_EL_TYPES = ['string', 'number', 'boolean']
 
-const appendText = (el, text) => 
-  el && (text || text === false) && el.appendChild(document.createTextNode(text))
+const appendText = (el, text) => (
+  el && (text || text === false) &&
+    el.appendChild(document.createTextNode(text))
+)
   
 const appendArray = (el, children) => (
   children
@@ -55,18 +57,19 @@ const setDataAttributes = (el, dataAttrs) => (
 const mapProps = (el, props) => (
   Object
     .keys(props)
-    .map((prop) => {
-      if (!(prop in el) || !ATTR_EXCEPTIONS.includes(prop))
-        return null
+    .map(prop => {
+      if(prop === 'for') prop = 'htmlFor'
 
-      const value = props[prop]
+      if (!(prop in el) && !ATTR_EXCEPTIONS.includes(prop))
+        return null
       
+      const value = props[prop]
       switch(prop){
         case 'style':
           return setStyles(el, value)
         case 'dataset':
           return setDataAttributes(el, value);
-        case 'className': 
+        case 'className':
         case prop && value === `function`: 
           return (el[prop] = value)
         default:
@@ -77,7 +80,6 @@ const mapProps = (el, props) => (
 
 const isSvg = type => ([`path`, `svg`, `circle`].includes(type))
 
-
 const makeProps = (el, props, propsType) => (
   propsType === `string` || propsType === `number`
     ? appendText(el, props)
@@ -85,8 +87,10 @@ const makeProps = (el, props, propsType) => (
       ? appendArray(el, props)
       : props instanceof window.Element
         ? el.appendChild(props)
-        : mapProps(el, props)
+        : mapProps(el, props)  
 )
+
+
 
 const makeEl = type => (
   isSvg(type)
@@ -96,9 +100,10 @@ const makeEl = type => (
 
 export const domTree = (type, props, ...children) => {
   const el = makeEl(type)
-  
-  PROPS_TYPES.includes(props) &&
-    makeProps(el, props, typeof props)
+
+  const propsType = typeof props
+  PROPS_TYPES.includes(propsType) &&
+    makeProps(el, props, propsType)
 
   children && 
     appendArray(el, children)

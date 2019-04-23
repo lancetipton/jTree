@@ -23,3 +23,15 @@ export const buildInstance = (type, id, typeName, settings) => {
 
   return INSTANCE_CACHE[id]
 }
+
+
+export const addCompProp = (schema, id) => {
+  schema && Object.defineProperty(schema, 'component', {
+    get: () => (document.getElementById(id)),
+    set: _id => {
+      if(_id && _id !== id) id = _id
+    },
+    enumerable: true,
+  })
+
+}

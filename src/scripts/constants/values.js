@@ -17,7 +17,7 @@ export const Values = {
     'log',
     'warn'
   ]),
-  ROOT: 'ROOT',
+  ROOT: 'content',
   DEFAULT_RENDERS: 'js',
   DEFAULT_TYPES: 'definitions'
 }

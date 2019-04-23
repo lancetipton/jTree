@@ -1,4 +1,5 @@
 import {
+  addCompProp,
   buildInstance,
   buildTypeName,
   clearObj,
@@ -42,67 +43,96 @@ const getParentComp = (data) => (
       : null
 )
 
-const loopDataObj = (value, key, tree, parent, settings) => {
+export const loopDataObj = (curSchema, tree, settings, elementCb) => {
+  const { value, key, parent } = curSchema
   const matchTypes = settings.Editor.Types.getTypes(value, settings)  
-  const type = checkMultiMatches(matchTypes, value, key, tree, parent, settings)
+  const type = checkMultiMatches(matchTypes, curSchema, tree, settings)
 
   // Check if the type has a factory to call, if not just return
   if(!type || !type.factory || !isConstructor(type.factory))
     return tree
-  
-  const id = uuid()
-  const typeName = buildTypeName(type.name || type.factory.name)
-  const instance = buildInstance(type, id, typeName, settings)
 
   const schema = {
-    value,
-    key,
-    id,
-    instance,
-    matchType: typeName,
+    ...curSchema,
+    id: curSchema.id || uuid(),
+    matchType: curSchema.matchType || buildTypeName(
+      type.name || type.factory.name
+    ),
     pos: buildPos(key, parent),
   }
-  if(key !== Values.ROOT) schema.parent = parent
+  schema.instance = schema.instance || buildInstance(
+    type,
+    schema.id,
+    schema.matchType,
+    settings
+  )
 
-  tree.schema[schema.id] = schema
+    // instance,
+  if(key !== Values.ROOT && !schema.parent)
+    schema.parent = parent
+
+  tree.schema[schema.pos] = schema
   const props = { schema, tree, settings }
-  props.build = isFunc(instance.build) && instance.build(props)
+  props.build = isFunc(schema.instance.build) && schema.instance.build(props)
 
   let component = isObj(value)
-    ? instance.render({
+    ? schema.instance.render({
         ...props,
         children: Object
           .entries(value)
           .map(([ childKey, child ]) => (
-              loopDataObj(child, childKey, tree, schema, settings)
+              loopDataObj(
+                { value: child, key: childKey, parent: schema },
+                tree,
+                settings,
+                elementCb
+              )
           ))
       })
     : Array.isArray(value)
-        ? instance.render({
+        ? schema.instance.render({
             ...props,
             children: value
               .map((child, index) => (
-                loopDataObj(child, index, tree, schema, settings)
+                loopDataObj(
+                  { value: child, key: index, parent: schema },
+                  tree,
+                  settings,
+                  elementCb
+                )
               ))
           })
-        : instance.render(props)
+        : schema.instance.render(props)
+
+  // If a component was create, add it to it's schema by id
+  if(component){
+    // Ensure the component has an Id
+    if(!component.id) component.id = schema.id
+    // Use the id to set the component prop on the schema
+    addCompProp(schema, component.id)
+  }
+  
+  // Add the dom components Id to the idMap
+  // This will help with looking up the schema later
+  tree.idMap[component && component.id || schema.id] = schema.pos
+
   
   // If we are not on the root element of the tree, just return the rendered component
   if(key !== Values.ROOT) return component
   // If on the root element, call the appendTree method
   // to add the component tree to the dom
-  settings.Editor.appendTree(component, props)
-
+  checkCall(elementCb, component, settings.editor.appendTree)
+  component = undefined
   // Then return the build tree
   return tree
 }
 
-export const buildTypes = (source, settings) => {
+export const buildTypes = (source, settings, elementCb) => {
   if(!validateBuildTypes(source, settings.Editor)) return null
   
-  const tree = { schema: {}, content: source }
-
-  return loopDataObj(source, Values.ROOT, tree, { value: tree }, settings)
+  const tree = { schema: {}, content: source, idMap: {} }
+  const rootSchema = { value: source, key: Values.ROOT }
+  return loopDataObj(rootSchema, tree, settings, elementCb)
 }
 
 export function TypesCls(settings){

@@ -71,7 +71,7 @@ export const callMatchHelper = (params, BaseType) => {
  * @param  {any} settings - passed in user settings
  * @return { object } - found matchType
  */
-export const checkMultiMatches = (matchTypes, value, key, tree, parent, settings) => {
+export const checkMultiMatches = (matchTypes, schema, tree, settings) => {
 
   let hasMatches = isObj(matchTypes)
   const matchKeys = hasMatches && Object.keys(matchTypes) || []
@@ -80,10 +80,8 @@ export const checkMultiMatches = (matchTypes, value, key, tree, parent, settings
   const { Editor: { Types: { BaseType } }, Editor } = settings
   
   const helperParams = {
-    value,
-    key,
+    schema,
     tree,
-    parent,
     Editor
   }
 

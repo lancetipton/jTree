@@ -16,6 +16,8 @@ export const clearObj = obj => (
 
 export const isObj = obj => typeof obj === 'object' && !Array.isArray(obj)
 
+export const isStr = str => typeof str === 'string'
+
 /**
  * Deep merges an array of objects together
  * @param { array } sources - array of objects to join

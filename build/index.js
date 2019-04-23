@@ -7,10 +7,18 @@ const jsonApiCall = () => {
 }
 
 
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', () => {
 
   const jTree = window.jTree
-  
+  let Editor
+  let editorNode = document.getElementById('editor')
+  let saveBtn = document.getElementById('save-btn')
+  saveBtn.addEventListener('click', () => {
+    Editor.updateAtPos('content.2.0.2.0.1', {
+      test: 'data',
+      food: 'bar'
+    })
+  })
   
   const onChange = (obj) => {
     console.log('on change')
@@ -108,13 +116,12 @@ document.addEventListener('DOMContentLoaded', function(){
     console.log('------------------ custom map build------------------');
   }
   
-  let Editor
-  let editorNode = document.getElementById('editor')
+
   const init = async () => {
     jsonApiCall()
       .then(testData => {
         
-        Editor = jTree.init({
+        return jTree.init({
           // ----------- General Settings ---------- //
           element: editorNode,
           showLogs: true,
@@ -233,7 +240,24 @@ document.addEventListener('DOMContentLoaded', function(){
           // }
         
         })
-
+      
+        
+      })
+      .then(_editor => {
+        if(!_editor) return
+        Editor = _editor
+        // Object.entries(Editor.tree.idMap).map(([ id, pos ]) => {
+        //   const element = document.getElementById(id)
+        //   if(!element) return
+        //   element.addEventListener('click', e => {
+        //     Editor.updateAtPos(pos, {
+        //       test: 'data',
+        //       food: 'bar'
+        //     })
+        //     e.preventDefault()
+        //     e.stopPropagation()
+        //   })
+        // })
       })
   }
 

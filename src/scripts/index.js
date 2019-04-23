@@ -6,48 +6,105 @@ import {
   deepMerge,
   getDomNode,
   isObj,
+  isStr,
   logData,
   parseJSONString,
   setLogs,
   validateSource,
 } from './utils'
 import { cleanUp } from './clean'
-import { buildTypes, TypesCls } from './types'
+import { Values } from './constants'
+import { buildTypes, TypesCls, loopDataObj } from './types'
+import _get from 'lodash.get'
+import _set from 'lodash.set'
 
 import { DEF_SETTINGS } from './constants'
 
 // Cache holder for active source data
 let ACT_SOURCE
 
-const cleanSettingsObj = settings => {
-  clearObj(settings.editor)
-  settings.editor = undefined
-  delete settings.editor
+/**
+ * Creates or replaces a dom node on the parent node
+ * Replace is referenced by ID
+ * @param  { dome node } element - node to add or replace with
+ * @param  { dome node } parent - parent node to add the element to
+ * @return { dom node } replaced || added dom node
+ */
+const upsertElement = (element, parent) => {
+  if(!element)
+    return logData(
+      `Could not add element to the dom tree. The element does not exists`,
+      parent,
+      'warn'
+    )
+
+  const curEl = document.getElementById(element.id)
+  return curEl
+    ? curEl.parentNode.replaceChild(element, curEl)
+    : parent && parent.appendChild(element) ||
+      logData(
+        `Could not add element to the dom tree. The parent does not exists`,
+        parent,
+        'warn'
+      )
+}
+
+/**
+ * Checks if the settings.editor.appendTree method exists, and calls it
+ * If response is not false, it will add the rootComp the Dom
+ * @param  { dom element } rootComp of the source data passed to the Editor
+ * @param  { function } appendTree - from settings.editor.appendTree ( from user )
+ *                                 - should always be bound to the Editor Class
+ *
+ * @return { void }
+ */
+const appendTreeHelper = function(rootComp, appendTree){
+  const res = checkCall(appendTree, rootComp, this)
+  if(res === false || !this.element) return null
+  upsertElement(rootComp, this.element)
+}
+
+const buildFromPos = function(pos, newValue, force, settings) {
+  if(
+    !isStr(pos) ||
+    !this.tree ||
+    !this.tree.schema ||
+    !this.tree.schema[pos]
+  ) return null
+  const buildSchema = this.tree.schema[pos]
+  const valueInTree = newValue || _get(this.tree, pos)
+  // If the values are the same, just return, cause there is not update
+  if(!force && valueInTree === buildSchema.value) return null
+  // Otherwise set the value from the parent to the child
+  buildSchema.value = valueInTree
+  const updatedEl = loopDataObj(
+    buildSchema,
+    this.tree,
+    settings,
+    appendTreeHelper && appendTreeHelper.bind(this)
+  )
+
+  const replaceEl = upsertElement(updatedEl, buildSchema.parent.component)
+  if(replaceEl === updatedEl) return null
+  
 }
 
 const createEditor = (settings, domContainer) => {
+
   class jTree {
     
     constructor(){
-      TypesCls(settings)
+      return TypesCls(settings)
         .then(Types => {
           this.Types = Types
           this.element = domContainer
           const { source, ...config } = settings.editor
-          
           this.config = { ...config }
           settings.Editor = this
-          source && this.setSource(source, true)
+          return source && this.setSource(source, true)
         })
     }
-    
-    appendTree = (rootComp, props) => {
-      const res = checkCall(settings.editor.appendTree, rootComp, settings.Editor)
-      if(res === false || !this.element) return null
 
-      rootComp && this.element.appendChild(rootComp)
-    }
-    
     buildTypes = source => {
       if(source && source !== ACT_SOURCE)
         return this.setSource(source)
@@ -56,7 +113,9 @@ const createEditor = (settings, domContainer) => {
         return logData(`Could build types, source data is invalid!`, ACT_SOURCE, 'warn')
       
       if(isObj(ACT_SOURCE))
-        this.tree = buildTypes(ACT_SOURCE, settings)
+        this.tree = buildTypes(ACT_SOURCE, settings, appendTreeHelper.bind(this))
+
+        return this
     }
 
     setSource = (source, update) => {
@@ -66,13 +125,44 @@ const createEditor = (settings, domContainer) => {
       if(!validateSource(source)) return undefined
 
       ACT_SOURCE = cloneDeep(source)
-      update && this.buildTypes()
+      return update && this.buildTypes()
     }
     
-    forceUpdate = source => {
-      this.setSource(source, true)
+    forceUpdate = pos => {
+      pos && buildFromPos.apply(this, [
+        pos,
+        null,
+        true,
+        settings
+      ])
     }
     
+    updateAtId = (id, value, check) => {
+      if(!this.tree.idMap || !this.tree.idMap[id])
+        return logData(
+          `Tried to update the tree with and ID does not exist!`,
+          id, tree, 'warn'
+        )
+
+      this.updateAtPos(this.tree.idMap[id], value, check)
+    }
+    
+    updateAtPos = (pos, value, check) => {
+      const valueInTree = check && Boolean(check && _get(this.tree, pos)) || true
+      if(!valueInTree)
+        return logData(
+          `Tried to update the tree position that does not exist!`,
+          pos, tree, 'warn'
+        )
+      _set(this.tree, pos, value)
+      buildFromPos.apply(this, [
+        pos,
+        value,
+        false,
+        settings
+      ])
+    }
+
     destroy = () => {
       this.element = undefined
       delete this.element
@@ -85,13 +175,13 @@ const createEditor = (settings, domContainer) => {
       delete this.Types
       
       ACT_SOURCE = undefined
-      cleanSettingsObj(settings)
-      cleanUp(this.config)
+      clearObj(this.config)
       cleanUp(settings)
     }
   }
   
-  return new jTree()
+  const Tree = new jTree()
+  return  Tree
 }
 
 
@@ -112,7 +202,6 @@ const init = (opts) => {
   const settings = deepMerge(DEF_SETTINGS, options)
   // Create the jTree Editor
   const Editor = createEditor(settings, domContainer)
-
   return Editor
 }
 
