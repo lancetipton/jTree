@@ -1,5 +1,4 @@
-import { clearObj } from './utils'
-import { clearInstanceCache } from './types/builder'
+import { clearObj, clearInstanceCache } from './utils'
 
 export const cleanUp = (settings) => {
   clearInstanceCache()

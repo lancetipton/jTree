@@ -1,13 +1,16 @@
-import { isConstructor, logData } from './methods_util'
 import { isObj, mapCb } from './object_util'
-import JSRender from '../renders/js'
-import Render from '../renders'
 import { Values } from '../constants'
+import Render from '../modules/renders'
 
-export const registerTypeRender = render => Render.register(render || JSRender)
+export const initTypeCache = (TypesCls, settings, { BaseType, subTypes, types }) => {
+  const joinedTypes = { ...types }
+  const joinedSubTypes = { ...subTypes, ...settings.customTypes }
+  TypesCls.BaseType = new BaseType(settings.types.base)
+  return buildTypeCache(joinedTypes, joinedSubTypes, TypesCls.BaseType)
+}
 
 export const buildTypeCache = (rootTypes, subTypes, BaseType) => {
-  const typeRender = Render.get()
+  const typeRender = Render.get() || {}
 
   const BaseTypeMeta = {
     name: BaseType.constructor.name,
@@ -47,7 +50,7 @@ export const buildTypeName = typeClsName => (
   typeClsName.split('Type').join('').toLowerCase()
 )
 
-export const buildSubTypes = (subTypes, parentMeta, typeRender) => (
+const buildSubTypes = (subTypes, parentMeta, typeRender) => (
   Object
   .values(subTypes)
   .reduce((built, subType) => {

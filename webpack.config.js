@@ -11,6 +11,7 @@ const paths = [ './build' ]
 
 module.exports = {
   mode: ENV_MODE || 'development',
+  devtool: 'inline-source-map',
   entry: {
     [libraryName]: './src/scripts/index.js',
     markdown: './src/example/markdown.js'
@@ -20,7 +21,8 @@ module.exports = {
     filename: '[name]' + outputFile,
     library: '[name]',
     libraryTarget: 'umd',
-    umdNamedDefine: true
+    umdNamedDefine: true,
+    globalObject: "(typeof self !== 'undefined' ? self : this)"
   },
   module: {
     rules: [
@@ -37,7 +39,7 @@ module.exports = {
           loader: 'raw-loader',
         }
       },
-      { enforce: 'pre', test: /\.(js|css)$/, loader: 'remove-comments-loader' }
+      // { enforce: 'pre', test: /\.(js|css)$/, loader: 'remove-comments-loader' }
     ]
   },
   plugins: [

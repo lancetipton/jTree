@@ -1,7 +1,9 @@
 import {
   buildSettings,
+  checkCall,
   clearObj,
   cloneDeep,
+  deepMerge,
   getDomNode,
   isObj,
   logData,
@@ -10,7 +12,10 @@ import {
   validateSource,
 } from './utils'
 import { cleanUp } from './clean'
-import { buildTypes, Types } from './types'
+import { buildTypes, TypesCls } from './types'
+
+import { DEF_SETTINGS } from './constants'
+
 // Cache holder for active source data
 let ACT_SOURCE
 
@@ -21,26 +26,34 @@ const cleanSettingsObj = settings => {
 }
 
 const createEditor = (settings, domContainer) => {
-  
   class jTree {
     
     constructor(){
-      this.Types = new Types(settings)
-      this.element = domContainer
-      const { source, ...config } = settings.editor
-      this.config = { ...config }
-      settings.Editor = this
-      source && this.setSource(source, true)
-
-      // cleanSettingsObj(settings)
+      TypesCls(settings)
+        .then(Types => {
+          this.Types = Types
+          this.element = domContainer
+          const { source, ...config } = settings.editor
+          
+          this.config = { ...config }
+          settings.Editor = this
+          source && this.setSource(source, true)
+        })
     }
+    
+    appendTree = (rootComp, props) => {
+      const res = checkCall(settings.editor.appendTree, rootComp, settings.Editor)
+      if(res === false || !this.element) return null
 
+      rootComp && this.element.appendChild(rootComp)
+    }
+    
     buildTypes = source => {
       if(source && source !== ACT_SOURCE)
         return this.setSource(source)
       
       if(!isObj(ACT_SOURCE))
-        return logData(`Could build types, source data is incalid!`, ACT_SOURCE, 'warn')
+        return logData(`Could build types, source data is invalid!`, ACT_SOURCE, 'warn')
       
       if(isObj(ACT_SOURCE))
         this.tree = buildTypes(ACT_SOURCE, settings)
@@ -72,6 +85,7 @@ const createEditor = (settings, domContainer) => {
       delete this.Types
       
       ACT_SOURCE = undefined
+      cleanSettingsObj(settings)
       cleanUp(this.config)
       cleanUp(settings)
     }
@@ -95,7 +109,7 @@ const init = (opts) => {
   // Clean up the opts.element so we don't have a memory leak
   opts.element = undefined
   // Build the settings by joining with the default settings
-  const settings = buildSettings(options)
+  const settings = deepMerge(DEF_SETTINGS, options)
   // Create the jTree Editor
   const Editor = createEditor(settings, domContainer)
 

@@ -16,5 +16,8 @@ export const Values = {
     'dir',
     'log',
     'warn'
-  ])
+  ]),
+  ROOT: 'ROOT',
+  DEFAULT_RENDERS: 'js',
+  DEFAULT_TYPES: 'definitions'
 }
