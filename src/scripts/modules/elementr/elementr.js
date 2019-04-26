@@ -58,22 +58,26 @@ const mapProps = (el, props) => (
   Object
     .keys(props)
     .map(prop => {
+      const value = props[prop]
+      if(props[prop] === undefined || props[prop] === null) return
+
       if(prop === 'for') prop = 'htmlFor'
+      if(prop === 'class') prop = 'className'
 
       if (!(prop in el) && !ATTR_EXCEPTIONS.includes(prop))
         return null
-      
-      const value = props[prop]
+
       switch(prop){
         case 'style':
           return setStyles(el, value)
         case 'dataset':
-          return setDataAttributes(el, value);
+          return setDataAttributes(el, value)
         case 'className':
-        case prop && value === `function`: 
           return (el[prop] = value)
         default:
-          return value && el.setAttribute(prop, value)
+          return typeof value === `function` && prop.indexOf('on') === 0
+            ? (el[prop] = value)
+            : value && el.setAttribute(prop, value)
       }
     })
 )
@@ -133,3 +137,4 @@ export const li = (...args) => domTree(`li`, ...args)
 export const svg = (...args) => domTree('svg', ...args)
 export const path = (...args) => domTree(`path`, ...args)
 export const circle = (...args) => domTree(`circle`, ...args)
+export const style = (...args) => domTree(`style`, ...args)

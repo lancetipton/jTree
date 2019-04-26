@@ -1,16 +1,15 @@
 import { isObj, mapCb } from './object_util'
 import { Values } from '../constants'
-import Render from '../modules/renders'
 
-export const initTypeCache = (TypesCls, settings, { BaseType, subTypes, types }) => {
+export const initTypeCache = (TypesCls, settings, { BaseType, subTypes, types }, renders) => {
   const joinedTypes = { ...types }
   const joinedSubTypes = { ...subTypes, ...settings.customTypes }
   TypesCls.BaseType = new BaseType(settings.types.base)
-  return buildTypeCache(joinedTypes, joinedSubTypes, TypesCls.BaseType)
+  return buildTypeCache(joinedTypes, joinedSubTypes, TypesCls.BaseType, renders)
 }
 
-export const buildTypeCache = (rootTypes, subTypes, BaseType) => {
-  const typeRender = Render.get() || {}
+export const buildTypeCache = (rootTypes, subTypes, BaseType, renders) => {
+  const typeRender = renders || {}
 
   const BaseTypeMeta = {
     name: BaseType.constructor.name,

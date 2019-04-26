@@ -1,4 +1,5 @@
 import { Values } from '../../../../constants'
+import { div, br, span } from '../../../elementr'
 
 const updateParentConstruct = (config, parent) => {
   Object.entries(Values.PARENT_OVERWRITE).map(([ key, type ]) => {
@@ -20,6 +21,15 @@ class BaseType {
   build = (params) => {
     
   }
+  
+  render = props => {
+    return div({ className: `string-div` },
+      span(`Key: ${props.schema.key}`),
+      br(),
+      span(`Value: ${props.schema.value}`),
+    )
+  }
+  
 }
 
 

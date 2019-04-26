@@ -25,9 +25,12 @@ import TypeDefs from './modules/types'
 
 let TYPE_CACHE
 let LOADED_TYPES
-const loadRenderTypes = renderPath => (
-  Render.load(renderPath || Values.DEFAULT_RENDERS)
+const loadRenderTypes = renderPath => Promise.resolve(
+  renderPath && Render.load(
+    typeof renderPath === 'string' && renderPath || Values.DEFAULT_RENDERS
+  )
 )
+
 
 const buildPos = (key, parent) => (
   key === Values.ROOT
@@ -193,14 +196,16 @@ export function TypesCls(settings){
     }
 
   }
-
+  
+  let dnyRenders
   const typesCls = new Types()
   return loadRenderTypes(settings.renderPath)
     .then(renders => {
+      dnyRenders = renders
       return typesCls.load(settings.typesPath)
     })
     .then(loadedTypes => {
-      TYPE_CACHE = initTypeCache(typesCls, settings, loadedTypes)
+      TYPE_CACHE = initTypeCache(typesCls, settings, loadedTypes, dnyRenders)
       return typesCls
     })
 }

@@ -1,5 +1,5 @@
-import store from './store'
-import { div } from './elementr'
+import store from './store/store'
+import { div } from '../../elementr'
 
 const NumberRender = (props) => {
   return div({ className: `number-div` },

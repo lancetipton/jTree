@@ -1,4 +1,5 @@
 import BaseType from '../base'
+import { div } from '../../../elementr'
 
 class NumberType extends BaseType {
 
@@ -15,6 +16,12 @@ class NumberType extends BaseType {
     
     // console.log('------------------params------------------');
     // console.log(params.schema);
+  }
+  
+  render = (props) => {
+    return div({ className: `number-div` },
+      props.schema.value,
+    ) 
   }
   
 }

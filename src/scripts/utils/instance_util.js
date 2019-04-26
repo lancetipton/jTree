@@ -14,8 +14,11 @@ export const buildInstance = (type, id, typeName, settings) => {
   INSTANCE_CACHE = INSTANCE_CACHE || {}
   const instance = INSTANCE_CACHE[id] ||  new type.factory(settings.types[typeName])
   if(
-    (!instance.render && type.render) ||
-    (instance.render && type.render && instance.render !== type.render)
+    // If dynamic render path is set, and the type has a render loaded
+    // And the instance.render is not already set as the type.render
+    (settings.renderPath && type.render && instance.render !== type.render) ||
+    // Or if no instance.render exists, and a type render does, use it
+    (!instance.render && type.render)
   )
     instance.render = type.render.bind(instance)
 

@@ -3,7 +3,7 @@ import NumberRender from './number'
 import MapRender from './map'
 import CollectionRender from './collection'
 import BooleanRender from './boolean'
-import createStore from './store'
+import createStore from './store/store'
 
 const JSRender = {
   init: createStore,

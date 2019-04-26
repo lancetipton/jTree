@@ -1,4 +1,5 @@
 import BaseType from '../base'
+import { div, ul, li } from '../../../elementr'
 
 class CollectionType extends BaseType {
   
@@ -13,7 +14,15 @@ class CollectionType extends BaseType {
     // console.log('------------------params------------------');
     // console.log(params.schema);
   }
-
+  
+  render = (props) => {
+    const children = props.children || []
+    
+    return div({ className: `collection-class` },
+      ul({}, children.map(child => li({}, child )) )
+    )
+  }
+  
 }
 
 

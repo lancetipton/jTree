@@ -125,7 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
           // ----------- General Settings ---------- //
           element: editorNode,
           showLogs: true,
-
+          // Dynamically load renders from path
+          // Set true to use default js renders
+          renderPath: false,
           // ----------- Editor Config ---------- //
           editor: {
             onChange: onChange,

@@ -1,6 +1,6 @@
 import BaseType from '../base'
 import { typesOverride, uuid } from '../../../../utils'
-
+import { div, ol, li } from '../../../elementr'
 
 class MapType extends BaseType {
 
@@ -11,6 +11,19 @@ class MapType extends BaseType {
      super(config)
       typesOverride(this, config)
    }
+  
+  
+  build = () => {
+    
+  }
+
+  render = props => {
+    const children = props.children || []
+
+    return div({ className: `map-class` },
+      ol({}, children.map(child => li({}, child )) )
+    )
+  }
 
 }
 

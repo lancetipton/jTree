@@ -1,4 +1,4 @@
-
+import { logData } from '../../utils'
 
 const load = (renderPath) => import(
   /* webpackInclude: /\.js$/ */
@@ -6,7 +6,12 @@ const load = (renderPath) => import(
   /* webpackMode: "lazy" */
   `./${renderPath || 'definitions'}`
   )
-  .then(type => type && type.default)
+  .then(type => {
+    if(!type || !type.default)
+      logData('Could not load types, please ensure they are properly installed!')
+
+      return type && type.default || {}
+  })
 
 
 export default { load }

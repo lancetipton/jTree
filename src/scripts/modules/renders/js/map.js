@@ -1,5 +1,5 @@
-import store from './store'
-import { div, ol, li } from './elementr'
+import store from './store/store'
+import { div, ol, li } from '../../elementr'
 
 const MapRender = props => {
   const children = props.children || []
