@@ -1,1 +1,0 @@
-const StyleLoader = require('../index')

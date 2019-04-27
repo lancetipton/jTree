@@ -1,5 +1,6 @@
 import BaseType from '../base'
-import { div } from '../../../elementr'
+import { er, elements } from 'element-r'
+const { div } = elements
 
 class NumberType extends BaseType {
 

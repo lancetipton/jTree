@@ -1,6 +1,6 @@
 import BaseType from '../base'
-import { div, ul, li } from '../../../elementr'
-
+import { er, elements } from 'element-r'
+const { div, ul, li } = elements
 class CollectionType extends BaseType {
   
   static priority = 1

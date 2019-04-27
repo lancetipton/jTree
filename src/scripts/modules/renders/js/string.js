@@ -1,5 +1,5 @@
-import store from './store/store'
-import { div, br, span } from '../../elementr'
+import { er, elements } from 'element-r'
+const { div, br, span } = elements
 
 const StringRender = props => {
   return div({ className: `string-div` },

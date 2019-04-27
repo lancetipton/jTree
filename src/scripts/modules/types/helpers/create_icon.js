@@ -1,5 +1,6 @@
-import { div, span, a, style  } from '../../elementr'
+import { er, elements } from 'element-r'
 import { uuid } from '../../../utils'
+const { div, span, a, style  } = elements
 
 const iconStyles = () => {
   const stylId = uuid()

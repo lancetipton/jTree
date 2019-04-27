@@ -1,10 +1,10 @@
 {
-  "name": "compose-it",
+  "name": "jtree",
   "version": "1.1.1",
   "description": "Simple WYSIWYG",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
-  "main": "build/ComposeIt.min.js",
-  "module": "build/ComposeIt.min.js",
+  "main": "build/jTree.min.js",
+  "module": "build/index.min.js",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -32,8 +32,10 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/plugin-transform-property-literals": "^7.2.0",
-    "@babel/polyfill": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
+    "babel-jest": "^24.7.1",
+    "jest": "^24.7.1",
+    "jest-cli": "^24.7.1",
     "@fortawesome/fontawesome-free": "^5.8.1",
     "babel-loader": "^8.0.5",
     "clean-webpack-plugin": "^1.0.0",
@@ -51,8 +53,33 @@
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "peerDependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    },
+    "testMatch": [
+      "<rootDir>/src/__tests__/**/*.js?(x)"
+    ],
+    "collectCoverageFrom": [
+      "<rootDir>/src/loader.js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "jsx",
+      "es6"
+    ],
+    "globals": {
+      "__DEV__": true
+    },
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/setupTests.js"
+    ]
   }
 }

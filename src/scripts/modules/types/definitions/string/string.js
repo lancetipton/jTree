@@ -1,23 +1,8 @@
 import BaseType from '../base'
 import { typesOverride } from '../../../../utils'
-import { div, br, span } from '../../../elementr'
 import { createEditBtns } from '../../helpers'
-
-
-const onEdit = function(e){
-  console.log('------------------on edit------------------');
-  console.log(this);
-}
-
-const onDrag = function(e){
-  console.log('------------------on drag------------------');
-  console.log(this);
-}
-
-const onDelete = function(e){
-  console.log('------------------on delete------------------');
-  console.log(this);
-}
+import { er, elements } from 'element-r'
+const { div, br, span } = elements
 
 class StringType extends BaseType {
 
@@ -27,6 +12,21 @@ class StringType extends BaseType {
   constructor(config){
     super(config)
     typesOverride(this, config)
+  }
+
+  onEdit = e => {
+    console.log('------------------on edit------------------');
+    console.log(this);
+  }
+
+  onDrag = e => {
+    console.log('------------------on drag------------------');
+    console.log(this);
+  }
+
+  onDelete = e => {
+    console.log('------------------on delete------------------');
+    console.log(this);
   }
 
   build = (params) => {
@@ -40,9 +40,9 @@ class StringType extends BaseType {
     return div({ className: `string-div`, style: { maxWidth: '80%' } },
       ...createEditBtns({
         id,
-        edit: onEdit.bind(this),
-        drag: onDrag.bind(this),
-        delete: onDelete.bind(this),
+        edit: this.onEdit,
+        drag: this.onDrag,
+        delete: this.onDelete,
       }),
       span(`Key: ${props.schema.key}`),
       br(),

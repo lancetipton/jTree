@@ -1,6 +1,7 @@
 import BaseType from '../base'
 import { typesOverride, uuid } from '../../../../utils'
-import { div, ol, li } from '../../../elementr'
+import { er, elements } from 'element-r'
+const { div, ol, li } = elements
 
 class MapType extends BaseType {
 

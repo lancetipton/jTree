@@ -1,5 +1,5 @@
-import store from './store/store'
-import { div, ul, li } from '../../elementr'
+import { er, elements } from 'element-r'
+const { div, ul, li } = elements
 
 const CollectionRender = (props) => {
   const children = props.children || []
