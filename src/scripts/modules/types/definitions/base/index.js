@@ -3,8 +3,6 @@ import { Values } from '../../../../constants'
 import { er, elements } from 'element-r'
 const { div, br, span } = elements
 
-
-
 const updateParentConstruct = (config, parent) => {
   Object.entries(Values.PARENT_OVERWRITE).map(([ key, type ]) => {
     if(typeof config[key] === type && parent[key] !== config[key])

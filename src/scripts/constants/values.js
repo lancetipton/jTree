@@ -18,6 +18,7 @@ export const Values = {
     'warn'
   ]),
   ROOT_CLASS: 'j-tree-editor',
+  ROOT: 'jTree-Root',
   DEFAULT_RENDERS: 'js',
   DEFAULT_TYPES: 'definitions'
 }

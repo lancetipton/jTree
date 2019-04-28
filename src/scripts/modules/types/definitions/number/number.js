@@ -20,7 +20,7 @@ class NumberType extends BaseType {
   }
   
   render = (props) => {
-    return div({ className: `number-div` },
+    return div({ className: `number-wrapper item-wrapper` },
       props.schema.value,
     ) 
   }

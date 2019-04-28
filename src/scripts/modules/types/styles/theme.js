@@ -30,9 +30,12 @@
 */
 
 const theme = {
-
   // color states
   passiveBack: '#FFFFFF',
+  // Group of items background color
+  passiveGroupBack: '#FFFFFF',
+  activeGroupBack: '#F1EFF5',
+  // Single Item background color
   passiveItemBack: '#FFFFFF',
   hoverItemBack: '#F1EFF5',
   
@@ -58,8 +61,7 @@ const theme = {
   raleway: `"Raleway", sans-serif`,
   cabin: `"Cabin", sans-serif`,
   roboto: `"Roboto", sans-serif`,
-  
-  
+
 }
 
 

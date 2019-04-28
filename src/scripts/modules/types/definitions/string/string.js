@@ -36,10 +36,9 @@ class StringType extends BaseType {
 
   render = props => {
     const { schema: { id }, schema } = props
-    return div({ className: `string-wrapper wrapper` },
-      span({ className: 'string-key' }, `Key: ${props.schema.key}`),
-      div({ className: 'key-value-spacer' }),
-      span({ className: 'string-value' }, `Value: ${props.schema.value}`),
+    return div({ className: `string-wrapper item-wrapper` },
+      span({ className: 'string-key' }, `${props.schema.key}`),
+      span({ className: 'string-value' }, `${props.schema.value}`),
       div({ className: `btns-wrapper` },
         createEditBtns({
           id,

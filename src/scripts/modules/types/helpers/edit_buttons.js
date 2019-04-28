@@ -1,13 +1,13 @@
 import { er, elements } from 'element-r'
 import { createIcon, iconStyles } from './create_icon'
-import { uuid } from '../../../utils'
+import { uuid, capitalize } from '../../../utils'
 const { div, style, span  } = elements
 
 export const typeLabel = type => (
   div({ className: `type-label` }, 
     span(
       { className: `type-text ${type}-text` }, 
-      `( ${type[0].toUpperCase()}${type.slice(1)} )`
+      `( ${capitalize(type)} )`
     )
   )
 )

@@ -47,38 +47,8 @@ const getParentComp = (data) => (
       : null
 )
 
-export const loopDataObj = (curSchema, tree, settings, elementCb) => {
-  const { value, key, parent } = curSchema
-  const matchTypes = settings.Editor.Types.getTypes(value, settings)  
-  const type = checkMultiMatches(matchTypes, curSchema, tree, settings)
-
-  // Check if the type has a factory to call, if not just return
-  if(!type || !type.factory || !isConstructor(type.factory))
-    return tree
-
-  const schema = {
-    ...curSchema,
-    id: curSchema.id || uuid(),
-    matchType: curSchema.matchType || buildTypeName(
-      type.name || type.factory.name
-    ),
-    pos: buildPos(key, parent),
-  }
-  schema.instance = schema.instance || buildInstance(
-    type,
-    schema.id,
-    schema.matchType,
-    settings
-  )
-
-    // instance,
-  if(key !== Values.ROOT && !schema.parent)
-    schema.parent = parent
-
-  tree.schema[schema.pos] = schema
-  const props = { schema, tree, settings }
-  props.build = isFunc(schema.instance.build) && schema.instance.build(props)
-
+const renderComponent = (key, value, props) => {
+  const { schema, tree, settings } = props
   let component = isObj(value)
     ? schema.instance.render({
         ...props,
@@ -88,8 +58,7 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
               loopDataObj(
                 { value: child, key: childKey, parent: schema },
                 tree,
-                settings,
-                elementCb
+                settings
               )
           ))
       })
@@ -101,32 +70,93 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
                 loopDataObj(
                   { value: child, key: index, parent: schema },
                   tree,
-                  settings,
-                  elementCb
+                  settings
                 )
               ))
           })
         : schema.instance.render(props)
 
-  // If a component was create, add it to it's schema by id
+  // If a component was created, add it to it's schema by id
   if(component){
     // Ensure the component has an Id
     if(!component.id) component.id = schema.id
     // Use the id to set the component prop on the schema
     addCompProp(schema, component.id)
   }
+
+  return component
+}
+
+const buildSchema = (curSchema, type, pos, settings) => {
+  const schema = {
+    ...curSchema,
+    pos,
+    id: curSchema.id || uuid(),
+    matchType: curSchema.matchType || buildTypeName(
+      type.name || type.factory.name
+    )
+  }
+  !schema.instance && (schema.instance = buildInstance(
+    type,
+    schema.id,
+    schema.matchType,
+    settings
+  ))
+
+  return schema
+}
+
+export const loopDataObj = (curSchema, tree, settings, elementCb) => {
+  const { value, key, parent } = curSchema
+  const matchTypes = settings.Editor.Types.getTypes(value, settings)  
+  const type = checkMultiMatches(matchTypes, curSchema, tree, settings)
+
+  // Check if the type has a factory to call, if not just return
+  if(!type || !type.factory || !isConstructor(type.factory))
+    return tree
   
+  // Build an updated scheam based on the new settings
+  const schema = buildSchema(
+    curSchema,
+    type,
+    buildPos(key, parent),
+    settings
+  )
+
+    // If not the root element, set the parent to the schema
+  key !== Values.ROOT && (schema.parent = parent)
+
+  // Add the schema to the tree based on pos
+  tree.schema[schema.pos] = schema
+  // Props helper to make it easier to manage
+  let props = { schema, tree, settings }
+  // Check if there is a build method, and is so call it
+  isFunc(schema.instance.build) && (
+    props.build = schema.instance.build(props)
+  )
+
+  // Render the component and it's children
+  let component = renderComponent(
+    key,
+    value,
+    props
+  )
   // Add the dom components Id to the idMap
   // This will help with looking up the schema later
   tree.idMap[component && component.id || schema.id] = schema.pos
-
+  // If we are not on the root element of the tree, 
+  // Ensure the props get cleared out and return the rendered component
+  if(key !== Values.ROOT)
+    return (props = undefined) || component
   
-  // If we are not on the root element of the tree, just return the rendered component
-  if(key !== Values.ROOT) return component
-  // If on the root element, call the appendTree method
-  // to add the component tree to the dom
-  checkCall(elementCb, component, settings.editor.appendTree)
+  // Only the root component should get to this point
+  // Call the appendTree method to add the component tree to the dom
+  elementCb && checkCall(elementCb, component, settings.editor.appendTree)
+  // Set component and props to undefined, to ensure it get's cleaned up
+  // as it's longer being used
   component = undefined
+  props = undefined
+
   // Then return the build tree
   return tree
 }

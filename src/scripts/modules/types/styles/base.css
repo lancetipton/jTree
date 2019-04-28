@@ -1,82 +1,111 @@
-.wrapper {
+.j-tree-editor ul {
+  margin: 0px;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.j-tree-editor ul > li {
+  padding: 0px;
+  margin: 0px;
+}
+
+
+
+/* --- General Item Styles --- */
+.j-tree-editor .item-wrapper {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  min-width: 80%;
-}
-.string-wrapper {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  min-width: 80%;
-}
-.string-wrapper .key-value-spacer {
-  min-width: 20px;
-}
-.string-wrapper .btns-wrapper {
-  min-width: 120px;
-  min-height: 10px;
 }
 
-div.map-wrapper > ol.map-list {
-  list-style-type: none;
-}
-
-div.collection-wrapper > ul.collection-list {
-  list-style-type: none;
-}
-
-ol > li > div.wrapper,
-ul > li > div.wrapper {
+.j-tree-editor ul > li > div.item-wrapper {
   transition: background-color @easeSpeed ease;
   background-color: @passiveItemBack;
-  padding: 2px 15px;
+  padding: 2px 20px;
 }
-ol > li > div.wrapper:hover,
-ul > li > div.wrapper:hover {
+
+.j-tree-editor ul > li > div.item-wrapper:hover {
   background-color: @hoverItemBack;
 }
 
+/* --- String Styles --- */
+.j-tree-editor .string-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 80%;
+}
 
-li > div.string-wrapper > div > div.edit-btns-wrapper {
+.j-tree-editor .string-wrapper  span.string-value {
+  margin-left: 30px;
+}
+
+.j-tree-editor .string-wrapper .btns-wrapper {
+
+}
+
+.j-tree-editor li > div.string-wrapper > div > div.edit-btns-wrapper {
   opacity: 0;
   transition: opacity @easeSpeed ease;
 }
 
-li:hover > div.string-wrapper > div > div.edit-btns-wrapper {
+.j-tree-editor li:hover > div.string-wrapper > div > div.edit-btns-wrapper {
   opacity: 1;
 }
 
-div.edit-btns-wrapper {
-  position: relative;
-  margin-left: 20px;
+/* --- Number Styles --- */
+.j-tree-editor div.number-wrapper {
+  
 }
 
-div.edit-btns-wrapper div.edit-btns {
+/* --- Map Styles --- */
+.j-tree-editor div.map-wrapper {
+  background-color: @passiveGroupBack;
+}
+
+.j-tree-editor div.map-wrapper > ul.map-list {
+
+}
+
+/* --- Collection Styles --- */
+.j-tree-editor div.collection-wrapper {
+  background-color: @passiveGroupBack;
+}
+
+.j-tree-editor div.collection-wrapper > ul.collection-list {
+
+}
+
+/* --- Edit Button Styles --- */
+.j-tree-editor div.edit-btns-wrapper {
+  position: relative;
+  margin-left: 30px;
+}
+
+.j-tree-editor div.edit-btns-wrapper div.edit-btns {
   display: flex;
-  width: 100%;
   justify-content: space-between;
   align-items: center;
-  padding: 7px 15px 2px;
+  padding: 7px 0px 2px;
 }
 
-div.edit-btns-wrapper  div.type-label {
+.j-tree-editor div.edit-btns-wrapper  div.type-label {
   font-size: @labelSize;
   color: @label;
   position: relative;
   top: -3px;
-}
-
-div.edit-btns-wrapper  div.type-text {
-  
+  margin-right: 10px;
 }
 
 
-.icon-wrapper {
+/* --- Edit Button Icon Styles --- */
+.j-tree-editor span.icon-wrapper {
   margin: 0 5px;
 }
 
-.icon-wrapper > a {
+.j-tree-editor span.icon-wrapper > a {
   text-align: center;
   text-decoration: none;
   transition: color @easeSpeed ease;
@@ -84,20 +113,20 @@ div.edit-btns-wrapper  div.type-text {
   color: @passiveBtn;
 }
 
-.icon-wrapper > a > .icon-text {
+.j-tree-editor span.icon-wrapper > a > .icon-text {
   margin-top: 3px;
   font-family: @raleway;
   display: block;
 }
 
-.icon-wrapper > a.icon-edit:hover {
+.j-tree-editor span.icon-wrapper > a.icon-edit:hover {
   color: @activeEdit;
 }
 
-.icon-wrapper > a.icon-drag:hover {
+.j-tree-editor span.icon-wrapper > a.icon-drag:hover {
   color: @activeDrag;
 }
 
-.icon-wrapper > a.icon-delete:hover {
+.j-tree-editor span.icon-wrapper > a.icon-delete:hover {
   color: @activeDelete;
 }

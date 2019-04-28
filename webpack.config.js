@@ -3,27 +3,36 @@ const CleanWebpackPlugin = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
-
 const libraryName = 'jTree'
-const ENV_MODE = process.env.ENV
+const NODE_ENV = process.env.NODE_ENV
+const isDev = NODE_ENV === 'development'
+const buildPath = isDev && 'develop' || 'build'
 const outputFile = '.min.js'
-const paths = [ './build' ]
+const outputNames = isDev && '[contenthash].[name]' || '[name]'
+const outputPath = path.resolve(__dirname, buildPath)
+const paths = [ buildPath ]
 
-module.exports = {
-  mode: ENV_MODE || 'development',
-  devtool: ENV_MODE === 'production' ? 'source-map' : 'inline-source-map',
+const wpConfig = {
+  mode: NODE_ENV || 'development',
+  devtool: isDev ? 'inline-source-map' : 'source-map',
   entry: {
     [libraryName]: './src/scripts/index.js',
     markdown: './src/example/markdown.js'
   },
   output: {
-    path: path.resolve(__dirname, './build'),
-    filename: '[name]' + outputFile,
+    path: outputPath,
+    filename: `[name]${outputFile}`,
     library: '[name]',
     libraryTarget: 'umd',
     umdNamedDefine: true,
     globalObject: "(typeof self !== 'undefined' ? self : this)"
   },
+  // optimization: {
+  //   splitChunks: {
+  //     name: `vendors`,
+  //     chunks: 'all',
+  //   }
+  // },
   module: {
     rules: [
       {
@@ -50,6 +59,10 @@ module.exports = {
       { from: './src/example/index.js' },
       { from: './src/example/test_data.js' },
       { from: './src/example/github.css' },
-    ])
+    ]),
+    // new webpack.HashedModuleIdsPlugin()
   ],
 }
+
+
+module.exports = wpConfig

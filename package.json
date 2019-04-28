@@ -4,7 +4,7 @@
   "description": "Simple WYSIWYG",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
   "main": "build/jTree.min.js",
-  "module": "build/index.min.js",
+  "module": "src/scrupts/index.js",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -21,8 +21,8 @@
   ],
   "scripts": {
     "test": "NODE_ENV=test jest --verbose",
-    "dev": "ENV=development webpack --watch --progress",
-    "build": "ENV=production webpack --mode production",
+    "dev": "NODE_ENV=development webpack --watch --progress",
+    "build": "NODE_ENV=production webpack --mode production",
     "deploy": "gh-pages -d build"
   },
   "devDependencies": {

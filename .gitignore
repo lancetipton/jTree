@@ -15,7 +15,7 @@ server_bundle.html
 */web/functions/_next
 packages/builder/public
 
-
+/develop
 # lock files
 package-lock.json
 npm-shrinkwrap.json
