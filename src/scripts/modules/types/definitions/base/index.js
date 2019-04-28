@@ -1,3 +1,4 @@
+import styles from './index.css'
 import { Values } from '../../../../constants'
 import { er, elements } from 'element-r'
 const { div, br, span } = elements
@@ -9,11 +10,15 @@ const updateParentConstruct = (config, parent) => {
   })
 }
 
+let STYLES_LOADED
 class BaseType {
 
   static priority = 0
   static matchHelper = () => {}
   static eval = (value) => (typeof value === 'string')
+
+  static getStyles = () => styles
+  
 
   constructor(config){
     config && updateParentConstruct(config, this.constructor)
@@ -24,7 +29,7 @@ class BaseType {
   }
   
   render = props => {
-    return div({ className: `string-div` },
+    return div({ className: `base-wrapper wrapper` },
       span(`Key: ${props.schema.key}`),
       br(),
       span(`Value: ${props.schema.value}`),

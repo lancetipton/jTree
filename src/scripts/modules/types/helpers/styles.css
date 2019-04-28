@@ -1,0 +1,65 @@
+li > div.string-wrapper > div > div.edit-btns-wrapper {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+li:hover > div.string-wrapper > div > div.edit-btns-wrapper {
+  opacity: 1;
+}
+
+div.edit-btns-wrapper {
+  position: relative;
+  margin-left: 20px;
+}
+
+div.edit-btns-wrapper div.edit-btns {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #FFFFFF;
+  box-shadow: '1px 2px 4px 0px rgba(0,0,0,0.2)';
+  padding: 7px 15px 2px;
+  border-radius: 20px;
+}
+
+.icon-wrapper {
+  margin: 0 5px;
+}
+
+.icon-wrapper > a {
+  text-align: center;
+  text-decoration: none;
+  transition: color 0.5s ease;
+  font-size: 10px;
+}
+
+.icon-wrapper > a > .icon-text {
+  margin-top: 3px;
+  font-family: 'Raleway', sans-serif;
+  display: block;
+}
+
+.icon-wrapper > a.icon-edit {
+  color: #0fced1;
+}
+
+.icon-wrapper > a.icon-drag {
+  color: #03a9f4;
+}
+
+.icon-wrapper > a.icon-delete {
+  color: #fa0719;
+}
+
+.icon-wrapper > a.icon-edit:hover {
+  color: #0b9ea1;
+}
+
+.icon-wrapper > a.icon-drag:hover {
+  color: #037fb7;
+}
+
+.icon-wrapper > a.icon-delete:hover {
+  color: #b20310;
+}

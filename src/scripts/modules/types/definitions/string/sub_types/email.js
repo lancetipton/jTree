@@ -10,7 +10,14 @@ class EmailType extends StringType {
   #priority = 2
 
   static eval = value => {
-    if (!value || typeof value !== 'string') return false
+    if (
+      !value ||
+      typeof value !== 'string' ||
+      value.indexOf('@') === -1 ||
+      value.indexOf('.') === -1
+    )
+      return false
+
     const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     return Boolean(regex.test(value))
   }

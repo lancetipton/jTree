@@ -22,6 +22,8 @@ import {
 import { Values } from './constants'
 import Render from './modules/renders'
 import TypeDefs from './modules/types'
+import StyleLoader from 'styleloader'
+const styleLoader = new StyleLoader()
 
 let TYPE_CACHE
 let LOADED_TYPES
@@ -30,7 +32,6 @@ const loadRenderTypes = renderPath => Promise.resolve(
     typeof renderPath === 'string' && renderPath || Values.DEFAULT_RENDERS
   )
 )
-
 
 const buildPos = (key, parent) => (
   key === Values.ROOT
@@ -132,7 +133,6 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
 
 export const buildTypes = (source, settings, elementCb) => {
   if(!validateBuildTypes(source, settings.Editor)) return null
-  
   const tree = { schema: {}, content: source, idMap: {} }
   const rootSchema = { value: source, key: Values.ROOT }
   return loopDataObj(rootSchema, tree, settings, elementCb)
@@ -190,6 +190,7 @@ export function TypesCls(settings){
     
     destroy = (Editor) => {
       clearObj(TYPE_CACHE)
+      styleLoader.destroy()
       TYPE_CACHE = undefined
       this.BaseType = undefined
       delete this.BaseType
@@ -205,7 +206,13 @@ export function TypesCls(settings){
       return typesCls.load(settings.typesPath)
     })
     .then(loadedTypes => {
-      TYPE_CACHE = initTypeCache(typesCls, settings, loadedTypes, dnyRenders)
+      settings.styleLoader = styleLoader
+      TYPE_CACHE = initTypeCache(
+        typesCls,
+        settings,
+        loadedTypes,
+        dnyRenders
+      )
       return typesCls
     })
 }

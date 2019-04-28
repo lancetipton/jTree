@@ -1,7 +1,7 @@
 import BaseType from '../base'
 import { typesOverride, uuid } from '../../../../utils'
 import { er, elements } from 'element-r'
-const { div, ol, li } = elements
+const { div, ol, li, link } = elements
 
 class MapType extends BaseType {
 
@@ -15,14 +15,16 @@ class MapType extends BaseType {
   
   
   build = () => {
-    
+
   }
 
   render = props => {
     const children = props.children || []
-
-    return div({ className: `map-class` },
-      ol({}, children.map(child => li({}, child )) )
+    
+    return div({ className: `map-wrapper` },
+      ol({ className: 'map-list' },
+        children.map(child => li({}, child ))
+      )
     )
   }
 

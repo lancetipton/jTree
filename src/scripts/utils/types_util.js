@@ -1,22 +1,39 @@
 import { isObj, mapCb } from './object_util'
 import { Values } from '../constants'
 
-export const initTypeCache = (TypesCls, settings, { BaseType, subTypes, types }, renders) => {
-  const joinedTypes = { ...types }
+const getTypeStyles = (settings, Type) => (
+  Type &&
+      Type.hasOwnProperty('getStyles') &&
+      settings.styleLoader &&
+      settings.styleLoader.add &&
+      settings.styleLoader.add(Type.name, Type.getStyles(settings))
+)
+
+export const initTypeCache = (TypesCls, settings, loadedTypes, renders) => {
+  const { BaseType, subTypes, types } = loadedTypes
+  const rootTypes = { ...types }
   const joinedSubTypes = { ...subTypes, ...settings.customTypes }
   TypesCls.BaseType = new BaseType(settings.types.base)
-  return buildTypeCache(joinedTypes, joinedSubTypes, TypesCls.BaseType, renders)
+  return buildTypeCache(
+    settings,
+    { rootTypes, subTypes: joinedSubTypes, BaseType: TypesCls.BaseType },
+    renders,
+  )
 }
 
-export const buildTypeCache = (rootTypes, subTypes, BaseType, renders) => {
+export const buildTypeCache = (settings, allTypes, renders) => {
+  const { rootTypes, subTypes, BaseType } = allTypes
   const typeRender = renders || {}
-
+  
   const BaseTypeMeta = {
     name: BaseType.constructor.name,
     base: BaseType,
     factory: BaseType.constructor,
-    render: typeRender.base
+    render: typeRender.base,
   }
+  // Ensure the styles get loaded for the base
+  getTypeStyles(settings, BaseType.constructor)
+
 
   BaseTypeMeta.children = Object
     .entries(rootTypes)
@@ -27,9 +44,17 @@ export const buildTypeCache = (rootTypes, subTypes, BaseType, renders) => {
         extends: BaseTypeMeta,
         render: typeRender[name] || typeRender.base
       }
+      // Ensure the styles get loaded for each type factory
+      getTypeStyles(settings, factory)
+
       if(subTypes[name])
         allTypes[name].children = Object.freeze(
-          buildSubTypes(subTypes[name], allTypes[name], typeRender)
+          buildSubTypes(
+            subTypes[name],
+            allTypes[name],
+            typeRender,
+            settings
+          )
         )
       Object.freeze(allTypes[name])
       
@@ -49,7 +74,7 @@ export const buildTypeName = typeClsName => (
   typeClsName.split('Type').join('').toLowerCase()
 )
 
-const buildSubTypes = (subTypes, parentMeta, typeRender) => (
+const buildSubTypes = (subTypes, parentMeta, typeRender, settings) => (
   Object
   .values(subTypes)
   .reduce((built, subType) => {
@@ -57,10 +82,12 @@ const buildSubTypes = (subTypes, parentMeta, typeRender) => (
     const typeName = buildTypeName(subType.name)
     built[typeName] = {
       name: typeName,
-      cast: subType,
+      factory: subType,
       extends: parentMeta,
       render: typeRender[typeName] || parentMeta.render
     }
+    // Ensure the styles get loaded for each sub type factory
+    getTypeStyles(settings, subType)
 
     return built
   }, parentMeta.subTypes || {})

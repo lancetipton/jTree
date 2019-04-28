@@ -1,6 +1,7 @@
 import BaseType from '../base'
-import { er, elements } from 'element-r'
-const { div, ul, li } = elements
+import { elements } from 'element-r'
+const { div, ul, li} = elements
+
 class CollectionType extends BaseType {
   
   static priority = 1
@@ -17,9 +18,8 @@ class CollectionType extends BaseType {
   
   render = (props) => {
     const children = props.children || []
-    
-    return div({ className: `collection-class` },
-      ul({}, children.map(child => li({}, child )) )
+    return div({ className: `collection-wrapper` },
+      ul({ className: 'collection-list' }, children.map(child => li({}, child )) )
     )
   }
   
