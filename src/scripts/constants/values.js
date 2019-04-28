@@ -17,7 +17,7 @@ export const Values = {
     'log',
     'warn'
   ]),
-  ROOT: 'content',
+  ROOT_CLASS: 'j-tree-editor',
   DEFAULT_RENDERS: 'js',
   DEFAULT_TYPES: 'definitions'
 }

@@ -98,6 +98,7 @@ const createEditor = (settings, domContainer) => {
         .then(Types => {
           this.Types = Types
           this.element = domContainer
+          this.element.classList.add(Values.ROOT_CLASS)
           const { source, ...config } = settings.editor
           this.config = { ...config }
           settings.Editor = this

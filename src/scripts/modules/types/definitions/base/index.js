@@ -1,7 +1,9 @@
-import styles from './index.css'
+import { buildTheme } from '../../styles/build_theme'
 import { Values } from '../../../../constants'
 import { er, elements } from 'element-r'
 const { div, br, span } = elements
+
+
 
 const updateParentConstruct = (config, parent) => {
   Object.entries(Values.PARENT_OVERWRITE).map(([ key, type ]) => {
@@ -17,9 +19,8 @@ class BaseType {
   static matchHelper = () => {}
   static eval = (value) => (typeof value === 'string')
 
-  static getStyles = () => styles
+  static getStyles = (settings) => buildTheme(settings)
   
-
   constructor(config){
     config && updateParentConstruct(config, this.constructor)
   }

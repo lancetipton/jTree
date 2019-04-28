@@ -1,10 +1,16 @@
-import styles from './styles.css'
 import { er, elements } from 'element-r'
 import { createIcon, iconStyles } from './create_icon'
 import { uuid } from '../../../utils'
-const { div, style  } = elements
+const { div, style, span  } = elements
 
-const btnStyles = () => styles
+export const typeLabel = type => (
+  div({ className: `type-label` }, 
+    span(
+      { className: `type-text ${type}-text` }, 
+      `( ${type[0].toUpperCase()}${type.slice(1)} )`
+    )
+  )
+)
 
 const btnTypes = {
   edit: 'pen',
@@ -36,17 +42,11 @@ export const createEditBtns = (props={}) => {
   
   if(!props.id) return []
 
-  const { id, styleLoader, ...buttons } = props
-  
-  styleLoader &&
-    styleLoader.add(
-      'edit-buttons', 
-      btnStyles(),
-      false
-    )
+  const { id, type, ...buttons } = props
   
   return div({ className: `edit-btns-wrapper` }, [
     div({ className: `edit-btns` }, [
+    typeLabel(type),
       ...buildActions(id, buttons)
     ])
   ])
