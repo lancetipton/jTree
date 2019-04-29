@@ -1,8 +1,6 @@
 import BaseType from '../base'
 import { typesOverride } from '../../../../utils'
-import { createEditBtns } from '../../helpers'
-import { er, elements } from 'element-r'
-const { div, br, span } = elements
+import { Item } from '../../components'
 
 class StringType extends BaseType {
 
@@ -15,40 +13,30 @@ class StringType extends BaseType {
   }
 
   onEdit = e => {
-    console.log('------------------on edit------------------');
     console.log(this);
   }
 
   onDrag = e => {
-    console.log('------------------on drag------------------');
     console.log(this);
   }
 
   onDelete = e => {
-    console.log('------------------on delete------------------');
     console.log(this);
   }
 
-  build = (params) => {
-    // console.log('------------------params------------------');
-    // console.log(params.schema);
-  }
+  build = (params) => {}
 
   render = props => {
-    const { schema: { id }, schema } = props
-    return div({ className: `string-wrapper item-wrapper` },
-      span({ className: 'string-key' }, `${props.schema.key}`),
-      span({ className: 'string-value' }, `${props.schema.value}`),
-      div({ className: `btns-wrapper` },
-        createEditBtns({
-          id,
-          type: 'String',
-          edit: this.onEdit,
-          drag: this.onDrag,
-          delete: this.onDelete,
-        }),
-      )
-    )
+    const { schema } = props
+    return Item({
+      id: schema.id,
+      key: schema.key,
+      value: schema.value,
+      type: schema.matchType,
+      onEdit: this.onEdit,
+      onDrag: this.onDrag,
+      onDelete: this.onDelete
+    })
   }
 
 }

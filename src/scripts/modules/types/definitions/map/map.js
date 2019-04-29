@@ -1,13 +1,7 @@
 import BaseType from '../base'
-import { typesOverride, uuid } from '../../../../utils'
-import { er, elements } from 'element-r'
-import { groupHeader } from '../../helpers'
-const { div, ul, li, link } = elements
-
-
-const buildChild = (props, child) => {
-  return li({ className: 'map-list-item' }, child )
-}
+import { typesOverride, capitalize } from '../../../../utils'
+import { Values } from '../../../../constants'
+import { List } from '../../components'
 
 class MapType extends BaseType {
 
@@ -19,22 +13,35 @@ class MapType extends BaseType {
       typesOverride(this, config)
    }
 
+  onEdit = e => {
+    
+    console.log(this);
+  }
+
+  onDrag = e => {
+    console.log(this);
+  }
+
+  onDelete = e => {
+    console.log(this);
+  }
+
 
   render = props => {
-    const children = props.children || []
-    // console.log('------------------props------------------');
-    // console.log(props);
-    // `map-wrapper`
-    // const className = props.key !== `jTree-Root`
-    //   ? `map-wrapper item-wrapper`
-    //   : `map-wrapper`
-    
-    return div({ className: `map-wrapper` },
-      groupHeader(props),
-      ul({ className: 'map-list' },
-        props.children && props.children.map(child => buildChild(props, child)) || ''
-      )
-    )
+    const isOpen = props.schema.open || props.schema.key === Values.ROOT
+    let classes = `map-wrapper list-wrapper`
+    classes += isOpen && ` list-open` || ''
+
+    return List({
+      children: props.children,
+      id: props.schema.id,
+      key: props.schema.key,
+      value: props.schema.value,
+      type: props.schema.matchType,
+      onEdit: this.onEdit,
+      onDrag: this.onDrag,
+      onDelete: this.onDelete
+    })
   }
 
 }

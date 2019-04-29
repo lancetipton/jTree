@@ -1,9 +1,8 @@
 import { er, elements } from 'element-r'
-import { uuid } from '../../../utils'
 const { div, span, a, style  } = elements
 
 
-export const createIcon = (name, text, extraProps={}, type) => {
+export const Icon = (name, text, extraProps={}, type) => {
   
   const props = {
     wrapper: {
@@ -11,7 +10,7 @@ export const createIcon = (name, text, extraProps={}, type) => {
       ...extraProps.wrapper
     },
     icon: {
-      className: `icon-${type} fa fa-${name}`,
+      className: `icon icon-${type} fa fa-${name}`,
       href: 'javascript:void(0);',
       title: text || name,
       ...extraProps.icon

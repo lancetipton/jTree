@@ -4,23 +4,23 @@ window.TEST_DOM_DATA = {
     class: true,
     'id': false,
   },
-  // '2': [
-  //   {
-  //     '0': 9999999,
-  //     '1': {
-  //       'id': '3af353c4-64f9-4edf-8324-bcbdf37d88cc',
-  //       'el-type': 'form-row',
-  //       class: 'form-row',
-  //     },
-  //     '2': [
-  //       {
-  //         '0': 'div',
-  //         '1': {
-  //           'id': '68a37655-3d0a-4c67-8fe7-da944b63da04',
-  //           'el-type': 'button-wrapper',
-  //           class: 'td-button-wrapper td-wrapper',
-  //           'td-wrapper': 'true',
-  //         },
+  '2': [
+    {
+      '0': 9999999,
+      '1': {
+        'id': '3af353c4-64f9-4edf-8324-bcbdf37d88cc',
+        'el-type': 'form-row',
+        class: 'form-row',
+      },
+      '2': [
+        {
+          '0': 'div',
+          '1': {
+            'id': '68a37655-3d0a-4c67-8fe7-da944b63da04',
+            'el-type': 'button-wrapper',
+            class: 'td-button-wrapper td-wrapper',
+            'td-wrapper': 'true',
+          },
   //         '2': [
   //           {
   //             '0': 'button',
@@ -67,9 +67,9 @@ window.TEST_DOM_DATA = {
   //             '2': 9999999
   //           },
   //         ],
-  //       },
-  //     ],
-  //   },
-  // ],
+        },
+      ],
+    },
+  ],
 }
   

@@ -3,7 +3,7 @@ import { elements } from 'element-r'
 const { div, ul, li} = elements
 
 const buildChild = (props, child) => {
-  return li({ className: 'collection-list-item' }, child )
+  return li({ className: 'collection-list-item list-item' }, child )
 }
 
 class CollectionType extends BaseType {
@@ -23,8 +23,8 @@ class CollectionType extends BaseType {
   render = (props) => {
     const children = props.children || []
 
-    return div({ className: `collection-wrapper` },
-      ul({ className: 'collection-list' },
+    return div({ className: `collection-wrapper list-wrapper` },
+      ul({ className: 'collection-list list-items' },
         children.map(child => buildChild(props, child))
       )
     )

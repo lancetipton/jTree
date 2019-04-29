@@ -35,6 +35,7 @@ const theme = {
   // Group of items background color
   passiveGroupBack: '#FFFFFF',
   activeGroupBack: '#F1EFF5',
+  openGroupBack: '#FFFFFF',
   // Single Item background color
   passiveItemBack: '#FFFFFF',
   hoverItemBack: '#F1EFF5',

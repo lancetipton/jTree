@@ -19,9 +19,11 @@ import {
   validateBuildTypes,
   validateNewType,
 } from './utils'
+
 import { Values } from './constants'
 import Render from './modules/renders'
 import TypeDefs from './modules/types'
+import stylesReset from './styles_reset.css'
 import StyleLoader from 'styleloader'
 const styleLoader = new StyleLoader()
 
@@ -115,7 +117,7 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   if(!type || !type.factory || !isConstructor(type.factory))
     return tree
   
-  // Build an updated scheam based on the new settings
+  // Build an updated schema based on the new settings
   const schema = buildSchema(
     curSchema,
     type,
@@ -237,6 +239,7 @@ export function TypesCls(settings){
     })
     .then(loadedTypes => {
       settings.styleLoader = styleLoader
+      styleLoader.add(`jt-style-reset`, stylesReset)
       TYPE_CACHE = initTypeCache(
         typesCls,
         settings,

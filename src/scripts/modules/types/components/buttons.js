@@ -1,9 +1,10 @@
 import { er, elements } from 'element-r'
-import { createIcon, iconStyles } from './create_icon'
-import { uuid, capitalize } from '../../../utils'
+import { Icon } from './icon'
+import { capitalize } from '../../../utils'
 const { div, style, span  } = elements
 
-export const typeLabel = type => (
+
+const typeLabel = type => (
   div({ className: `type-label` }, 
     span(
       { className: `type-text ${type}-text` }, 
@@ -20,9 +21,9 @@ const btnTypes = {
 
 const buildIcon = (action, type, id) => {
   return action
-    ? createIcon(
+    ? Icon(
         btnTypes[type],
-        `${type[0].toUpperCase()}${type.slice(1)}`,
+        capitalize(type),
         { icon: { id, onclick: action } },
         type
       )
@@ -38,14 +39,13 @@ const buildActions = (id, props) => (
     }, [])
 )
 
-export const createEditBtns = (props={}) => {
-  
+export const Buttons = (props) => {
   if(!props.id) return []
 
   const { id, type, ...buttons } = props
   
-  return div({ className: `edit-btns-wrapper` }, [
-    div({ className: `edit-btns` }, [
+  return div({ className: `btns-wrapper` }, [
+    div({ className: `btns-list` }, [
     typeLabel(type),
       ...buildActions(id, buttons)
     ])
