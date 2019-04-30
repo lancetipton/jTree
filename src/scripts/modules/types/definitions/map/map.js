@@ -29,7 +29,7 @@ class MapType extends BaseType {
 
   render = props => {
     const isOpen = props.schema.open || props.schema.key === Values.ROOT
-    let classes = `map-wrapper list-wrapper`
+    let classes = `list-wrapper`
     classes += isOpen && ` list-open` || ''
 
     return List({

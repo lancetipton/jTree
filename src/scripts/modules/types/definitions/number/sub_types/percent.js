@@ -1,15 +1,46 @@
 import NumberType from '../number'
+import { Item } from '../../../components'
 
 class PercentType extends NumberType {
-  constructor(props){
-    super(props)
-    // if(settings.priorities && settings.priorities.percent)
-    //   this.#priority = settings.priorities.percent
+  
+  static priority = 2
+  static eval = (value) => (
+    typeof value === 'string' &&
+    parseFloat(value) &&
+    value.indexOf('%') !== -1
+  )
+
+  constructor(config){
+    super(config)
   }
 
-  #priority = 2
-  
-  static eval = value => typeof value === 'number'
+  onEdit = e => {
+    console.log(this);
+  }
+
+  onDrag = e => {
+    console.log(this);
+  }
+
+  onDelete = e => {
+    console.log(this);
+  }
+
+  shouldComponentUpdate = (params) => {}
+
+  render = props => {
+    
+    const { schema } = props
+    return Item({
+      id: schema.id,
+      key: schema.key,
+      value: schema.value,
+      type: schema.matchType,
+      onEdit: this.onEdit,
+      onDrag: this.onDrag,
+      onDelete: this.onDelete
+    })
+  }
 }
 
 export default PercentType

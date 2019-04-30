@@ -2,6 +2,7 @@ import { CollectionType, collSubTypes } from  './collection'
 import { MapType, mapSubTypes } from  './map'
 import { NumberType, numberSubTypes  } from  './number'
 import { StringType, stringSubTypes } from  './string'
+import { BooleanType } from  './boolean'
 import BaseType from  './base'
 
 const types = {
@@ -9,6 +10,7 @@ const types = {
   map: MapType,
   number: NumberType,
   string: StringType,
+  boolean: BooleanType,
 }
 const subTypes = {
   collection: collSubTypes,

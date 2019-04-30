@@ -24,7 +24,7 @@ const buildIcon = (action, type, id) => {
     ? Icon(
         btnTypes[type],
         capitalize(type),
-        { icon: { id, onclick: action } },
+        { icon: { 'data-tree-id': id, onclick: action } },
         type
       )
     : ''

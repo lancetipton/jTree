@@ -1,10 +1,7 @@
 import BaseType from '../base'
-import { elements } from 'element-r'
-const { div, ul, li} = elements
-
-const buildChild = (props, child) => {
-  return li({ className: 'collection-list-item list-item' }, child )
-}
+import { capitalize } from '../../../../utils'
+import { Values } from '../../../../constants'
+import { List } from '../../components'
 
 class CollectionType extends BaseType {
   
@@ -15,20 +12,35 @@ class CollectionType extends BaseType {
     super(settings)
   }
   
-  build = (params) => {
-    // console.log('------------------params------------------');
-    // console.log(params.schema);
-  }
-  
-  render = (props) => {
-    const children = props.children || []
-
-    return div({ className: `collection-wrapper list-wrapper` },
-      ul({ className: 'collection-list list-items' },
-        children.map(child => buildChild(props, child))
-      )
-    )
+  onEdit = e => {
     
+    console.log(this);
+  }
+
+  onDrag = e => {
+    console.log(this);
+  }
+
+  onDelete = e => {
+    console.log(this);
+  }
+
+
+  render = props => {
+    const isOpen = props.schema.open || props.schema.key === Values.ROOT
+    let classes = `list-wrapper`
+    classes += isOpen && ` list-open` || ''
+
+    return List({
+      children: props.children,
+      id: props.schema.id,
+      key: props.schema.key,
+      value: props.schema.value,
+      type: props.schema.matchType,
+      onEdit: this.onEdit,
+      onDrag: this.onDrag,
+      onDelete: this.onDelete
+    })
   }
   
 }

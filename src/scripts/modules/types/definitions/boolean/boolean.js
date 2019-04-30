@@ -1,10 +1,10 @@
 import BaseType from '../base'
 import { Item } from '../../components'
 
-class StringType extends BaseType {
+class BooleanType extends BaseType {
 
   static priority = 1
-  static eval = (value) => (typeof value === 'string')
+  static eval = (value) => (typeof value === 'boolean')
 
   constructor(config){
     super(config)
@@ -22,22 +22,11 @@ class StringType extends BaseType {
     console.log(this);
   }
 
-  shouldComponentUpdate = (props) => {
+  shouldComponentUpdate = (params) => {}
 
-  }
-  
-  componentDidUpdate = (props) => {
-
-  }
-  
   render = props => {
+
     const { schema } = props
-    
-    if(schema.state === 'edit'){
-      console.log('------------------edit number------------------');
-      console.log(props);
-    }
-    
     return Item({
       id: schema.id,
       key: schema.key,
@@ -48,7 +37,7 @@ class StringType extends BaseType {
       onDelete: this.onDelete
     })
   }
-
+  
 }
 
-export default StringType
+export default BooleanType

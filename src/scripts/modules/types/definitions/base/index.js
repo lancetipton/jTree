@@ -24,7 +24,7 @@ class BaseType {
     config && updateParentConstruct(config, this.constructor)
   }
 
-  build = (params) => {
+  shouldComponentUpdate = (params) => {
     
   }
   

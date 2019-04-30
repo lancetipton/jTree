@@ -93,9 +93,12 @@ const buildSubTypes = (subTypes, parentMeta, typeRender, settings) => (
   }, parentMeta.subTypes || {})
 )
 
-export const typesOverride = (Type, config) => {
-  Object.entries(Values.TYPE_OVERWRITE).map(([ key, type ]) => {
-    if(typeof config[key] === type && Type[key] !== config[key])
-      Type[key] = config[key]
-  })
+export const typesOverride = (typeInstance, config) => {
+  if(!config) return null
+
+  Object.entries(Values.TYPE_OVERWRITE).map(([ key, type ]) => (
+    typeof config[key] === type &&
+      typeInstance[key] !== config[key] &&
+      (typeInstance[key] = config[key])
+  ))
 }

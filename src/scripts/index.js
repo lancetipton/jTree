@@ -89,6 +89,7 @@ const buildFromPos = function(pos, newValue, force, settings) {
   
 }
 
+
 const createEditor = (settings, domContainer) => {
 
   class jTree {
@@ -131,7 +132,7 @@ const createEditor = (settings, domContainer) => {
     
     forceUpdate = pos => {
       pos && buildFromPos.apply(this, [
-        pos,
+        pos.replace('content.', `${Values.ROOT}.`),,
         null,
         true,
         settings
@@ -157,13 +158,45 @@ const createEditor = (settings, domContainer) => {
         )
       _set(this.tree, pos, value)
       buildFromPos.apply(this, [
-        pos,
+        pos.replace('content.', `${Values.ROOT}.`),
         value,
         false,
         settings
       ])
     }
-
+    
+    updateSchema = (idOrPos, update, value) => {
+      if(Values.SCHEMA_STATES.indexOf(update) == -1)
+        return logData(
+          `${update} is not an allowed schema state. Allowed states are ${Values.SCHEMA_STATES.join(', ')}`
+        )
+      
+      const pos =  this.tree.idMap[idOrPos] && this.tree.idMap[idOrPos].replace(`${Values.ROOT}.`, 'content.') || idOrPos
+      
+      const foundElement = _get(this.tree, pos)
+      if(!foundElement)
+        return logData(`Could not find ${idOrPos} in Tree`, idOrPos, this.tree, 'warn')
+      
+      const schemaId = pos.replace('content.', `${Values.ROOT}.`)
+      if(!this.tree.schema[schemaId])
+        return logData(
+          `Could not find schema for ${idOrPos} in Tree`, idOrPos, tree, 'warn'
+        )
+      
+      // Update the foundSchema with key and value
+      _set(this.tree.schema[schemaId], 'state', value && update || undefined)
+      buildFromPos.apply(this, [
+        schemaId,
+        foundElement,
+        true,
+        settings
+      ])
+    }
+    
+    removeAt = () => {
+      
+    }
+    
     destroy = () => {
       this.element = undefined
       delete this.element

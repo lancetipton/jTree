@@ -1,28 +1,52 @@
 import BaseType from '../base'
-import { er, elements } from 'element-r'
-const { div } = elements
+import { Item } from '../../components'
 
 class NumberType extends BaseType {
 
-  constructor(settings){
-    super(settings)
-    // if(settings.priorities && settings.priorities.number)
-    //   this.#priority = settings.priorities.number
+  static priority = 1
+  static eval = (value) => (typeof value === 'number')
+
+  constructor(config){
+    super(config)
   }
 
-  static eval = value => typeof value === 'number'
-  #priority = 1
   
-  build = (params) => {
-    
-    // console.log('------------------params------------------');
-    // console.log(params.schema);
+  onEdit = (e, Editor) => {
+    const id = e.currentTarget.getAttribute('data-tree-id')
+    if(!id) return
+
+    const pos = Editor.tree.idMap[id]
+    const schema = Editor.tree.schema[pos]
+    Editor.updateSchema(id, 'edit', true)
   }
-  
-  render = (props) => {
-    return div({ className: `number-wrapper item-wrapper` },
-      props.schema.value,
-    ) 
+
+  onDrag = e => {
+    console.log(this);
+  }
+
+  onDelete = e => {
+    console.log(this);
+  }
+
+  shouldComponentUpdate = (params) => {}
+
+  render = props => {
+    const { schema } = props
+
+    if(schema.state === 'edit'){
+      console.log('------------------render------------------');
+      console.log(props);
+    }
+    
+    return Item({
+      id: schema.id,
+      key: schema.key,
+      value: schema.value,
+      type: schema.matchType,
+      onEdit: this.onEdit,
+      onDrag: this.onDrag,
+      onDelete: this.onDelete
+    })
   }
   
 }

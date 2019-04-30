@@ -20,5 +20,10 @@ export const Values = {
   ROOT_CLASS: 'j-tree-editor',
   ROOT: 'jTree-Root',
   DEFAULT_RENDERS: 'js',
-  DEFAULT_TYPES: 'definitions'
+  DEFAULT_TYPES: 'definitions',
+  SCHEMA_STATES: [
+    'edit',
+    'move',
+    'remove'
+  ]
 }

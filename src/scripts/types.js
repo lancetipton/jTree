@@ -108,6 +108,17 @@ const buildSchema = (curSchema, type, pos, settings) => {
   return schema
 }
 
+const clearSchema = schema => {
+  if(schema.instance){
+    schema.instance = undefined
+    delete schema.instance
+  }
+  
+  if(schema.component) delete schema.component
+
+  clearObj(schema)
+}
+
 export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   const { value, key, parent } = curSchema
   const matchTypes = settings.Editor.Types.getTypes(value, settings)  
@@ -127,16 +138,26 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
 
     // If not the root element, set the parent to the schema
   key !== Values.ROOT && (schema.parent = parent)
-
+  
+  // If an old schema exists at this pos, clear it out
+  // tree.schema[schema.pos] &&
+  //   clearSchema(tree.schema[schema.pos])
   // Add the schema to the tree based on pos
   tree.schema[schema.pos] = schema
   // Props helper to make it easier to manage
   let props = { schema, tree, settings }
   // Check if there is a build method, and is so call it
-  isFunc(schema.instance.build) && (
-    props.build = schema.instance.build(props)
+  let shouldUpdate = true
+  isFunc(schema.instance.shouldComponentUpdate) && (
+    shouldUpdate = schema.instance.shouldComponentUpdate(props)
   )
-
+  
+  if(shouldUpdate === false){
+    tree.idMap[schema.id] = schema.pos
+    props = undefined
+    return ''
+  }
+  
   // Render the component and it's children
   let component = renderComponent(
     key,
@@ -148,8 +169,12 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   tree.idMap[component && component.id || schema.id] = schema.pos
   // If we are not on the root element of the tree, 
   // Ensure the props get cleared out and return the rendered component
-  if(key !== Values.ROOT)
+  if(key !== Values.ROOT){
+    isFunc(schema.instance.componentDidUpdate) && 
+      schema.instance.componentDidUpdate(props)
+
     return (props = undefined) || component
+  }
   
   // Only the root component should get to this point
   // Call the appendTree method to add the component tree to the dom

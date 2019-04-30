@@ -1,4 +1,6 @@
 import { clearObj } from './object_util'
+import { typesOverride } from './types_util'
+import { isFunc } from './methods_util'
 
 let INSTANCE_CACHE
 export const clearInstanceCache = () => {
@@ -12,18 +14,35 @@ export const getInstanceCache = id => (
   
 export const buildInstance = (type, id, typeName, settings) => {
   INSTANCE_CACHE = INSTANCE_CACHE || {}
-  const instance = INSTANCE_CACHE[id] ||  new type.factory(settings.types[typeName])
-  if(
+  // Check for cached instance
+  if(!INSTANCE_CACHE[id]){
+    // Get the config from the passed in settings
+    const config = settings.types && settings.types[typeName]
+    // If no cached instance, built new one from factory
+    const instance = new type.factory(config)
+    // Check for config overrides from the passed in settings
+    config && typesOverride(instance, settings.types[typeName])
     // If dynamic render path is set, and the type has a render loaded
     // And the instance.render is not already set as the type.render
-    (settings.renderPath && type.render && instance.render !== type.render) ||
     // Or if no instance.render exists, and a type render does, use it
-    (!instance.render && type.render)
-  )
-    instance.render = type.render.bind(instance)
+    if(
+      (settings.renderPath && type.render && instance.render !== type.render) ||
+      (!instance.render && type.render)
+    )
+      instance.render = type.render.bind(instance)
+    
+    // Wrap the methods on the instance, so we can pass the Editor into them when called
+    Object.keys(instance).map(key => {
+      if(!isFunc(instance[key])) return
+      const oldMethod = instance[key]
+      instance[key] = (...args) => oldMethod(...args, settings.Editor)
+    })
 
-  INSTANCE_CACHE[id] = instance 
-
+    // Add the instance to the instance cache
+    INSTANCE_CACHE[id] = instance
+  }
+  
+  
   return INSTANCE_CACHE[id]
 }
 
@@ -35,6 +54,7 @@ export const addCompProp = (schema, id) => {
       if(_id && _id !== id) id = _id
     },
     enumerable: true,
+    configurable: true,
   })
 
 }
