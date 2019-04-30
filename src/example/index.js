@@ -140,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
             changeDebounce: 50,
             iconType: 'far',
             styles: {},
-            popper: {},
             appendTree: () => {}
           },
 

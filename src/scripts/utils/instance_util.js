@@ -11,7 +11,11 @@ export const clearInstanceCache = () => {
 export const getInstanceCache = id => (
   id && INSTANCE_CACHE[id] || INSTANCE_CACHE
 )
-  
+
+export const clearInstance = id => (
+   id && INSTANCE_CACHE[id] && (INSTANCE_CACHE[id] = undefined)
+)
+ 
 export const buildInstance = (type, id, typeName, settings) => {
   INSTANCE_CACHE = INSTANCE_CACHE || {}
   // Check for cached instance

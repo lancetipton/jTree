@@ -2,6 +2,7 @@ import {
   addCompProp,
   buildInstance,
   buildTypeName,
+  clearInstance,
   clearObj,
   checkCall,
   checkMultiMatches,
@@ -108,8 +109,15 @@ const buildSchema = (curSchema, type, pos, settings) => {
   return schema
 }
 
-const clearSchema = schema => {
+const clearSchema = (settings, schema) => {
   if(schema.instance){
+    isFunc(schema.instance.componentWillUnmount) &&
+      schema.instance.componentWillUnmount(
+        { schema, settings },
+        schema.component,
+        settings.Editor
+      )
+    clearInstance(schema.id)
     schema.instance = undefined
     delete schema.instance
   }
@@ -118,6 +126,17 @@ const clearSchema = schema => {
 
   clearObj(schema)
 }
+
+const checkPropsChange = (props, check) => (
+  props && Object.keys(props).map(key => {
+    if(props[key] !== check[key]) {
+      throw new Error(`Props should not be changed when rendering a component!`)
+    }
+    
+    if(typeof props[key] === 'object' && Values.PROPS_CHECK.indexOf(key) === -1)
+      checkPropsChange(props[key], check[key])
+  })
+)
 
 export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   const { value, key, parent } = curSchema
@@ -153,11 +172,22 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   )
   
   if(shouldUpdate === false){
+    isFunc(schema.instance.componentWillUnmount) &&
+      schema.instance.componentWillUnmount(props, schema.component)
+    // Should make instance a defined prop like component
+    // Then in the getters and setters, have it update the instance cache
+    clearInstance(schema.id)
     tree.idMap[schema.id] = schema.pos
     props = undefined
     return ''
   }
   
+  checkPropsChange(props, {
+    tree,
+    schema,
+    settings
+  })
+
   // Render the component and it's children
   let component = renderComponent(
     key,
@@ -171,7 +201,7 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   // Ensure the props get cleared out and return the rendered component
   if(key !== Values.ROOT){
     isFunc(schema.instance.componentDidUpdate) && 
-      schema.instance.componentDidUpdate(props)
+      schema.instance.componentDidUpdate(props, component)
 
     return (props = undefined) || component
   }
@@ -271,6 +301,7 @@ export function TypesCls(settings){
         loadedTypes,
         dnyRenders
       )
+
       return typesCls
     })
 }

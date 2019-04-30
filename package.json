@@ -1,10 +1,10 @@
 {
   "name": "jtree",
   "version": "1.1.1",
-  "description": "Simple WYSIWYG",
+  "description": "Json and Javascript object editor",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
   "main": "build/jTree.min.js",
-  "module": "src/scrupts/index.js",
+  "module": "src/scripts/index.js",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -14,10 +14,11 @@
     "url": "https://github.com/lancetipton/Compose-It/issues"
   },
   "keywords": [
-    "wysiwyg",
+    "json",
     "editor",
-    "content",
-    "cms"
+    "gui",
+    "ui",
+    "object editor"
   ],
   "scripts": {
     "test": "NODE_ENV=test jest --verbose",
@@ -37,6 +38,7 @@
     "babel-jest": "^24.7.1",
     "babel-loader": "^8.0.5",
     "clean-webpack-plugin": "^1.0.0",
+    "cleave.js": "^1.4.10",
     "copy-webpack-plugin": "^4.6.0",
     "core-js": "3",
     "gh-pages": "^2.0.1",
@@ -46,7 +48,6 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
-    "popper.js": "^1.14.7",
     "raw-loader": "^2.0.0",
     "remove-comments-loader": "^0.1.2",
     "webpack": "^4.27.1",

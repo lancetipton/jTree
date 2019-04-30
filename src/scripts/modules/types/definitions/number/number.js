@@ -1,16 +1,24 @@
 import BaseType from '../base'
 import { Item } from '../../components'
+import Cleave from 'cleave.js'
+import { elements } from 'element-r'
+const { div, input } = elements
 
 class NumberType extends BaseType {
 
   static priority = 1
   static eval = (value) => (typeof value === 'number')
-
+  static cleaves = []
+  
   constructor(config){
     super(config)
+    this.cleaveOpts = {
+      numeral: true,
+      stripLeadingZeroes: false,
+      ...config.cleave
+    }
   }
 
-  
   onEdit = (e, Editor) => {
     const id = e.currentTarget.getAttribute('data-tree-id')
     if(!id) return
@@ -28,14 +36,30 @@ class NumberType extends BaseType {
     console.log(this);
   }
 
-  shouldComponentUpdate = (params) => {}
-
+  shouldComponentUpdate = (props, Editor) => {}
+  
+  componentDidUpdate = (props, domEl, Editor) => {
+    const { schema } = props
+    NumberType.cleaves[schema.id] &&
+      NumberType.cleaves[schema.id].setRawValue(schema.value)
+  }
+  
+  componentWillUnmount = (props, domEl, Editor) => {
+    const id = props.schema.id
+    NumberType.cleaves[id] && NumberType.cleaves[id].destroy()
+  }
+  
   render = props => {
     const { schema } = props
-
     if(schema.state === 'edit'){
-      console.log('------------------render------------------');
-      console.log(props);
+      const domNode = input({ className: `item` }, `${schema.value}`)
+      const component = div({ className: `item` },
+        div({ className: 'item-key item-data' }, `${schema.key}:`),
+        domNode
+      )
+      NumberType.cleaves[schema.id] = NumberType.cleaves[schema.id] ||
+        new Cleave(domNode, this.cleaveOpts)
+      return component
     }
     
     return Item({

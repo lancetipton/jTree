@@ -25,5 +25,12 @@ export const Values = {
     'edit',
     'move',
     'remove'
+  ],
+  PROPS_CHECK: [
+    'tree',
+    'Editor',
+    'parent',
+    'instance',
+    'settings'
   ]
 }

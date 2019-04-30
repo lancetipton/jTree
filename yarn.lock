@@ -1832,6 +1832,11 @@ clean-webpack-plugin@^1.0.0:
   dependencies:
     rimraf "^2.6.1"
 
+cleave.js@^1.4.10:
+  version "1.4.10"
+  resolved "https://registry.yarnpkg.com/cleave.js/-/cleave.js-1.4.10.tgz#40505827f07c148be6822522504901fca278a445"
+  integrity sha512-7AWnh+6pgQbbRT+e7WnK/yc+U50zhtQZklvEcKDiFDpfcu3kb300BdV7FMYtGOIsAzD5TKy7KH38ZwgyWyFE2Q==
+
 cliui@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/cliui/-/cliui-4.1.0.tgz#348422dbe82d800b3022eef4f6ac10bf2e4d1b49"
@@ -5471,11 +5476,6 @@ pn@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
-
-popper.js@^1.14.7:
-  version "1.14.7"
-  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.7.tgz#e31ec06cfac6a97a53280c3e55e4e0c860e7738e"
-  integrity sha512-4q1hNvoUre/8srWsH7hnoSJ5xVmIL4qgz+s4qf2TnJIMyZFUFMGH+9vE7mXynAlHSZ/NdTmmow86muD0myUkVQ==
 
 portfinder@^1.0.9:
   version "1.0.20"

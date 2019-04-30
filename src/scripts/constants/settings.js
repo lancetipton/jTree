@@ -19,12 +19,6 @@ export const DEF_SETTINGS =  Object.freeze({
     destroyOnCancel: true,
     changeDebounce: 50,
     iconType: 'far',
-    styles: {},
-    popper: {
-      eventsEnabled: false,
-      removeOnDestroy: true,
-      placement: 'bottom-start',
-      modifiers: {},
-    }
+    styles: {}
   }
 })
