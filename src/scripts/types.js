@@ -2,7 +2,6 @@ import {
   addCompProp,
   buildInstance,
   buildTypeName,
-  clearInstance,
   clearObj,
   checkCall,
   checkMultiMatches,
@@ -101,8 +100,7 @@ const buildSchema = (curSchema, type, pos, settings) => {
   }
   !schema.instance && (schema.instance = buildInstance(
     type,
-    schema.id,
-    schema.matchType,
+    schema,
     settings
   ))
 
@@ -117,9 +115,7 @@ const clearSchema = (settings, schema) => {
         schema.component,
         settings.Editor
       )
-    clearInstance(schema.id)
     schema.instance = undefined
-    delete schema.instance
   }
   
   if(schema.component) delete schema.component
@@ -159,8 +155,6 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   key !== Values.ROOT && (schema.parent = parent)
   
   // If an old schema exists at this pos, clear it out
-  // tree.schema[schema.pos] &&
-  //   clearSchema(tree.schema[schema.pos])
   // Add the schema to the tree based on pos
   tree.schema[schema.pos] = schema
   // Props helper to make it easier to manage
@@ -176,7 +170,7 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
       schema.instance.componentWillUnmount(props, schema.component)
     // Should make instance a defined prop like component
     // Then in the getters and setters, have it update the instance cache
-    clearInstance(schema.id)
+    schema.instance = undefined
     tree.idMap[schema.id] = schema.pos
     props = undefined
     return ''

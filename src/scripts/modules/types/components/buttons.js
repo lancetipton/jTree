@@ -14,23 +14,27 @@ const typeLabel = type => (
 )
 
 const btnTypes = {
-  edit: 'pen',
-  drag: 'hand-point-up',
-  delete: 'trash-alt',
+  onEdit: { icon: 'pen', key: 'Edit' },
+  onDrag: { icon: 'hand-point-up', key: 'Drag' },
+  onDelete: { icon: 'trash-alt', key: 'Delete' },
+  onSave: { icon: 'check', key: 'Save' },
+  onCancel: { icon: 'times', key: 'Cancel' },
 }
 
 const buildIcon = (action, type, id) => {
+  const btn = btnTypes[type] || {}
+  
   return action
     ? Icon(
-        btnTypes[type],
-        capitalize(type),
+        btn.icon,
+        btn.key,
         { icon: { 'data-tree-id': id, onclick: action } },
         type
       )
     : ''
 }
 
-const buildActions = (id, props) => (
+const buildBtns = (id, props) => (
   Object
     .keys(btnTypes)
     .reduce((actions, key) => {
@@ -47,7 +51,7 @@ export const Buttons = (props) => {
   return div({ className: `btns-wrapper` }, [
     div({ className: `btns-list` }, [
     typeLabel(type),
-      ...buildActions(id, buttons)
+      ...buildBtns(id, buttons)
     ])
   ])
 }

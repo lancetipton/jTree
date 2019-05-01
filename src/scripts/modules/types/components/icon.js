@@ -2,17 +2,17 @@ import { er, elements } from 'element-r'
 const { div, span, a, style  } = elements
 
 
-export const Icon = (name, text, extraProps={}, type) => {
-  
+export const Icon = (icon, text, extraProps={}) => {
+  const lowerText = text && text.toLowerCase()
   const props = {
     wrapper: {
       className: `icon-wrapper`,
       ...extraProps.wrapper
     },
     icon: {
-      className: `icon icon-${type} fa fa-${name}`,
+      className: `icon icon-${lowerText} fa fa-${icon}`,
       href: 'javascript:void(0);',
-      title: text || name,
+      title: text || icon,
       ...extraProps.icon
     },
     text: {

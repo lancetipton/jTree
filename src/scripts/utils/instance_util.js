@@ -13,19 +13,21 @@ export const getInstanceCache = id => (
 )
 
 export const clearInstance = id => (
-   id && INSTANCE_CACHE[id] && (INSTANCE_CACHE[id] = undefined)
+  id && INSTANCE_CACHE[id] && (INSTANCE_CACHE[id] = undefined)
 )
  
-export const buildInstance = (type, id, typeName, settings) => {
+export const buildInstance = (type, schema, settings) => {
+  const { id, matchType } = schema
+  
   INSTANCE_CACHE = INSTANCE_CACHE || {}
   // Check for cached instance
   if(!INSTANCE_CACHE[id]){
     // Get the config from the passed in settings
-    const config = settings.types && settings.types[typeName]
+    const config = settings.types && settings.types[matchType]
     // If no cached instance, built new one from factory
     const instance = new type.factory(config)
     // Check for config overrides from the passed in settings
-    config && typesOverride(instance, settings.types[typeName])
+    config && typesOverride(instance, settings.types[matchType])
     // If dynamic render path is set, and the type has a render loaded
     // And the instance.render is not already set as the type.render
     // Or if no instance.render exists, and a type render does, use it
@@ -50,6 +52,19 @@ export const buildInstance = (type, id, typeName, settings) => {
   return INSTANCE_CACHE[id]
 }
 
+
+export const addSchemaInstance = (schema, id) => {
+  schema && Object.defineProperty(schema, 'instance', {
+    get: () => (INSTANCE_CACHE(id)),
+    set: instance => {
+      !instance
+        ? clearInstance(id)
+        : (INSTANCE_CACHE[id] = instance)
+    },
+    enumerable: true,
+    configurable: true,
+  })
+}
 
 export const addCompProp = (schema, id) => {
   schema && Object.defineProperty(schema, 'component', {
