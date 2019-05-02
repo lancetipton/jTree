@@ -35,10 +35,10 @@
   margin-left: -20px;
 }
 
-
+/* ---- Display Item ---- */
 .j-tree-editor ul.list > li.row > div.item {
   transition: background-color @easeSpeed ease;
-  padding: 2px 10px;
+  padding: 0px 10px;
   display: flex;
   /* flex-direction: column; */
   justify-content: flex-start;
@@ -66,32 +66,38 @@
   min-width: 50px;
 }
 
-.j-tree-editor li.row > div.item.item-edit > input.item-edit {
+/* ---- Edit Item / Inputs / Label ---- */
+.j-tree-editor li.row > div.item.item-edit > div > input.item-edit {
   min-height: 20px;
-  margin-top: 20px;
+  margin-top: 15px;
   margin-bottom: 10px;
 }
-.j-tree-editor li.row > div.item.item-edit > label {
+.j-tree-editor li.row > div.item .item-data-wrapper {
+  position: relative;
+  margin-top: 5px;
+}
+
+.j-tree-editor li.row > div.item.item-edit > div > label {
   font-weight: bold;
   font-size: 10px;
-  position: relative;
-  top: -17px;
-  left: 25px;
-}
-.j-tree-editor li.row > div.item.item-edit > label.item-key-label {
   position: absolute;
-  top: 5px;
-  left: 10px;
+  top: 0;
+  opacity: 1;
 }
-.j-tree-editor li.row > div.item.item-edit > label.item-value-label {
+.j-tree-editor li.row > div.item.item-edit > div > label.item-key-label {
+  /* position: absolute;
+  top: 5px;
+  left: 10px; */
+}
+.j-tree-editor li.row > div.item.item-edit > div > label.item-value-label {
   
 }
 
-.j-tree-editor li.row > div.item.item-edit > input.item-edit:first-of-type {
-  /* margin-right: 20px; */
+.j-tree-editor li.row > div.item.item-edit > div.item-key-wrapper {
+  margin-right: 20px;
 }
 
-/* Button Icons */
+/* ---- Action Button ---- */
 .j-tree-editor div.item > div.item-btns {
   margin-left: 30px;
   opacity: 0;
@@ -118,6 +124,7 @@
   margin-right: 10px;
 }
 
+/* ---- Action Icons ---- */
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper {
   margin: 0 5px;
 }
@@ -141,6 +148,15 @@
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-delete:hover {
   color: @activeDelete;
 }
+
+.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-save:hover {
+  color: @activeSave;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-cancel:hover {
+  color: @activeCancel;
+}
+
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon > .icon-text {
   margin-top: 3px;

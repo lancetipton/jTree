@@ -45,6 +45,8 @@ const theme = {
   activeEdit: '#0FCED1',
   activeDrag: '#03A9F4',
   activeDelete: '#FA0719',
+  activeSave: '#4caf50',
+  activeCancel: '#fa0719',
   
   // Labels
   header: '#565656',

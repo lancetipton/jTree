@@ -3,13 +3,16 @@ import { elements } from 'element-r'
 import { capitalize } from '../../../utils'
 const { div, input, label } = elements
 
-// { id, key, value, type, onEdit, onDrag, onDelete }
-export const Item = (props) => {
+
+const buildOptions = props => {
   const isEdit = props.state === 'edit'
-  const showLabel = props.state === 'edit' && props.showLabel
-  const buildOpts = isEdit
+  const showLabel = isEdit && props.showLabel
+
+  return isEdit
     ? { 
-      type: input,
+      El: input,
+      isEdit,
+      showLabel,
       keyVal: '',
       editCls: `item-edit`,
       keyAttrs: {
@@ -18,6 +21,7 @@ export const Item = (props) => {
         value: props.key,
         name: `key-${props.key}`
       },
+      elValue: props.value,
       valAttrs: {
         class: `item-value item-data item-edit${props.cleave && ` item-cleave` || ''}`,
         type: props.valueInput || 'text',
@@ -25,23 +29,46 @@ export const Item = (props) => {
       }
     }
     : {
-      type: div,
+      El: div,
+      isEdit,
+      showLabel,
+      elValue: props.value,
       keyVal: `${props.key}:`,
       editCls: '',
       keyAttrs: { class: `item-key item-data` },
       valAttrs: { class: `item-value item-data` }
     }
-  
-  
-  return div({ className: `item ${buildOpts.editCls}` },
-    showLabel && label(
-      { className: 'item-key-label', for: buildOpts.keyAttrs.name }, 'Key'
-    ) || null,
-    buildOpts.type(buildOpts.keyAttrs, buildOpts.keyVal),
-    showLabel && label(
-      { className: 'item-value-label', for: buildOpts.valAttrs.name }, 'Value'
-    ) || null,
-    buildOpts.type(buildOpts.valAttrs, props.value),
+}
+
+
+const buildItemKey = ({ showLabel, El, keyAttrs, keyVal }) => {
+  const keyEl = El(keyAttrs, keyVal)
+  return !showLabel
+    ? keyEl
+    : div({ className: 'item-data-wrapper item-key-wrapper' },
+      label({ className: 'item-key-label', for: keyAttrs.name }, 'Key'),
+      keyEl
+    )
+}
+
+const buildItemValue = ({ showLabel, El, valAttrs, elValue }) => {
+  const valEl = El(valAttrs, elValue)
+  return !showLabel
+    ? valEl
+    : div({ className: 'item-data-wrapper item-value-wrapper' },
+      label({ className: 'item-value-label', for: valAttrs.name }, 'Value'),
+      valEl
+    )
+}
+
+// { id, key, value, type, onEdit, onDrag, onDelete }
+export const Item = (props) => {
+
+  const opts = buildOptions(props)
+
+  return div({ className: `item ${opts.editCls}` },
+    buildItemKey(opts),
+    buildItemValue(opts),
     div({ className: `item-btns item-data` },
       Buttons(props),
     )

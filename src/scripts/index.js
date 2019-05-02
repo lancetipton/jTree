@@ -72,19 +72,19 @@ const buildFromPos = function(pos, newValue, force, settings) {
     !this.tree.schema[pos]
   ) return null
   const buildSchema = this.tree.schema[pos]
-  const valueInTree = newValue || _get(this.tree, pos)
+  const valueInTree = newValue || _get(this.tree, pos)  
   // If the values are the same, just return, cause there is not update
   if(!force && valueInTree === buildSchema.value) return null
   // Otherwise set the value from the parent to the child
   buildSchema.value = valueInTree
+  
   const updatedEl = loopDataObj(
     buildSchema,
     this.tree,
     settings,
     appendTreeHelper && appendTreeHelper.bind(this)
   )
-
-  const replaceEl = upsertElement(updatedEl, buildSchema.parent.component)
+  const replaceEl = upsertElement(updatedEl, buildSchema.component)
   if(replaceEl === updatedEl) return null
   
 }
@@ -145,7 +145,6 @@ const createEditor = (settings, domContainer) => {
           `Tried to update the tree with and ID does not exist!`,
           id, tree, 'warn'
         )
-
       this.updateAtPos(this.tree.idMap[id], value, check)
     }
     
@@ -164,7 +163,8 @@ const createEditor = (settings, domContainer) => {
         settings
       ])
     }
-    
+
+    // Update the schema state 
     updateSchema = (idOrPos, update, value) => {
       if(Values.SCHEMA_STATES.indexOf(update) == -1)
         return logData(
@@ -172,8 +172,9 @@ const createEditor = (settings, domContainer) => {
         )
       
       const pos =  this.tree.idMap[idOrPos] && this.tree.idMap[idOrPos].replace(`${Values.ROOT}.`, 'content.') || idOrPos
-      
+
       const foundElement = _get(this.tree, pos)
+
       if(!foundElement)
         return logData(`Could not find ${idOrPos} in Tree`, idOrPos, this.tree, 'warn')
       
@@ -183,6 +184,10 @@ const createEditor = (settings, domContainer) => {
           `Could not find schema for ${idOrPos} in Tree`, idOrPos, tree, 'warn'
         )
       
+      const schema = this.tree.schema[schemaId]
+      if(schema.instance && schema.instance.componentWillUnmount)
+        schema.instance.componentWillUnmount()
+
       // Update the foundSchema with key and value
       _set(this.tree.schema[schemaId], 'state', value && update || undefined)
       buildFromPos.apply(this, [

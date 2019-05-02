@@ -1,6 +1,7 @@
 import BaseType from '../base'
 import { Item } from '../../components'
 import Cleave from 'cleave.js'
+import { getMutationObserver, debounce } from '../../../../utils'
 
 class NumberType extends BaseType {
 
@@ -12,23 +13,40 @@ class NumberType extends BaseType {
     this.cleaveOpts = {
       numeral: true,
       stripLeadingZeroes: false,
+      onValueChanged: this.onCleaveChange,
       ...config.cleave
     }
+    this.obsOpts = {
+      ...config.observer,
+    }
+    
   }
-
+  
+  onCleaveChange = e => {
+    const { rawValue } = e.target
+    if(this.orgVal !== rawValue) this.curVal = rawValue
+  }
 
   onChange = e => {
-    console.log('------------------on change------------------');
-    console.log(this);
+    console.log('------------------e.currentTarget------------------');
+    console.log(e.currentTarget.value);
+    console.log(e.target.value);
+    
   }
-  onSave = e => {
-    console.log('------------------on save------------------');
-    console.log(this);
+  onSave = (e, Editor) => {
+    const id = e.currentTarget.getAttribute('data-tree-id')
+    if(!id) return
+    
+    Editor.updateAtId(id, parseInt(this.curVal), true, false)
+    // Editor.updateSchema(id, 'edit', false)
   }
+
   onCancel = (e, Editor) => {
-    console.log(Editor);
-    console.log('------------------on cancel------------------');
-    console.log(this);
+    const id = e.currentTarget.getAttribute('data-tree-id')
+    if(!id) return
+    
+    Editor.updateAtId(id, this.orgVal, true, false)
+    Editor.updateSchema(id, 'edit', false)
   }
 
   onEdit = (e, Editor) => {
@@ -48,18 +66,40 @@ class NumberType extends BaseType {
     console.log(this);
   }
 
-  buildCleave = (schema, itemEl) => {
-      Array
-        .from(itemEl.children)
-        .map(child => {
-          if(child.classList.contains('item-cleave')){
-            this.cleave && this.clearCleave()
-            this.cleave = new Cleave(child, this.cleaveOpts)
-            console.log('------------------this.cleave------------------');
-            console.log(this.cleave);
-            this.cleave.setRawValue(schema.value)
-          }
-        })
+  onChange = e => {
+    console.log('------------------change------------------');
+    console.log(e.target.value);
+  }
+
+  checkCleave = (schema, domNode) => {
+    if(domNode.classList && domNode.classList.contains('item-cleave')){
+      this.cleave && this.clearCleave()
+      this.cleave = new Cleave(domNode, this.cleaveOpts)
+      this.cleave.setRawValue(schema.value)
+      domNode = undefined
+      return true
+    }
+  }
+  
+  buildEvents = (schema, domNode) => {
+    
+    if(!domNode) return
+    
+    const isInput = domNode.tagName === 'INPUT'
+    // Checks if it has the cleave class
+    const isCleave = isInput && !this.cleave && this.checkCleave(schema, domNode)
+    // Catches changes for the key input
+    if(isInput && !isCleave) domNode.oninput = this.onChange
+    
+    !isInput && domNode.children.length && Array
+      .from(domNode.children)
+      .map(child => {
+        (child.tagName === 'INPUT' || child.children.length)
+        && this.buildEvents(schema, child) 
+      })
+
+    // Clear out domNode just so we don't have any memory leaks
+    domNode = undefined
   }
 
   clearCleave = () => {
@@ -78,7 +118,7 @@ class NumberType extends BaseType {
     // If not in edit mode, clear out cleave
     if(schema.state !== 'edit') this.clearCleave()
     // If in edit mode, and no cleave, add the cleave to the component
-    else if(!this.cleave) this.buildCleave(schema, domEl)
+    else if(!this.cleave) this.buildEvents(schema, domEl)
     // Else update the cleave to the current raw value
     else  this.cleave.setRawValue(schema.value)
     
@@ -86,8 +126,10 @@ class NumberType extends BaseType {
   }
   
   componentWillUnmount = (props, domEl, Editor) => {
+    console.log('------------------will unmount------------------');
     this.clearCleave()
     this.orgVal = undefined
+    this.curVal = undefined
   }
   
   render = props => {
