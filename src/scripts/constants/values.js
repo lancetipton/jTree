@@ -3,6 +3,7 @@ export const Values = {
   NO_OP: () => {},
   PRIORITY: 'PRIORITY',
   MAP_TYPES: 'MAP_TYPES',
+  NOT_IN_TREE: 'NOT_IN_TREE',
   PARENT_OVERWRITE: Object.freeze({
     eval: 'function',
     matchHelper: 'function',
@@ -18,19 +19,28 @@ export const Values = {
     'warn'
   ]),
   ROOT_CLASS: 'j-tree-editor',
-  ROOT: 'jTree-Root',
+  ROOT: 'content',
   DEFAULT_RENDERS: 'js',
   DEFAULT_TYPES: 'definitions',
-  SCHEMA_STATES: [
-    'edit',
-    'move',
-    'remove'
-  ],
-  PROPS_CHECK: [
+  MODES: Object.freeze({
+    EDIT: 'EDIT',
+    MOVE: 'MOVE',
+    REMOVE: 'REMOVE'
+  }),
+  PROPS_CHECK: Object.freeze([
     'tree',
     'Editor',
     'parent',
     'instance',
     'settings'
-  ]
+  ]),
+  TREE_UPDATE_PROPS: Object.freeze([
+    'key',
+    'value',
+    'mode',
+    'type',
+    'matchType'
+  ]),
+  DATA_TREE_ID: 'data-tree-id',
+  DATA_SCHEMA_KEY: 'data-schema-key',
 }

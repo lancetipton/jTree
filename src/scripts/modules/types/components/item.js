@@ -1,13 +1,14 @@
 import { Buttons } from './buttons'
 import { elements } from 'element-r'
 import { capitalize } from '../../../utils'
+import { Values } from '../../../constants'
 const { div, input, label } = elements
 
 
 const buildOptions = props => {
-  const isEdit = props.state === 'edit'
+  const isEdit = props.mode === Values.MODES.EDIT
   const showLabel = isEdit && props.showLabel
-
+  
   return isEdit
     ? { 
       El: input,
@@ -19,12 +20,14 @@ const buildOptions = props => {
         class: `item-key item-data item-edit`,
         type: props.keyInput || 'text',
         value: props.key,
+        [Values.DATA_SCHEMA_KEY]: 'key',
         name: `key-${props.key}`
       },
       elValue: props.value,
       valAttrs: {
         class: `item-value item-data item-edit${props.cleave && ` item-cleave` || ''}`,
         type: props.valueInput || 'text',
+        [Values.DATA_SCHEMA_KEY]: 'value',
         name: `value-${props.key}`
       }
     }

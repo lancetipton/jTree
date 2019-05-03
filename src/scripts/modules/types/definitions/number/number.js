@@ -1,7 +1,8 @@
 import BaseType from '../base'
 import { Item } from '../../components'
 import Cleave from 'cleave.js'
-import { getMutationObserver, debounce } from '../../../../utils'
+import { getMutationObserver, debounce, isFunc } from '../../../../utils'
+import { Values } from '../../../../constants'
 
 class NumberType extends BaseType {
 
@@ -19,43 +20,54 @@ class NumberType extends BaseType {
     this.obsOpts = {
       ...config.observer,
     }
+    this.updateObj = {}
+    this.orgObj = {}
+    config.onChange && (this.customChange = config.onChange)
     
   }
   
   onCleaveChange = e => {
     const { rawValue } = e.target
-    if(this.orgVal !== rawValue) this.curVal = rawValue
+    if(this.orgObj.value !== rawValue)
+      this.updateObj.value = parseInt(rawValue)
   }
 
-  onChange = e => {
-    console.log('------------------e.currentTarget------------------');
-    console.log(e.currentTarget.value);
-    console.log(e.target.value);
+  onChange = (e, Editor) => {
+    const value = e.target && e.target.value || e.currentTarget && e.currentTarget.value
+    const key = e.currentTarget.getAttribute(Values.DATA_SCHEMA_KEY)
+    if(
+      (value === undefined || key === undefined) ||
+      (this.orgObj[key] && this.orgObj[key] === value)
+    ) return
     
+    return (
+      !isFunc(this.customChange) ||
+      this.customChange(key, value, Editor) !== false
+    ) && (
+      this.updateObj[key] = value
+    )
   }
+
   onSave = (e, Editor) => {
-    const id = e.currentTarget.getAttribute('data-tree-id')
-    if(!id) return
-    
-    Editor.updateAtId(id, parseInt(this.curVal), true, false)
-    // Editor.updateSchema(id, 'edit', false)
+    const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+    id &&
+      Editor.update(id, {
+        ...this.updateObj,
+        mode: undefined,
+      })
   }
 
   onCancel = (e, Editor) => {
-    const id = e.currentTarget.getAttribute('data-tree-id')
-    if(!id) return
-    
-    Editor.updateAtId(id, this.orgVal, true, false)
-    Editor.updateSchema(id, 'edit', false)
+    const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+
+    id &&
+      Editor.update(id, { mode: undefined, value: this.orgObj.value })
   }
 
   onEdit = (e, Editor) => {
-    const id = e.currentTarget.getAttribute('data-tree-id')
-    if(!id) return
-
-    const pos = Editor.tree.idMap[id]
-    const schema = Editor.tree.schema[pos]
-    Editor.updateSchema(id, 'edit', true)
+    const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+    id &&
+      Editor.update(id, { mode: Values.MODES.EDIT })
   }
 
   onDrag = e => {
@@ -64,11 +76,6 @@ class NumberType extends BaseType {
 
   onDelete = e => {
     console.log(this);
-  }
-
-  onChange = e => {
-    console.log('------------------change------------------');
-    console.log(e.target.value);
   }
 
   checkCleave = (schema, domNode) => {
@@ -109,33 +116,37 @@ class NumberType extends BaseType {
   }
 
   shouldComponentUpdate = (props, Editor) => {
-    // if(this.orgVal && this.orgVal === props.schema.value)
+    // if(this.orgObj.value && this.orgObj.value === props.schema.value)
     //   return false
   }
   
   componentDidUpdate = (props, domEl, Editor) => {
     const { schema } = props
     // If not in edit mode, clear out cleave
-    if(schema.state !== 'edit') this.clearCleave()
+    if(schema.mode !== Values.MODES.EDIT) this.clearCleave()
     // If in edit mode, and no cleave, add the cleave to the component
     else if(!this.cleave) this.buildEvents(schema, domEl)
     // Else update the cleave to the current raw value
     else  this.cleave.setRawValue(schema.value)
     
-    this.orgVal = schema.value
+    this.orgObj = {
+     value: schema.value,
+     key: schema.key,
+     mode: schema.mode,
+     matchType: schema.matchType,
+    }
   }
   
   componentWillUnmount = (props, domEl, Editor) => {
-    console.log('------------------will unmount------------------');
     this.clearCleave()
-    this.orgVal = undefined
-    this.curVal = undefined
+    this.orgObj = undefined
+    this.updateObj = undefined
   }
   
   render = props => {
     const { schema } = props
-    // schema.state = 'edit'
-    const actions = schema.state !== 'edit'
+    // schema.mode = Values.MODES.EDIT
+    const actions = schema.mode !== Values.MODES.EDIT
       ? {
         onEdit: this.onEdit,
         onDrag: this.onDrag,
@@ -151,7 +162,7 @@ class NumberType extends BaseType {
       id: schema.id,
       key: schema.key,
       value: schema.value,
-      state: schema.state,
+      mode: schema.mode,
       showLabel: true,
       cleave: true,
       type: schema.matchType,

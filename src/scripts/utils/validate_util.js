@@ -1,6 +1,9 @@
 import { isObj } from './object_util'
 import { isConstructor, logData } from './methods_util'
+import { Values } from '../constants'
+import _get from 'lodash.get'
 
+// TREE_UPDATE_PROPS
 export const validateNewType = (newType, TYPE_CACHE) => {
   if(!newType.name)
     return logData(`Type could not be registered. Types require a name property!`, 'error')
@@ -22,10 +25,57 @@ export const validateBuildTypes = (source, Editor) => {
 }
 
 export const validateSource = (source) => {
-if(!isObj(source))
-  return logData(
-    `Could update source. Please make sure source param is an Object or JSON parse-able string`,
-    'error',
-  )
+  if(!isObj(source))
+    return logData(
+      `Could update source. Please make sure source param is an Object or JSON parse-able string`,
+      'error',
+    )
   return true
+}
+
+export const validateUpdate = (idOrPos, update, tree) => {
+  const { prop, value } = update
+
+  if(!idOrPos)
+    return logData(
+      `Update requires an id or position as it's first argument!`,
+      idOrPos, tree, 'warn'
+    )
+  const pos =  tree.idMap[idOrPos] || idOrPos
+  if(!pos)
+    return logData(
+      `Could not find position with ${idOrPos}. Are you sure it exists in the tree!`,
+      tree, 'warn'
+    )
+
+  const dataInTree = _get(tree, pos, Values.NOT_IN_TREE)
+  if(dataInTree === Values.NOT_IN_TREE) {
+    return logData(
+      `Could not find any data in the tree that matches ${idOrPos}!`,
+      tree, 'warn'
+    )
+  }
+  
+  if(!isObj(update))
+    return logData(
+      `Update method second argument must be an object!`,
+      update, tree, 'warn'
+    )
+  
+  const schema = tree.schema[pos]
+  const nonValid = Object
+    .keys(update)
+    .reduce((notValid, key) => {
+      if(Values.TREE_UPDATE_PROPS.indexOf(key) == -1 )
+        notValid = key
+      
+      return notValid
+    }, false)
+  
+  if(nonValid)
+    return logData(`${nonValid} is not a valid update property`, 'warn')
+  
+
+  
+  return { schema, pos }
 }

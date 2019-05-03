@@ -55,7 +55,8 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "babel-plugin-import-css-to-jss": "^3.1.1"
+    "babel-plugin-import-css-to-jss": "^3.1.1",
+    "lodash.unset": "^4.5.2"
   },
   "peerDependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1"

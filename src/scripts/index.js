@@ -10,15 +10,28 @@ import {
   logData,
   parseJSONString,
   setLogs,
+  updateKey,
+  updateSchema,
+  updateType,
+  updateValue,
   validateSource,
+  validateUpdate,
 } from './utils'
 import { cleanUp } from './clean'
 import { Values } from './constants'
 import { buildTypes, TypesCls, loopDataObj } from './types'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
+import _unset from 'lodash.unset'
 
 import { DEF_SETTINGS } from './constants'
+
+const UPDATE_ACTIONS = {
+  key: updateKey,
+  // type: updateType,
+  value: updateValue,
+}
+
 
 // Cache holder for active source data
 let ACT_SOURCE
@@ -64,31 +77,29 @@ const appendTreeHelper = function(rootComp, appendTree){
   upsertElement(rootComp, this.element)
 }
 
-const buildFromPos = function(pos, newValue, force, settings) {
+const buildFromPos = function(pos, settings, force) {
+
   if(
     !isStr(pos) ||
     !this.tree ||
     !this.tree.schema ||
     !this.tree.schema[pos]
   ) return null
+
   const buildSchema = this.tree.schema[pos]
-  const valueInTree = newValue || _get(this.tree, pos)  
-  // If the values are the same, just return, cause there is not update
-  if(!force && valueInTree === buildSchema.value) return null
-  // Otherwise set the value from the parent to the child
-  buildSchema.value = valueInTree
-  
+  const valueInTree = _get(this.tree, pos)  
+
   const updatedEl = loopDataObj(
     buildSchema,
     this.tree,
     settings,
     appendTreeHelper && appendTreeHelper.bind(this)
   )
-  const replaceEl = upsertElement(updatedEl, buildSchema.component)
-  if(replaceEl === updatedEl) return null
-  
-}
 
+  const replaceEl = upsertElement(updatedEl, buildSchema.component)
+
+  return replaceEl !== updatedEl
+}
 
 const createEditor = (settings, domContainer) => {
 
@@ -132,68 +143,46 @@ const createEditor = (settings, domContainer) => {
     
     forceUpdate = pos => {
       pos && buildFromPos.apply(this, [
-        pos.replace('content.', `${Values.ROOT}.`),,
-        null,
+        pos,
+        settings,
         true,
-        settings
-      ])
-    }
-    
-    updateAtId = (id, value, check) => {
-      if(!this.tree.idMap || !this.tree.idMap[id])
-        return logData(
-          `Tried to update the tree with and ID does not exist!`,
-          id, tree, 'warn'
-        )
-      this.updateAtPos(this.tree.idMap[id], value, check)
-    }
-    
-    updateAtPos = (pos, value, check) => {
-      const valueInTree = check && Boolean(check && _get(this.tree, pos)) || true
-      if(!valueInTree)
-        return logData(
-          `Tried to update the tree position that does not exist!`,
-          pos, tree, 'warn'
-        )
-      _set(this.tree, pos, value)
-      buildFromPos.apply(this, [
-        pos.replace('content.', `${Values.ROOT}.`),
-        value,
-        false,
-        settings
       ])
     }
 
-    // Update the schema state 
-    updateSchema = (idOrPos, update, value) => {
-      if(Values.SCHEMA_STATES.indexOf(update) == -1)
-        return logData(
-          `${update} is not an allowed schema state. Allowed states are ${Values.SCHEMA_STATES.join(', ')}`
-        )
-      
-      const pos =  this.tree.idMap[idOrPos] && this.tree.idMap[idOrPos].replace(`${Values.ROOT}.`, 'content.') || idOrPos
+    update = (idOrPos, update) => {
 
-      const foundElement = _get(this.tree, pos)
+      // Ensure the passed in update object is valid
+      const validData = validateUpdate(idOrPos, update, this.tree)
+      if(!validData) return
+      let { pos, schema } = validData
+      if(!schema || !pos) return
 
-      if(!foundElement)
-        return logData(`Could not find ${idOrPos} in Tree`, idOrPos, this.tree, 'warn')
-      
-      const schemaId = pos.replace('content.', `${Values.ROOT}.`)
-      if(!this.tree.schema[schemaId])
-        return logData(
-          `Could not find schema for ${idOrPos} in Tree`, idOrPos, tree, 'warn'
-        )
-      
-      const schema = this.tree.schema[schemaId]
-      if(schema.instance && schema.instance.componentWillUnmount)
-        schema.instance.componentWillUnmount()
+      // Update the schema to ensure we are working with the correct data first
+      const updatedSchema = updateSchema(update, schema)
+      // Loop over the allowed props to be update
+      Values.TREE_UPDATE_PROPS
+        .map(prop => {
+          // If the prop exists in the update acctions,
+          // and the passed in update object
+          // Then call the action to update it
+          const updated = update[prop] &&
+            UPDATE_ACTIONS[prop] &&
+            UPDATE_ACTIONS[prop](this.tree, pos, updatedSchema)
+          // Special case for the key prop, cause we have to
+          // Copy the schema, and change the pos in the tree
+          // We then need to update the schema and pos reference to ensure
+          // future references use the updated one
+          if(prop === 'key' && updated){
+            const { tree, updatedSchema } = updated
+            this.tree = tree
+            schema = updatedSchema
+            pos = updatedSchema.pos
+          }
+        })
 
-      // Update the foundSchema with key and value
-      _set(this.tree.schema[schemaId], 'state', value && update || undefined)
+      // Rebuild the tree from this position
       buildFromPos.apply(this, [
-        schemaId,
-        foundElement,
-        true,
+        pos,
         settings
       ])
     }

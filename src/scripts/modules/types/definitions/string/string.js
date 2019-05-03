@@ -1,5 +1,6 @@
 import BaseType from '../base'
 import { Item } from '../../components'
+import { Values } from '../../../../constants'
 
 class StringType extends BaseType {
 
@@ -33,7 +34,7 @@ class StringType extends BaseType {
   render = props => {
     const { schema } = props
     
-    if(schema.state === 'edit'){
+    if(schema.mode === Values.MODES.EDIT){
       console.log('------------------edit number------------------');
       console.log(props);
     }
