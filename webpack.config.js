@@ -62,7 +62,12 @@ const wpConfig = {
     ]),
     // new webpack.HashedModuleIdsPlugin()
   ],
+  resolve: {
+    alias: {
+      jTConstants: path.resolve(__dirname, '/src/scripts/constants'),
+      jTUtils: path.resolve(__dirname, '/src/scripts/utils'),
+    },
+  }
 }
-
 
 module.exports = wpConfig

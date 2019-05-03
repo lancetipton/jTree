@@ -98,29 +98,13 @@ const buildSchema = (curSchema, type, pos, settings) => {
       type.name || type.factory.name
     )
   }
-  !schema.instance && (schema.instance = buildInstance(
+  !schema.instance && buildInstance(
     type,
     schema,
     settings
-  ))
+  )
 
   return schema
-}
-
-const clearSchema = (settings, schema) => {
-  if(schema.instance){
-    isFunc(schema.instance.componentWillUnmount) &&
-      schema.instance.componentWillUnmount(
-        { schema, settings },
-        schema.component,
-        settings.Editor
-      )
-    schema.instance = undefined
-  }
-  
-  if(schema.component) delete schema.component
-
-  clearObj(schema)
 }
 
 const checkPropsChange = (props, check) => (

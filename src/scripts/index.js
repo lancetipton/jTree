@@ -27,7 +27,6 @@ import _unset from 'lodash.unset'
 import { DEF_SETTINGS } from './constants'
 
 const UPDATE_ACTIONS = {
-  key: updateKey,
   // type: updateType,
   value: updateValue,
 }
@@ -153,33 +152,43 @@ const createEditor = (settings, domContainer) => {
 
       // Ensure the passed in update object is valid
       const validData = validateUpdate(idOrPos, update, this.tree)
-      if(!validData) return
-      let { pos, schema } = validData
-      if(!schema || !pos) return
+      // And Ensure we have a schema and pos to use
+      if(!validData || !validData.schema || !validData.pos) return
 
-      // Update the schema to ensure we are working with the correct data first
-      const updatedSchema = updateSchema(update, schema)
+      // Update the schema to ensure we are working with the updated data
+      let updatedSchema = updateSchema(update, { ...validData.schema })
+      // Get reference to the pos
+      let { pos } = validData
+      // Special case for the key prop, cause we have to
+      // copy the schema, and change the pos in the tree
+      if(update.key){
+        const updatedPos = updateKey(this.tree, pos, updatedSchema)
+        // If no updated pos came back
+        // There was an issue updating, so just return
+        if(!updatedPos) return
+        // if(!updated || !updated.tree || !updated.pos) return
+        
+        // If there was a valid update to pos
+        // Update the references to the local pos / schema
+        // So future references use the updated one
+        pos = updatedPos
+        updatedSchema = this.tree.schema[pos]
+      }
+        
       // Loop over the allowed props to be update
       Values.TREE_UPDATE_PROPS
-        .map(prop => {
+        .map(prop => (
           // If the prop exists in the update acctions,
           // and the passed in update object
           // Then call the action to update it
-          const updated = update[prop] &&
+          update[prop] &&
             UPDATE_ACTIONS[prop] &&
             UPDATE_ACTIONS[prop](this.tree, pos, updatedSchema)
-          // Special case for the key prop, cause we have to
-          // Copy the schema, and change the pos in the tree
-          // We then need to update the schema and pos reference to ensure
-          // future references use the updated one
-          if(prop === 'key' && updated){
-            const { tree, updatedSchema } = updated
-            this.tree = tree
-            schema = updatedSchema
-            pos = updatedSchema.pos
-          }
-        })
-
+        ))
+      
+      // After all parts of the schema have been updated, set it to the pos
+      this.tree.schema[pos] = updatedSchema
+      
       // Rebuild the tree from this position
       buildFromPos.apply(this, [
         pos,

@@ -49,13 +49,13 @@ export const buildInstance = (type, schema, settings) => {
   }
   
   
-  return INSTANCE_CACHE[id]
+  return addSchemaInstance(schema, id)
 }
 
 
 export const addSchemaInstance = (schema, id) => {
   schema && Object.defineProperty(schema, 'instance', {
-    get: () => (INSTANCE_CACHE(id)),
+    get: () => (INSTANCE_CACHE[id]),
     set: instance => {
       !instance
         ? clearInstance(id)

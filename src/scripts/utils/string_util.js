@@ -10,3 +10,5 @@ export const parseJSONString = str => {
 export const capitalize = str => (
   typeof str === 'string' && `${str[0].toUpperCase()}${str.slice(1)}` || str
 )
+
+export const isStr = str => typeof str === 'string'
