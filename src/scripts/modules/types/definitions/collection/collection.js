@@ -1,6 +1,6 @@
 import BaseType from '../base'
-import { capitalize } from '../../../../utils'
-import { Values } from '../../../../constants'
+import { capitalize } from 'jTUtils'
+import { Values } from 'jTConstants'
 import { List } from '../../components'
 
 class CollectionType extends BaseType {

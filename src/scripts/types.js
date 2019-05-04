@@ -18,9 +18,9 @@ import {
   uuid,
   validateBuildTypes,
   validateNewType,
-} from './utils'
+} from 'jTUtils'
 
-import { Values } from './constants'
+import { Values } from 'jTConstants'
 import Render from './modules/renders'
 import TypeDefs from './modules/types'
 import stylesReset from './styles_reset.css'

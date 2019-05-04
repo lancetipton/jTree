@@ -1,6 +1,6 @@
 import base from './base.css'
 import orgTheme from './theme'
-import { deepMerge } from '../../../utils'
+import { deepMerge } from 'jTUtils'
 
 
 const fillBlocks = (block, theme) => (

@@ -1,6 +1,6 @@
 import BaseType from '../base'
-import { typesOverride, capitalize } from '../../../../utils'
-import { Values } from '../../../../constants'
+import { typesOverride, capitalize } from 'jTUtils'
+import { Values } from 'jTConstants'
 import { List } from '../../components'
 
 class MapType extends BaseType {

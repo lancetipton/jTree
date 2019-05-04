@@ -1,6 +1,6 @@
 import { Buttons } from './buttons'
 import { elements } from 'element-r'
-import { capitalize } from '../../../utils'
+import { capitalize } from 'jTUtils'
 const { div } = elements
 
 export const ListHeader = ({ id, key, value, type, onEdit, onDrag, onDelete }) => {

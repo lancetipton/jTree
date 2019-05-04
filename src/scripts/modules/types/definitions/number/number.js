@@ -1,8 +1,8 @@
 import BaseType from '../base'
 import { Item } from '../../components'
 import Cleave from 'cleave.js'
-import { getMutationObserver, debounce, isFunc } from '../../../../utils'
-import { Values } from '../../../../constants'
+import { getMutationObserver, debounce, isFunc } from 'jTUtils'
+import { Values } from 'jTConstants'
 
 class NumberType extends BaseType {
 

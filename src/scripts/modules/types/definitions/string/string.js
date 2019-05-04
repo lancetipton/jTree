@@ -1,6 +1,6 @@
 import BaseType from '../base'
 import { Item } from '../../components'
-import { Values } from '../../../../constants'
+import { Values } from 'jTConstants'
 
 class StringType extends BaseType {
 

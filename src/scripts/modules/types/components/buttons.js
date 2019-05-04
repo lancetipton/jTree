@@ -1,6 +1,6 @@
 import { er, elements } from 'element-r'
 import { Icon } from './icon'
-import { capitalize } from '../../../utils'
+import { capitalize } from 'jTUtils'
 const { div, style, span  } = elements
 
 

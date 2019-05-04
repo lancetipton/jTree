@@ -12,6 +12,8 @@ const outputNames = isDev && '[contenthash].[name]' || '[name]'
 const outputPath = path.resolve(__dirname, buildPath)
 const paths = [ buildPath ]
 
+
+
 const wpConfig = {
   mode: NODE_ENV || 'development',
   devtool: isDev ? 'inline-source-map' : 'source-map',
@@ -64,8 +66,9 @@ const wpConfig = {
   ],
   resolve: {
     alias: {
-      jTConstants: path.resolve(__dirname, '/src/scripts/constants'),
-      jTUtils: path.resolve(__dirname, '/src/scripts/utils'),
+      jTConstants: path.resolve(__dirname, './src/scripts/constants'),
+      jTUtils: path.resolve(__dirname, './src/scripts/utils'),
+      jTRoot: path.resolve(__dirname, './src/scripts/'),
     },
   }
 }

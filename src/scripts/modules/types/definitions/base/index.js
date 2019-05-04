@@ -1,5 +1,5 @@
 import { buildTheme } from '../../styles/build_theme'
-import { Values } from '../../../../constants'
+import { Values } from 'jTConstants'
 import { er, elements } from 'element-r'
 const { div, br, span } = elements
 

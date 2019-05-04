@@ -1,4 +1,4 @@
-import { logData } from '../../utils'
+import { logData } from 'jTUtils'
 
 const load = (renderPath) => import(
   /* webpackInclude: /\.js$/ */

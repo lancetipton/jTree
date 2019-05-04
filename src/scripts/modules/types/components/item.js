@@ -1,7 +1,7 @@
 import { Buttons } from './buttons'
 import { elements } from 'element-r'
-import { capitalize } from '../../../utils'
-import { Values } from '../../../constants'
+import { capitalize } from 'jTUtils'
+import { Values } from 'jTConstants'
 const { div, input, label } = elements
 
 

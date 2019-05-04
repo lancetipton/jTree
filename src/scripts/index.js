@@ -16,9 +16,9 @@ import {
   updateValue,
   validateSource,
   validateUpdate,
-} from './utils'
+} from 'jTUtils'
 import { cleanUp } from './clean'
-import { Values } from './constants'
+import { Values } from 'jTConstants'
 import { buildTypes, TypesCls, loopDataObj } from './types'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
