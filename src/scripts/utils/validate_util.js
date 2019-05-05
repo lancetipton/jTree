@@ -3,7 +3,12 @@ import { isConstructor, logData } from './methods_util'
 import { Values } from '../constants'
 import _get from 'lodash.get'
 
-// TREE_UPDATE_PROPS
+/**
+ * Validates a new type to ensure if has not already been registered
+ * @param  { object } newType - new object to be validated
+ * @param  { Object } TYPE_CACHE - stores currently registered type classes
+ * @return { boolean }
+ */
 export const validateNewType = (newType, TYPE_CACHE) => {
   if(!newType.name)
     return logData(`Type could not be registered. Types require a name property!`, 'error')
@@ -15,15 +20,26 @@ export const validateNewType = (newType, TYPE_CACHE) => {
   return true
 }
 
+/**
+ * Ensures the Editor types class is loaded
+ * @param  { object } source 
+ * @param  { Editor Class } Editor 
+ * @return { boolean }
+ */
 export const validateBuildTypes = (source, Editor) => {
   if(!validateSource(source)) return false
 
   if(!isObj(Editor.Types) || typeof Editor.Types.get !== 'function')
-    return logData(`Editor.Types class is requires when building the editor types!`, 'error')
+    return logData(`Editor.Types class is required when building the editor types!`, 'error')
   
   return true
 }
 
+/**
+ * Ensures the passed in source is an object
+ * @param  { object } source 
+ * @return { boolean }
+ */
 export const validateSource = (source) => {
   if(!isObj(source))
     return logData(
@@ -33,6 +49,13 @@ export const validateSource = (source) => {
   return true
 }
 
+/**
+ * Validate the passed in params to ensure proper data is used whe updating the tree schema
+ * @param  { string } idOrPos - location of the value to be updated
+ * @param  { object } update - describes what should be update
+ * @param  { object } tree - holds the source and schema for of the active object
+ * @return { boolean }
+ */
 export const validateUpdate = (idOrPos, update, tree) => {
   const { prop, value } = update
 

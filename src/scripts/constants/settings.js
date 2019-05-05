@@ -15,9 +15,6 @@ export const DEF_SETTINGS =  Object.freeze({
     onSave: Values.NO_OP,
     onCancel: Values.NO_OP,
     source: undefined,
-    destroyOnSave: true,
-    destroyOnCancel: true,
-    changeDebounce: 50,
     iconType: 'far',
     styles: {}
   }

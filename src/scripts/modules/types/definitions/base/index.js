@@ -2,15 +2,15 @@ import { buildTheme } from '../../styles/build_theme'
 import { Values } from 'jTConstants'
 import { Item } from '../../components'
 import Cleave from 'cleave.js'
-import { isFunc, noOp, logData, clearObj } from 'jTUtils'
+import { isFunc, logData, clearObj } from 'jTUtils'
 
 const customEvents = {
-  onCancel: noOp,
-  onChange: noOp,
-  onEdit: noOp,
-  onDelete: noOp,
-  onDrag: noOp,
-  onSave: noOp,
+  onCancel: Values.NO_OP,
+  onChange: Values.NO_OP,
+  onEdit: Values.NO_OP,
+  onDelete: Values.NO_OP,
+  onDrag: Values.NO_OP,
+  onSave: Values.NO_OP,
 }
 
 const noId = e =>
@@ -23,20 +23,27 @@ const updateParentConstruct = (config, parent) => {
   })
 }
 
-const addCustomEvents = (config, usrEvts) => (
+const addCustomEvents = (config, userEvents) => (
   Object
     .keys(customEvents)
     .map(key => (
-      usrEvts[key] = isFunc(config[key]) && config[key] || customEvents[key]
+      userEvents[key] = isFunc(config[key]) && config[key] || customEvents[key]
     ))
 )
 
-const shouldDoDefault = (e, Editor, usrEvt) => {
+const shouldDoDefault = (e, update, Editor, userEvent) => {
   const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
   return !id
     ? noId()
-    : usrEvt && usrEvt(e, id, Editor) === false || id
+    : userEvent && userEvent(e, update, id, Editor) === false || id
 }
+
+const addAllowedConfigOpts = config => (
+  Values.TYPES_CONFIG_OPTS
+    .reduce((typeConf, opt) => (
+      (opt in config)  && (typeConf[opt] = config[opt]) || typeConf), {}
+    )
+)
 
 let STYLES_LOADED
 class BaseType {
@@ -51,86 +58,96 @@ class BaseType {
     if(!config) return
 
     updateParentConstruct(config, this.constructor)
-    addCustomEvents(config, this.usrEvts)
+    addCustomEvents(config, this.userEvents)
+    this.config = addAllowedConfigOpts(config) || {}
   }
 
-  usrEvts = {}
+  userEvents = {}
   updated = {}
   original = {}
   
   onChange = (e, Editor) => {
-    const value = e.target && e.target.value || e.currentTarget && e.currentTarget.value
-    const key = e.currentTarget.getAttribute(Values.DATA_SCHEMA_KEY)
-    if(value && e.target)
-      e.target.style.width = `${value.length}ch`
+    const input =  e.target || e.currentTarget
+    const value = input.value
+    const key = input.getAttribute(Values.DATA_SCHEMA_KEY)
 
     if(
       (value === undefined || key === undefined) ||
       (this.original[key] && this.original[key] === value)
     ) return
+    
+    value &&  this.config.expandOnChange !== false && this.setWidth(input)
+    const update = { key, value, original: this.original[key] }
 
-
-    return (this.usrEvts.onChange(key, value, Editor) !== false) && 
-      ( this.updated[key] = value )
+    return (this.userEvents.onChange(e, update, this.original.id, Editor) !== false) && 
+      ( this.updated[key] = update.value )
   }
 
   onSave = (e, Editor) => {
-    const id = shouldDoDefault( e, Editor, this.usrEvts.onSave )
-    id && Editor.update(id, { ...this.updated, mode: undefined })
+    const update = { ...this.updated, mode: undefined }
+    const id = shouldDoDefault( e, update, Editor, this.userEvents.onSave )
+    id && Editor.update(id, update)
   }
 
   onCancel = (e, Editor) => {
-    const id = shouldDoDefault( e, Editor, this.usrEvts.onCancel )
-    id && Editor.update(id, { mode: undefined, value: this.original.value })
+    const update = { mode: undefined, value: this.original.value }
+    const id = shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
+    id && Editor.update(id, update)
   }
 
   onEdit = (e, Editor) => {
-    const id = shouldDoDefault( e, Editor, this.usrEvts.onEdit )
-    id && Editor.update(id, { mode: Values.MODES.EDIT })
+    const update = { mode: Values.MODES.EDIT }
+    const id = shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
+    id && Editor.update(id, update)
   }
 
   onDrag = (e, Editor) => {
-    const id = shouldDoDefault( e, Editor, this.usrEvts.onEdit )
-    id && Editor.update(id, { mode: Values.MODES.DRAG })
+    const update = { mode: Values.MODES.DRAG }
+    const id = shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
+    id && Editor.update(id, update)
   }
 
   onDelete = (e, Editor) => {
-    const id = shouldDoDefault( e, Editor, this.usrEvts.onDelete )
+    const update = { id, mode: Values.MODES.DRAG }
+    const id = shouldDoDefault( e, update, Editor, this.userEvents.onDelete )
     id && Editor.remove(id)
   }
 
-  buildEvents = (schema, domNode) => {
-    if(!domNode || !domNode.tagName) return
-    const isInput = domNode.tagName === 'INPUT'
-    // Catches changes for the key input
-    if(isInput) {
-      domNode.oninput = this.onChange
-      // Update the length of the input to match the value length
-      domNode.value.length && (domNode.style.width = `${domNode.value.length}ch`)
-    }
-    
-    !isInput && domNode.children.length && Array
-      .from(domNode.children)
-      .map(child => {
-        (child.tagName === 'INPUT' || child.children.length)
-        && this.buildEvents(schema, child) 
-      })
+  getActions = mode => (
+    mode !== Values.MODES.EDIT
+      ? {
+        onEdit: this.onEdit,
+        onDrag: this.onDrag,
+        onDelete: this.onDelete
+      }
+      : {
+        onChange: this.onChange,
+        onSave: this.onSave,
+        onCancel: this.onCancel,
+      }
+  )
 
-    // Clear out domNode just so we don't have any memory leaks
-    domNode = undefined
-  }
+  setWidth = input => (
+    input &&
+      input.value &&
+      (input.style.width = `${input.value.length}ch`)
+  )
+
+  buildEvents = (schema, domNode) => (
+   domNode && Array
+      .from(domNode.getElementsByTagName('input'))
+      .map(input => {
+        input.oninput = this.onChange
+        this.config.expandOnChange !== false && this.setWidth(input)
+      })
+  )
 
   componentDidUpdate = (props, domEl, Editor) => {
     const { schema } = props
     
     this.buildEvents(schema, domEl)
-
-    this.original = {
-     value: schema.value,
-     key: schema.key,
-     mode: schema.mode,
-     matchType: schema.matchType,
-    }
+    const { parent, instance, component, ...original } = schema
+    this.original = original
     // Clear out the updated, because we just updated
     this.updated && clearObj(this.updated)
   }

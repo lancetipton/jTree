@@ -67,12 +67,36 @@
 }
 
 /* ---- Edit Item / Inputs / Label ---- */
-.j-tree-editor li.row > div.item.item-edit > div > input.item-edit {
+/* Select Box */
+.j-tree-editor li.row > div.item.item-edit > div > select.item-edit {
+	box-sizing: border-box;
+  border-radius: 0px;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+  height: 27px;
+  padding: 3px;
+  cursor: pointer;
+}
+.j-tree-editor li.row > div.item.item-edit > i.item-icon {
+  position: relative;
+  left: -15px;
+  top: 2px;
+  pointer-events: none;
+}
+
+
+.j-tree-editor li.row > div.item.item-edit > div > .item-edit {
+  background-color: @inBackground;
   min-width: 130px;
-  min-height: 20px;
+  max-width: 100%;
+  max-height: 30px;
   margin-top: 15px;
   margin-bottom: 10px;
-  padding: 3px;
+  padding: 5px;
+  font-size: @inFontSize;
+  border: @inBorder;
+  color: @inColor;
 }
 .j-tree-editor li.row > div.item .item-data-wrapper {
   position: relative;
@@ -125,6 +149,7 @@
   top: -3px;
   margin-right: 10px;
 }
+
 
 /* ---- Action Icons ---- */
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper {

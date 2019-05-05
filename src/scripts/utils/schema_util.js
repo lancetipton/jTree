@@ -43,11 +43,18 @@ export const buildInstance = (type, schema, settings) => {
     )
       instance.render = type.render.bind(instance)
     
+
+    const editor = settings.editor || {}
     // Wrap the methods on the instance, so we can pass the Editor into them when called
     Object.keys(instance).map(key => {
       if(!isFunc(instance[key])) return
       const oldMethod = instance[key]
-      instance[key] = (...args) => oldMethod(...args, settings.Editor)
+      
+      instance[key] = (...args) => {
+        const hasOverride = isFunc(editor[key])
+        if( !hasOverride || settings.editor[key](...args) !== false )
+          return oldMethod(...args, settings.Editor)
+      }
     })
 
     // Add the instance to the instance cache

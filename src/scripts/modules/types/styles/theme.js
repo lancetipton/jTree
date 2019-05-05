@@ -30,6 +30,12 @@
 */
 
 const theme = {
+  // Inputs
+  inBackground: '#FFFFFF',
+  inBorder:  '1px solid #D8D7DC',
+  inColor:  '#14171c',
+  inFontSize: '12px',
+  
   // color states
   passiveBack: '#FFFFFF',
   // Group of items background color

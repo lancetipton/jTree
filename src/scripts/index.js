@@ -185,7 +185,11 @@ const createEditor = (settings, domContainer) => {
       // Clear the schema from the tree schema
       clearSchema(schema, this.tree.schema)
     }
-
+    
+    schema = (idOrPos) => (
+      _get(this, [ 'tree', 'schema',  _get(this, `tree.idMap.${idOrPos}`, idOrPos) ])
+    )
+    
     destroy = () => {
       ACT_SOURCE = undefined
       clearObj(this.tree.content)

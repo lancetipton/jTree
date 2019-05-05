@@ -1,6 +1,7 @@
 window.TEST_DOM_DATA = {
   // id: 'b3c5eb51-5a5b-4b52-a29e-a831ebf5a347',
   0: 9999999,
+  1: true,
   // 1: {
   //   class: true,
   //   id: 'b3c5eb51-5a5b-4b52-a29e-a831ebf5a347',

@@ -36,13 +36,21 @@ export const deepMerge = (...sources) => (
               (joined, [ key, value ]) => ({
                 ...joined,
                 [key]:
-                  // Check if the value is an object, and deep merge the object with the current merged object
-                  (value instanceof Object &&
+                  // Check if the value is not a function and is an object
+                  // Also check if key is in the object
+                  // Set to value or deepMerge the object with the current merged object
+                  (
+                    typeof value !== 'function' &&
+                    value instanceof Object &&
                     key in joined &&
-                    deepMerge(joined[key], value)) ||
+                    // This will always return an object
+                    // So if it gets called then value is not getting set
+                    deepMerge(joined[key], value)
+                  ) ||
                   // Otherwise just set the value
                   value
               }),
+              // Pass in merged at the joined object
               merged
             )
           : // If it's not an array or object, just return the merge object

@@ -1,80 +1,78 @@
 import { Buttons } from './buttons'
 import { elements } from 'element-r'
-import { capitalize } from 'jTUtils'
+import { capitalize, isFunc } from 'jTUtils'
 import { Values } from 'jTConstants'
-const { div, input, label } = elements
+import * as subComps from './sub'
+const { div, i } = elements
 
-
-const buildOptions = props => {
+/**
+ * Build the input options based on props.mode and type
+ * @param  { object } props - Data return from the sub component input type
+ * @param  { string } type - One of key or value
+ * @return { object } built options 
+ */
+const buildOptions = (props, type) => {
   const isEdit = props.mode === Values.MODES.EDIT
   const showLabel = isEdit && props.showLabel
-  
-  return isEdit
-    ? { 
-      El: input,
-      isEdit,
-      showLabel,
-      keyVal: '',
-      editCls: `item-edit`,
-      keyAttrs: {
-        class: `item-key item-data item-edit`,
-        type: props.keyInput || 'text',
-        value: props.key,
-        [Values.DATA_SCHEMA_KEY]: 'key',
-        name: `key-${props.key}`
-      },
-      elValue: props.value,
-      valAttrs: {
-        class: `item-value item-data item-edit${props.cleave && ` item-cleave` || ''}`,
-        type: props.valueInput || 'text',
-        [Values.DATA_SCHEMA_KEY]: 'value',
-        name: `value-${props.key}`,
-        value: props.value,
-      }
-    }
-    : {
-      El: div,
-      isEdit,
-      showLabel,
-      elValue: props.value,
-      keyVal: `${props.key}:`,
-      editCls: '',
-      keyAttrs: { class: `item-key item-data` },
-      valAttrs: { class: `item-value item-data` }
-    }
+  const typeEl = props[`${type}El`]
+
+  return !isEdit 
+    ? subComps.display(props, type)
+    : typeEl && subComps[typeEl]
+      ? subComps[typeEl](props, type)
+      : subComps.input(props, type)
 }
 
-
+/**
+ * Build the key input, key editing should always be a string
+ * @param  { object } props - data return from the sub component input type
+ * @return { dom node }
+ */
 const buildItemKey = ({ showLabel, El, keyAttrs, keyVal }) => {
   const keyEl = El(keyAttrs, keyVal)
   return !showLabel
     ? keyEl
     : div({ className: 'item-data-wrapper item-key-wrapper' },
-      label({ className: 'item-key-label', for: keyAttrs.name }, 'Key'),
+      subComps.label(keyAttrs.name, 'Key'),
       keyEl
     )
 }
 
-const buildItemValue = ({ showLabel, El, valAttrs, elValue }) => {
-  const valEl = El(valAttrs, elValue)
+/**
+ * Build the value input
+ * Checks for children method || use elValue, used for Select || Input dom nodes
+ * @param  { object } props - data return from the sub component input type
+ * @return { dom node }
+ */
+const buildItemValue = props => {
+  const { showLabel, El, valueAttrs, elValue, children } = props
+  const valEl = El(valueAttrs, isFunc(children) && children(props) || elValue)
+  
   return !showLabel
     ? valEl
     : div({ className: 'item-data-wrapper item-value-wrapper' },
-      label({ className: 'item-value-label', for: valAttrs.name }, 'Value'),
-      valEl
+      subComps.label(valueAttrs.name, 'Value'),
+      valEl,
     )
 }
 
-// { id, key, value, type, onEdit, onDrag, onDelete }
-export const Item = (props) => {
-
-  const opts = buildOptions(props)
-
-  return div({ className: `item ${opts.editCls}` },
-    buildItemKey(opts),
-    buildItemValue(opts),
-    div({ className: `item-btns item-data` },
+/**
+ * Builds item based on passed in props
+ * Build item children including key / value inputs, and action based on props.mode
+ * @param  { object } props - passing in from the Types render method
+ * @return { dom node }
+ */
+export const Item = (props) => (
+  div(
+    { className: `item ${props.mode === Values.MODES.EDIT && Values.EDIT_CLS || ''}` },
+    buildItemKey(buildOptions(props, 'key')),
+    buildItemValue(buildOptions(props, 'value')),
+    props.mode === Values.MODES.EDIT && 
+      props.icon &&
+        i({className: 'fas fa-sort-down item-icon'}) || '', 
+    div(
+      { className: `item-btns item-data` },
       Buttons(props),
     )
   )
-}
+)

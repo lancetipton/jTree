@@ -19,19 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log(Editor);
   })
   
-  const onChange = (obj) => {
+  const onChange = (event, update, id, Editor) => {
     console.log('on change')
     console.log(obj)
   }
 
   // Calls composer.destroy() after this method CB
-  const onSave = (html) => {
+  const onSave = (event, update, id, Editor) => {
     console.log('on save')
     console.log(html)
   }
 
   // Calls composer.destroy() after this method CB
-  const onCancel = () => {
+  const onCancel = (event, update, id, Editor) => {
     console.log('on cancel')
   }
   
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       */
     }
 
-    // #priority = 0
+    static priority = 0
     /*
       * **Required** 
       * Instance private variable
@@ -69,27 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
         * If higher then all others, it will be used
     */
     
-    set priority(num){
-      /*
-        * Instance method ( function )
-        * Override the inherited 'Parent Class' method
-        * Updates the private #priority variable 
-        * Params
-          1. number
-      */
-    }
 
-    get priority(){
-      /*
-        * Instance method ( function )
-        * Override the inherited 'Parent Class' method
-        * Gets the private #priority variable 
-        * Params
-          * None
-      */
-    }
-
-    build = ({ value, key, meta, tree, parent, settings }) => {
+    shouldComponentUpdate = (params) => {
+      const { value, key, meta, tree, parent, settings } = params
+      
       /*
         * Instance method ( function )
         * Override the inherited 'Parent Class' method
@@ -111,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  const mapBuild = ({ value, key, meta, tree, parent, settings }) => {
-    console.log('------------------ custom map build------------------');
+  const numOnChange = (event, update, id, Editor) => {
+    // console.log('------------------ Num onChange ------------------');
   }
   
 
@@ -129,13 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
           renderPath: false,
           // ----------- Editor Config ---------- //
           editor: {
-            onChange: onChange,
-            onSave: onSave,
-            onCancel: onCancel,
+            // Called for all type events
+            // Can override all types events
+            // onChange: onChange,
+            // onSave: onSave,
+            // onCancel: onCancel,
+            // Source object to be edited
             source: testData,
-            destroyOnSave: true,
-            destroyOnCancel: true,
-            changeDebounce: 50,
             iconType: 'far',
             styles: {},
             appendTree: () => {}
@@ -185,10 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
           //     /* Boolean - Default Type */
 
             map: {
-              // build: mapBuild
                 /*
                   * Override the build method of the map type
-                    * Allows customizing how the dom node is built
+                    * Allows customizing the shouldComponentUpdate method on map type
                 */
             },
           //     /*  Map (Object) - Default Type */
@@ -208,7 +190,10 @@ document.addEventListener('DOMContentLoaded', () => {
           //     url: {},
           //     uuid: {},
 
-          //   number: {},
+            number: {
+              onChange: numOnChange,
+              expandOnChange: true,
+            },
           //     /* Default Type ( number ) */
 
           //     /* ----- Extra default types that extend Number type ----- */

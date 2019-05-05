@@ -41,6 +41,15 @@ export const Values = {
     'type',
     'matchType'
   ]),
+  CLEAVE_CLS: 'item-cleave',
+  EDIT_CLS: 'item-edit',
   DATA_TREE_ID: 'data-tree-id',
-  DATA_SCHEMA_KEY: 'data-schema-key'
+  DATA_SCHEMA_KEY: 'data-schema-key',
+  TYPES_CONFIG_OPTS: Object.freeze([
+    // Allowed custom config properties
+    // Auto expand the input to the size of it's text content
+    'expandOnChange',
+    // Array of allowed options to be used in select inputs, when editing
+    'options'
+  ])
 }

@@ -19,28 +19,16 @@ class StringType extends CleaveType {
   }
 
   render = props => {
-    const { schema } = props
-    const actions = schema.mode !== Values.MODES.EDIT
-      ? {
-        onEdit: this.onEdit,
-        onDrag: this.onDrag,
-        onDelete: this.onDelete
-      }
-      : {
-        onChange: this.onChange,
-        onSave: this.onSave,
-        onCancel: this.onCancel,
-      }
-
+    const { schema: { id, key, value, mode, matchType } } = props
     return Item({
-      id: schema.id,
-      key: schema.key,
-      value: schema.value,
-      mode: schema.mode,
+      id,
+      key,
+      value,
+      mode,
+      type: matchType,
       showLabel: true,
-      type: schema.matchType,
       keyInput: 'text',
-      ...actions
+      ...this.getActions(mode)
     })
   }
 

@@ -2,6 +2,12 @@ import { checkCall } from './methods_util'
 import { isObj } from './object_util'
 import { Values } from '../constants'
 
+/**
+ * 
+ * @param  {any} matches 
+ * @param  {any} priority 
+ * @return 
+ */
 const setHighestPriority = (matches, priority) => {
   if(!matches.highest || matches.highest <= priority){
     matches.highest =  priority
@@ -11,6 +17,15 @@ const setHighestPriority = (matches, priority) => {
   return false
 }
 
+/**
+ * 
+ * @param  {any} TYPE_CACHE 
+ * @param  {any} value 
+ * @param  {any} parent 
+ * @param  {any} settings 
+ * @param  {any} [matches={}] 
+ * @return 
+ */
 export const getMatchTypes = function(TYPE_CACHE, value, parent, settings, matches={}){
 
   TYPE_CACHE.children[Values.MAP_TYPES]((name, meta) => {

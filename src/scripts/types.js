@@ -285,7 +285,9 @@ export function TypesCls(settings){
         loadedTypes,
         dnyRenders
       )
-
+      
+      
+      
       return typesCls
     })
 }
