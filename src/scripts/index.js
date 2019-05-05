@@ -1,23 +1,26 @@
 import {
   buildSettings,
   checkCall,
+  cleanUp,
   clearObj,
+  clearSchema,
   cloneDeep,
   deepMerge,
-  getDomNode,
+  getElement,
   isObj,
   isStr,
   logData,
   parseJSONString,
+  removeElement,
   setLogs,
   updateKey,
   updateSchema,
   updateType,
   updateValue,
+  upsertElement,
   validateSource,
   validateUpdate,
 } from 'jTUtils'
-import { cleanUp } from './clean'
 import { Values } from 'jTConstants'
 import { buildTypes, TypesCls, loopDataObj } from './types'
 import _get from 'lodash.get'
@@ -31,35 +34,8 @@ const UPDATE_ACTIONS = {
   value: updateValue,
 }
 
-
 // Cache holder for active source data
 let ACT_SOURCE
-
-/**
- * Creates or replaces a dom node on the parent node
- * Replace is referenced by ID
- * @param  { dome node } element - node to add or replace with
- * @param  { dome node } parent - parent node to add the element to
- * @return { dom node } replaced || added dom node
- */
-const upsertElement = (element, parent) => {
-  if(!element)
-    return logData(
-      `Could not add element to the dom tree. The element does not exists`,
-      parent,
-      'warn'
-    )
-
-  const curEl = document.getElementById(element.id)
-  return curEl
-    ? curEl.parentNode.replaceChild(element, curEl)
-    : parent && parent.appendChild(element) ||
-      logData(
-        `Could not add element to the dom tree. The parent does not exists`,
-        parent,
-        'warn'
-      )
-}
 
 /**
  * Checks if the settings.editor.appendTree method exists, and calls it
@@ -87,7 +63,6 @@ const buildFromPos = function(pos, settings, force) {
 
   const buildSchema = this.tree.schema[pos]
   const valueInTree = _get(this.tree, pos)  
-
   const updatedEl = loopDataObj(
     buildSchema,
     this.tree,
@@ -149,32 +124,30 @@ const createEditor = (settings, domContainer) => {
     }
 
     update = (idOrPos, update) => {
-
       // Ensure the passed in update object is valid
       const validData = validateUpdate(idOrPos, update, this.tree)
       // And Ensure we have a schema and pos to use
-      if(!validData || !validData.schema || !validData.pos) return
-
-      // Update the schema to ensure we are working with the updated data
-      let updatedSchema = updateSchema(update, { ...validData.schema })
+      if(!validData || !validData.schema || !validData.pos) return 
       // Get reference to the pos
       let { pos } = validData
+
+      // Update the schema to ensure we are working with the updated data
+      this.tree.schema[pos] = updateSchema(update, { ...validData.schema })
+
       // Special case for the key prop, cause we have to
       // copy the schema, and change the pos in the tree
       if(update.key){
-        const updatedPos = updateKey(this.tree, pos, updatedSchema)
+        const updatedPos = updateKey(this.tree, pos, this.tree.schema[pos])
         // If no updated pos came back
         // There was an issue updating, so just return
-        if(!updatedPos) return
-        // if(!updated || !updated.tree || !updated.pos) return
-        
-        // If there was a valid update to pos
-        // Update the references to the local pos / schema
-        // So future references use the updated one
-        pos = updatedPos
-        updatedSchema = this.tree.schema[pos]
+        if(updatedPos){
+          // If there was a valid update to pos
+          // Update the references to the local pos
+          // So future references use the updated one
+          pos = updatedPos
+        }
       }
-        
+
       // Loop over the allowed props to be update
       Values.TREE_UPDATE_PROPS
         .map(prop => (
@@ -183,37 +156,47 @@ const createEditor = (settings, domContainer) => {
           // Then call the action to update it
           update[prop] &&
             UPDATE_ACTIONS[prop] &&
-            UPDATE_ACTIONS[prop](this.tree, pos, updatedSchema)
+            UPDATE_ACTIONS[prop](this.tree, pos, this.tree.schema[pos])
         ))
-      
-      // After all parts of the schema have been updated, set it to the pos
-      this.tree.schema[pos] = updatedSchema
-      
+
       // Rebuild the tree from this position
       buildFromPos.apply(this, [
         pos,
         settings
       ])
+
+      validData.schema = undefined
     }
     
-    removeAt = () => {
-      
+    remove = idOrPos => {
+      // Ensure the passed in update object is valid
+      const validData = validateUpdate(idOrPos, {}, this.tree)
+      // And Ensure we have a schema and pos to use
+      if(!validData || !validData.schema || !validData.pos) return 
+      const { pos, schema } = validData
+
+      // Clear the data from the tree
+      _unset(this.tree, pos)
+
+      // Remove move the element from the dom
+      const domNode = schema.component
+      removeElement(domNode, domNode.parentNode)
+
+      // Clear the schema from the tree schema
+      clearSchema(schema, this.tree.schema)
     }
-    
+
     destroy = () => {
-      this.element = undefined
-      delete this.element
-
-      this.tree = undefined
-      delete this.tree
-
-      this.Types.destroy(this)
-      this.Types = undefined
-      delete this.Types
-      
       ACT_SOURCE = undefined
+      clearObj(this.tree.content)
+      clearObj(this.tree.idMap)
       clearObj(this.config)
-      cleanUp(settings)
+      this.Types.destroy(this)
+      _unset(this, 'Types')
+      _unset(this, 'element')
+      cleanUp(settings, this.tree)
+
+      clearObj(this)
     }
   }
   
@@ -225,7 +208,7 @@ const createEditor = (settings, domContainer) => {
 
 const init = (opts) => {
   if(opts.showLogs) setLogs(true)
-  const domContainer = getDomNode(opts.element)
+  const domContainer = getElement(opts.element)
   if(!domContainer)
     return logData(
       `Dom node ( element ) is required when calling the jTree init method`, 'error'

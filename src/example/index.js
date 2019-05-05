@@ -14,11 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let editorNode = document.getElementById('editor')
   let saveBtn = document.getElementById('save-btn')
   saveBtn.addEventListener('click', () => {
-    Editor.updateSchema('content.0', 'EDIT', true)
-    // Editor.updateAtPos('content.2.0.2.0.1', {
-    //   test: 'data',
-    //   food: 'bar'
-    // })
+    Editor.destroy()
+    console.log('------------------Editor------------------');
+    console.log(Editor);
   })
   
   const onChange = (obj) => {

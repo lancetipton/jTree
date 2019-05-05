@@ -1,5 +1,6 @@
 import { isObj } from './object_util'
 import { logData } from './methods_util'
+import { clearSchema } from './clean_util'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
 import _unset from 'lodash.unset'
@@ -53,7 +54,7 @@ export const updateType = () => {
  * @param  { object } schema - data that defines the object at the current pos
  * @return { void }
  */
-export const updateValue = (tree, pos, schema) => _set(tree, pos, schema.value)
+export const updateValue = (tree, pos) => _set(tree, pos, tree.schema[pos].value)
 
 /**
  * Updates the position of an node in the tree
@@ -63,12 +64,14 @@ export const updateValue = (tree, pos, schema) => _set(tree, pos, schema.value)
  * @param  { object } schema - data that defines the object at the current pos
  * @return { string } - updated position based on the new key
  */
-export const updateKey = (tree, pos, schema) => {
+export const updateKey = (tree, pos) => {
   // Cache the current value at that pos
   const currentVal = _get(tree, pos)
   // Get the new pos based on the update key and old pos
-  const updatedPos = buildNewPos(pos, schema.key)
-
+  const updatedPos = buildNewPos(pos, tree.schema[pos].key)
+  // If the key was not actually changed, just return
+  if(updatedPos === pos) return
+  
   // Check if the updatedPos already exists. If it does, just return
   // Cause we don't want to overwrite it
   if(tree.schema[updatedPos])
@@ -87,19 +90,13 @@ export const updateKey = (tree, pos, schema) => {
 
   // Set the new schema data, with the new pos
   tree.schema[updatedPos] = {
-    ...schema,
+    // Add the old pos data
+    ...tree.schema[pos],
+    // Overwrite the original pos with updated on
     pos: updatedPos
   }
-  // Remove all references to clear out potential memory leaks
-  // We don't unmount the component on the instance, because
-  // We're not removing the instance, just changing the object the references it
-  tree.schema[pos].component = undefined
-  tree.schema[pos].parent = undefined
-  tree.schema[pos].instance = undefined
-  tree.schema[pos] = undefined
-  // Remove the reference to the old pos on the schema
-  _unset(tree.schema, pos)
-  
+
+  clearSchema(tree.schema[pos], tree.schema, false)
   // return the updated pos
   return updatedPos
 }

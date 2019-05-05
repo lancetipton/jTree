@@ -19,11 +19,14 @@ export const getMatchTypes = function(TYPE_CACHE, value, parent, settings, match
     // Or the base priority if none exists for factory
     const priority = factory.priority || this.BaseType.constructor.priority
     // Check and update the priority if needed
-    const updatedPriority = setHighestPriority(matches, priority)
-    // Check if the priority was updated or the eval doesn't match
-    // If no priority update, or not eval match, then return
-    if(!updatedPriority || !factory || !factory.eval || !factory.eval(value))
+    
+    // Check if the eval doesn't match, if no eval match, then return
+    if(!factory || !factory.eval || !factory.eval(value))
       return
+
+    // TODO: priority not being set correctly
+    // Need to only set highest prioirty if there is a match
+    const updatedPriority = setHighestPriority(matches, priority)
 
     // Sets the meta to the matches object
     matches[priority] = matches[priority] || {}

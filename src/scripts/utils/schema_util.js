@@ -1,6 +1,7 @@
 import { clearObj } from './object_util'
 import { typesOverride } from './types_util'
 import { isFunc } from './methods_util'
+import _unset from 'lodash.unset'
 
 let INSTANCE_CACHE
 export const clearInstanceCache = () => {
@@ -12,9 +13,14 @@ export const getInstanceCache = id => (
   id && INSTANCE_CACHE[id] || INSTANCE_CACHE
 )
 
-export const clearInstance = id => (
-  id && INSTANCE_CACHE[id] && (INSTANCE_CACHE[id] = undefined)
-)
+export const clearInstance = id => {
+  if(!id || !INSTANCE_CACHE[id]) return
+  isFunc(INSTANCE_CACHE[id].componentWillUnmount) &&
+    INSTANCE_CACHE[id].componentWillUnmount()
+
+  _unset(INSTANCE_CACHE, id)
+}
+
  
 export const buildInstance = (type, schema, settings) => {
   const { id, matchType } = schema

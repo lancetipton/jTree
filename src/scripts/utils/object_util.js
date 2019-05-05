@@ -1,16 +1,15 @@
+import _unset from 'lodash.unset'
+
 export { default as cloneDeep } from 'lodash.clonedeep'
 
 export const cloneJson = obj => JSON.parse(JSON.stringify(obj))
 
 export const clearObj = obj => (
-  Object
+  obj && Object
     .entries(obj)
     .map(([key, value]) => {
-      if(typeof value === 'object')
-        clearObj(value)
-
-      obj[key] = undefined
-      delete obj[key]
+      if(typeof value === 'object') clearObj(value)
+      _unset(obj, key)
     })
 )
 

@@ -1,52 +1,46 @@
-import BaseType from '../base'
+import CleaveType from '../cleave'
 import { Item } from '../../components'
 import { Values } from 'jTConstants'
 
-class StringType extends BaseType {
+class StringType extends CleaveType {
 
   static priority = 1
   static eval = (value) => (typeof value === 'string')
 
   constructor(config){
-    super(config)
+    super({
+      ...config,
+      cleave: {
+        numeral: false,
+        stripLeadingZeroes: false,
+        ...(config && config.cleave || {}),
+      }
+    })
   }
 
-  onEdit = e => {
-    console.log(this);
-  }
-
-  onDrag = e => {
-    console.log(this);
-  }
-
-  onDelete = e => {
-    console.log(this);
-  }
-
-  shouldComponentUpdate = (props) => {
-
-  }
-  
-  componentDidUpdate = (props) => {
-
-  }
-  
   render = props => {
     const { schema } = props
-    
-    if(schema.mode === Values.MODES.EDIT){
-      console.log('------------------edit number------------------');
-      console.log(props);
-    }
-    
+    const actions = schema.mode !== Values.MODES.EDIT
+      ? {
+        onEdit: this.onEdit,
+        onDrag: this.onDrag,
+        onDelete: this.onDelete
+      }
+      : {
+        onChange: this.onChange,
+        onSave: this.onSave,
+        onCancel: this.onCancel,
+      }
+
     return Item({
       id: schema.id,
       key: schema.key,
       value: schema.value,
+      mode: schema.mode,
+      showLabel: true,
       type: schema.matchType,
-      onEdit: this.onEdit,
-      onDrag: this.onDrag,
-      onDelete: this.onDelete
+      keyInput: 'text',
+      ...actions
     })
   }
 

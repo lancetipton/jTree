@@ -28,7 +28,8 @@ const buildOptions = props => {
         class: `item-value item-data item-edit${props.cleave && ` item-cleave` || ''}`,
         type: props.valueInput || 'text',
         [Values.DATA_SCHEMA_KEY]: 'value',
-        name: `value-${props.key}`
+        name: `value-${props.key}`,
+        value: props.value,
       }
     }
     : {

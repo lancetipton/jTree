@@ -24,7 +24,7 @@ export const Values = {
   DEFAULT_TYPES: 'definitions',
   MODES: Object.freeze({
     EDIT: 'EDIT',
-    MOVE: 'MOVE',
+    DRAG: 'DRAG',
     REMOVE: 'REMOVE'
   }),
   PROPS_CHECK: Object.freeze([
@@ -42,5 +42,5 @@ export const Values = {
     'matchType'
   ]),
   DATA_TREE_ID: 'data-tree-id',
-  DATA_SCHEMA_KEY: 'data-schema-key',
+  DATA_SCHEMA_KEY: 'data-schema-key'
 }

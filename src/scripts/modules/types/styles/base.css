@@ -68,9 +68,11 @@
 
 /* ---- Edit Item / Inputs / Label ---- */
 .j-tree-editor li.row > div.item.item-edit > div > input.item-edit {
+  min-width: 130px;
   min-height: 20px;
   margin-top: 15px;
   margin-bottom: 10px;
+  padding: 3px;
 }
 .j-tree-editor li.row > div.item .item-data-wrapper {
   position: relative;

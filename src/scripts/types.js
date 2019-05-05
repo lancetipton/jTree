@@ -6,6 +6,7 @@ import {
   checkCall,
   checkMultiMatches,
   callMatchHelper,
+  clearTypeData,
   deepMerge,
   getMatchTypes,
   initTypeCache,
@@ -20,15 +21,17 @@ import {
   validateNewType,
 } from 'jTUtils'
 
+import _unset from 'lodash.unset'
 import { Values } from 'jTConstants'
 import Render from './modules/renders'
 import TypeDefs from './modules/types'
 import stylesReset from './styles_reset.css'
+
 import StyleLoader from 'styleloader'
 const styleLoader = new StyleLoader()
-
 let TYPE_CACHE
 let LOADED_TYPES
+
 const loadRenderTypes = renderPath => Promise.resolve(
   renderPath && Render.load(
     typeof renderPath === 'string' && renderPath || Values.DEFAULT_RENDERS
@@ -209,10 +212,13 @@ export function TypesCls(settings){
 
     get = () => TYPE_CACHE
     
-    clear = () => {
-      clearObj(TYPE_CACHE)
-      clearObj(LOADED_TYPES)
+    clear = (includeClass=true) => {
+      clearTypeData(this, TYPE_CACHE, includeClass)
       TYPE_CACHE = undefined
+      Object
+        .keys(LOADED_TYPES)
+        .map(key => _unset(LOADED_TYPES[key]))
+
       LOADED_TYPES = undefined
     }
     
@@ -233,7 +239,7 @@ export function TypesCls(settings){
     }
 
     rebuild = () => {
-      this.clear()
+      this.clear(false)
       TYPE_CACHE = initTypeCache(this, settings)
     }
     
@@ -249,16 +255,16 @@ export function TypesCls(settings){
         ]
       )
 
+      if(matchTypes.highest && matchTypes[matchTypes.highest])
+        return matchTypes[matchTypes.highest]
+
       const firstKey =  isObj(matchTypes) && Object.keys(matchTypes)[0]
       return firstKey && matchTypes[firstKey]
     }
     
     destroy = (Editor) => {
-      clearObj(TYPE_CACHE)
+      this.clear()
       styleLoader.destroy()
-      TYPE_CACHE = undefined
-      this.BaseType = undefined
-      delete this.BaseType
     }
 
   }
