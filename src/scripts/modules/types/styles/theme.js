@@ -1,68 +1,65 @@
-/*
-
-  lightBlue: '#00a5ff',
+const colors = {
+  lightBlue: '#00A5FF',
   robinBlue: '#00c4c9',
-  brightGray: '#343b46',
-  grayShadow: '#ccc9c9',
-  graySand: '#cacbcc',
-  iconGray: '#c5c5c5',
+  brightGray: '#343B46',
+  grayShadow: '#CCC9C9',
+  graySand: '#CACBCC',
+  iconGray: '#C5C5C5',
   lightGray: '#D8D7DC',
+  fadedGray: '#8692a8',
   spanishGray: '#C0BFC4',
-  shuttleGray: '#545d6d',
-  
-  bunkerBlack: '#13161c',
-  ebonyBlack: '#242a35',
+  shuttleGray: '#545D6D',
+  bunkerBlack: '#13161C',
+  ebonyBlack: '#242A35',
   lightBlack: '#565656',
-  mirageBlack: '#19202b',
+  mirageBlack: '#19202B',
 
   // Colors
-  dullWhite: '#f1eff5',
-  white: '#ffffff',
-  gray: '#bfbec3',
-  black: '#14171c',
+  dullWhite: '#F1EFF5',
+  white: '#FFFFFF',
+  gray: '#BFBEC3',
+  black: '#14171C',
 
-  blue: '#03a9f4',
-  lime: '#0fced1',
-  green: '#4caf50',
-  red: '#fa0719',
-  orange: '#fa7807',
-
-*/
+  blue: '#03A9F4',
+  lime: '#0FCED1',
+  green: '#4CAF50',
+  red: '#FA0719',
+  orange: '#FA7807',
+}
 
 const theme = {
   // Inputs
-  inBackground: '#FFFFFF',
-  inBorder:  '1px solid #D8D7DC',
-  inColor:  '#14171c',
+  inBackground: colors.white,
+  inBorder:  `1px solid ${colors.lightGray}`,
+  inColor:  colors.lightBlack,
   inFontSize: '12px',
   
   // color states
-  passiveBack: '#FFFFFF',
+  passiveBack: colors.white,
   // Group of items background color
-  passiveGroupBack: '#FFFFFF',
-  activeGroupBack: '#F1EFF5',
-  openGroupBack: '#FFFFFF',
+  passiveGroupBack: colors.white,
+  activeGroupBack: colors.dullWhite,
+  openGroupBack: colors.white,
   // Single Item background color
-  passiveItemBack: '#FFFFFF',
-  hoverItemBack: '#F1EFF5',
+  passiveItemBack: colors.white,
+  hoverItemBack: colors.dullWhite,
   
   // Buttons states
-  passiveBtn: '#565656',
-  activeEdit: '#0FCED1',
-  activeDrag: '#03A9F4',
-  activeDelete: '#FA0719',
-  activeSave: '#4caf50',
-  activeCancel: '#fa0719',
+  passiveBtn: colors.lightBlack,
+  activeEdit: colors.lime,
+  activeDrag: colors.blue,
+  activeSave: colors.green,
+  activeCancel: colors.red,
+  activeDelete: colors.red,
   
-  // Labels
-  header: '#565656',
-  label: '#8692a8',
+  // Types
+  typeLabelColor: colors.fadedGray,
+  typeLabelSize: '10px',
   
   // Sizes
   headerSize: '14px',
   keySize: '12px',
   valueSize: '12px',
-  labelSize: '10px',
   
   // Speeds
   easeSpeed: `0.5s`,

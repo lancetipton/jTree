@@ -22,7 +22,6 @@ class BooleanType extends BaseType {
       value,
       mode,
       options,
-      icon: true,
       type: matchType,
       showLabel: true,
       valueEl: 'select',

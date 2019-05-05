@@ -12,8 +12,15 @@ const getChildren = props => (
   ))
 )
 
+const selectWrapper = (props, children) => (
+  elements.div({className: 'select-wrapper'},
+    elements.select(props, children),
+    elements.i({className: 'fas fa-sort select-icon'}), 
+  )
+)
+
 export const select = (props, type) => ({
-  El: elements.select,
+  El: selectWrapper,
   isEdit: true,
   showLabel: props.showLabel,
   keyVal: '',

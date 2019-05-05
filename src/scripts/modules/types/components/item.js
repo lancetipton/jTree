@@ -67,9 +67,6 @@ export const Item = (props) => (
     { className: `item ${props.mode === Values.MODES.EDIT && Values.EDIT_CLS || ''}` },
     buildItemKey(buildOptions(props, 'key')),
     buildItemValue(buildOptions(props, 'value')),
-    props.mode === Values.MODES.EDIT && 
-      props.icon &&
-        i({className: 'fas fa-sort-down item-icon'}) || '', 
     div(
       { className: `item-btns item-data` },
       Buttons(props),

@@ -68,7 +68,7 @@
 
 /* ---- Edit Item / Inputs / Label ---- */
 /* Select Box */
-.j-tree-editor li.row > div.item.item-edit > div > select.item-edit {
+.j-tree-editor li.row > div.item-edit .select-wrapper select.item-edit {
 	box-sizing: border-box;
   border-radius: 0px;
 	-moz-appearance: none;
@@ -78,16 +78,24 @@
   padding: 3px;
   cursor: pointer;
 }
-.j-tree-editor li.row > div.item.item-edit > i.item-icon {
-  position: relative;
-  left: -15px;
-  top: 2px;
-  pointer-events: none;
+
+.j-tree-editor li.row > div.item-edit .select-wrapper {
+  
 }
 
+.j-tree-editor li.row > div.item-edit .select-wrapper > i.select-icon {
+  position: absolute;
+  right: 7px;
+  top: 23px;
+  font-size: 12px;
+  pointer-events: none;
+  color: @inColor;
+}
 
+.j-tree-editor li.row > div.item-edit .select-wrapper select.item-edit,
 .j-tree-editor li.row > div.item.item-edit > div > .item-edit {
   background-color: @inBackground;
+  display: inline-block;
   min-width: 130px;
   max-width: 100%;
   max-height: 30px;
@@ -109,6 +117,7 @@
   position: absolute;
   top: 0;
   opacity: 1;
+  color: @inColor;
 }
 .j-tree-editor li.row > div.item.item-edit > div > label.item-key-label {
   /* position: absolute;
@@ -143,8 +152,8 @@
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper div.type-label {
-  font-size: @labelSize;
-  color: @label;
+  font-size: @typeLabelSize;
+  color: @typeLabelColor;
   position: relative;
   top: -3px;
   margin-right: 10px;
