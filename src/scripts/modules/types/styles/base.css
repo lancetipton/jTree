@@ -35,6 +35,23 @@
   margin-left: -20px;
 }
 
+.j-tree-editor ul.list div.header .list-toggle-icon {
+  text-decoration: none;
+  position: relative;
+  margin-right: 10px;
+  font-size: 16px;
+  top: 1px;
+  -webkit-transition: -webkit-transform 1s ease-in-out;
+  -ms-transition: -ms-transform 1s ease-in-out;
+  transition: transform 1s ease-in-out;  
+}
+
+.j-tree-editor ul.list div.header .list-toggle-icon.open {
+  transform:rotate(90deg);
+  -ms-transform:rotate(90deg);
+  -webkit-transform:rotate(90deg);
+}
+
 /* ---- Display Item ---- */
 .j-tree-editor ul.list > li.row > div.item {
   transition: background-color @easeSpeed ease;
@@ -119,6 +136,7 @@
   opacity: 1;
   color: @inColor;
 }
+
 .j-tree-editor li.row > div.item.item-edit > div > label.item-key-label {
   /* position: absolute;
   top: 5px;

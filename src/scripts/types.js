@@ -54,17 +54,19 @@ const getParentComp = (data) => (
 
 const renderComponent = (key, value, props) => {
   const { schema, tree, settings } = props
+  const showChildren = schema.mode === 'OPEN'
+
   let component = isObj(value)
     ? schema.instance.render({
         ...props,
         children: Object
           .entries(value)
           .map(([ childKey, child ]) => (
-              loopDataObj(
+              showChildren && loopDataObj(
                 { value: child, key: childKey, parent: schema },
                 tree,
                 settings
-              )
+              ) || { value: child, key: childKey }
           ))
       })
     : Array.isArray(value)
@@ -72,11 +74,11 @@ const renderComponent = (key, value, props) => {
             ...props,
             children: value
               .map((child, index) => (
-                loopDataObj(
+                showChildren && loopDataObj(
                   { value: child, key: index, parent: schema },
                   tree,
                   settings
-                )
+                ) || { value: child, key: childKey }
               ))
           })
         : schema.instance.render(props)

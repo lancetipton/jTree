@@ -1,6 +1,7 @@
 import { er, elements } from 'element-r'
 import { Icon } from './icon'
 import { capitalize } from 'jTUtils'
+import { Values } from 'jTConstants'
 const { div, style, span  } = elements
 
 
@@ -28,7 +29,7 @@ const buildIcon = (action, type, id) => {
     ? Icon(
         btn.icon,
         btn.key,
-        { icon: { 'data-tree-id': id, onclick: action } },
+        { icon: { [Values.DATA_TREE_ID]: id, onclick: action } },
         type
       )
     : ''

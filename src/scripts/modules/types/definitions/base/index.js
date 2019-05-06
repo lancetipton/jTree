@@ -134,12 +134,14 @@ class BaseType {
   )
 
   buildEvents = (schema, domNode) => (
-   domNode && Array
-      .from(domNode.getElementsByTagName('input'))
-      .map(input => {
-        input.oninput = this.onChange
-        this.config.expandOnChange !== false && this.setWidth(input)
-      })
+    domNode && ['input', 'select', 'textarea']
+      .map(tag => (
+        Array.from(domNode.getElementsByTagName(tag))
+          .map(input => {
+            input.oninput = this.onChange
+            this.config.expandOnChange !== false && this.setWidth(input)
+          })
+      ))
   )
 
   componentDidUpdate = (props, domEl, Editor) => {

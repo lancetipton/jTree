@@ -25,7 +25,8 @@ export const Values = {
   MODES: Object.freeze({
     EDIT: 'EDIT',
     DRAG: 'DRAG',
-    REMOVE: 'REMOVE'
+    REMOVE: 'REMOVE',
+    OPEN: 'OPEN'
   }),
   PROPS_CHECK: Object.freeze([
     'tree',
