@@ -45,13 +45,12 @@ const getParentComp = (data) => (
       : null
 )
 
-const getChildSchema = (key, value, { tree, schema }) => (
-  tree.schema[buildPos(key, schema)] || { 
-    key,
-    value,
-    parent: schema,
-  }
-)
+const getChildSchema = (key, value, { tree, schema }) => ({ 
+  ...(tree.schema[buildPos(key, schema)] || {}),
+  key,
+  value,
+  parent: schema,
+})
 
 const renderComponent = (key, value, props) => {
   const { schema, tree, settings } = props
