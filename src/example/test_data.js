@@ -1,19 +1,19 @@
 window.TEST_DOM_DATA = {
   // id: 'b3c5eb51-5a5b-4b52-a29e-a831ebf5a347',
-  0: 9999999,
-  1: true,
-  // 1: {
-  //   class: true,
-  //   id: 'b3c5eb51-5a5b-4b52-a29e-a831ebf5a347',
-  // },
-  // '2': [
-  //   {
-  //     '0': 9999999,
-  //     '1': {
-  //       'id': '3af353c4-64f9-4edf-8324-bcbdf37d88cc',
-  //       'el-type': 'form-row',
-  //       class: 'form-row',
-  //     },
+  // 0: 9999999,
+  // 1: true,
+  1: {
+    class: true,
+    // id: 'b3c5eb51-5a5b-4b52-a29e-a831ebf5a347',
+  },
+  '2': {
+      '0': 9999999,
+      '1': {
+        'id': '3af353c4-64f9-4edf-8324-bcbdf37d88cc',
+        'el-type': 'form-row',
+        class: 'form-row',
+      },
+    }
   //     '2': [
   //       {
   //         '0': 'div',

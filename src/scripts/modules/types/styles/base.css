@@ -43,13 +43,27 @@
   top: 1px;
   -webkit-transition: -webkit-transform 1s ease-in-out;
   -ms-transition: -ms-transform 1s ease-in-out;
-  transition: transform 1s ease-in-out;  
+  transition: all 1s ease-in-out;
+  color: @passiveToggle;
+}
+
+.j-tree-editor ul.list div.header .list-toggle-icon:hover {
+  text-decoration: none;
+  position: relative;
+  margin-right: 10px;
+  font-size: 16px;
+  top: 1px;
+  -webkit-transition: -webkit-transform 1s ease-in-out;
+  -ms-transition: -ms-transform 1s ease-in-out;
+  transition: transform 1s ease-in-out;
+  color: @activeToggle;
 }
 
 .j-tree-editor ul.list div.header .list-toggle-icon.open {
   transform:rotate(90deg);
   -ms-transform:rotate(90deg);
   -webkit-transform:rotate(90deg);
+  color: @activeToggle;
 }
 
 /* ---- Display Item ---- */

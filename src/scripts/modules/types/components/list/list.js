@@ -1,4 +1,5 @@
 import { elements } from 'element-r'
+import { Schema } from 'jTConstants'
 import { Row } from './row'
 import { ListHeader } from './list_header'
 const { div, ul } = elements
@@ -22,8 +23,9 @@ export const List = (props) => {
   
   children = children && children.map(child => Row(child, props)) || []
   
-  children.unshift( Row( ListHeader(headerProps) ) )
-  
+  headerProps.key !== Schema.ROOT &&
+    children.unshift( Row( ListHeader(headerProps) ) )
+
   return div({ className: wrapClass(classes) }, 
     ul({ className: 'list' }, children)
   )

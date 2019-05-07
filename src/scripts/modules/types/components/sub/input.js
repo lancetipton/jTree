@@ -18,7 +18,17 @@ const getAttrs = (props, type) => (
       value: props.value,
     }
 )
-
+/**
+ * 
+ * 
+ * @param  { object } props - data passed in from TypeClass instance
+ * @param  { object } props.showLabel - should show input label
+ * @param  { object } props.value - value of the element
+ * @param  { object } props.valueInput - value input type if editing
+ * @param  { object } props.key - key being edited
+ * @param  { object } props.keyInput - key input type if editing
+ * @return { dom node }
+ */
 export const input = (props, type) => ({ 
     El: elements.input,
     isEdit: true,

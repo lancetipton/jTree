@@ -1,7 +1,7 @@
 import BaseType from '../base'
 import Cleave from 'cleave.js'
 import { clearObj } from 'jTUtils'
-import { Values } from 'jTConstants'
+import { Values, Schema } from 'jTConstants'
 
 const getCleaveEl = (Editor, id) => {
   const { component } = Editor.schema(id)
@@ -71,7 +71,7 @@ class CleaveType extends BaseType {
   componentDidUpdate = (props, domEl, Editor) => {
     const { schema } = props
     // If not in edit mode, clear out cleave
-    if(schema.mode !== Values.MODES.EDIT) this.clearCleave(false)
+    if(schema.mode !== Schema.MODES.EDIT) this.clearCleave(false)
     // If in edit mode, and no cleave, add the cleave to the component
     else if(!this.cleave) this.buildEvents(schema, domEl)
     // Else update the cleave to the current raw value

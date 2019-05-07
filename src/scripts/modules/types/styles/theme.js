@@ -34,6 +34,10 @@ const theme = {
   inColor:  colors.lightBlack,
   inFontSize: '12px',
   
+  // Toggle Action
+  passiveToggle: colors.blue,
+  activeToggle: colors.orange,
+  
   // color states
   passiveBack: colors.white,
   // Group of items background color

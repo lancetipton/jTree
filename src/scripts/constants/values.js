@@ -1,56 +1,33 @@
 export const Values = {
+  CLEAVE_CLS: 'item-cleave',
+  DATA_SCHEMA_KEY: 'data-schema-key',
+  DATA_TREE_ID: 'data-tree-id',
+  DEFAULT_TYPES: 'definitions',
+  EDIT_CLS: 'item-edit',
   KEY_MODS: Object.freeze([ 'shift', 'alt', 'ctrl', 'cmd' ]),
-  NO_OP: () => {},
-  PRIORITY: 'PRIORITY',
-  MAP_TYPES: 'MAP_TYPES',
-  NOT_IN_TREE: 'NOT_IN_TREE',
-  PARENT_OVERWRITE: Object.freeze({
-    eval: 'function',
-    matchHelper: 'function',
-    priority: 'number',
-  }),
-  TYPE_OVERWRITE: Object.freeze({
-    build: 'function'
-  }),
   LOG_TYPES: Object.freeze([
     'error',
     'dir',
     'log',
     'warn'
   ]),
-  ROOT_CLASS: 'j-tree-editor',
-  ROOT: 'content',
-  DEFAULT_RENDERS: 'js',
-  DEFAULT_TYPES: 'definitions',
-  MODES: Object.freeze({
-    EDIT: 'EDIT',
-    DRAG: 'DRAG',
-    REMOVE: 'REMOVE',
-    OPEN: 'OPEN'
+  MAP_TYPES: 'MAP_TYPES',
+  NO_OP: () => {},
+  PARENT_OVERWRITE: Object.freeze({
+    eval: 'function',
+    matchHelper: 'function',
+    priority: 'number',
   }),
-  PROPS_CHECK: Object.freeze([
-    'tree',
-    'Editor',
-    'parent',
-    'instance',
-    'settings'
-  ]),
-  TREE_UPDATE_PROPS: Object.freeze([
-    'key',
-    'value',
-    'mode',
-    'type',
-    'matchType'
-  ]),
-  CLEAVE_CLS: 'item-cleave',
-  EDIT_CLS: 'item-edit',
-  DATA_TREE_ID: 'data-tree-id',
-  DATA_SCHEMA_KEY: 'data-schema-key',
+  PRIORITY: 'PRIORITY',
+  ROOT_CLASS: 'j-tree-editor',
   TYPES_CONFIG_OPTS: Object.freeze([
     // Allowed custom config properties
     // Auto expand the input to the size of it's text content
     'expandOnChange',
     // Array of allowed options to be used in select inputs, when editing
     'options'
-  ])
+  ]),
+  TYPE_OVERWRITE: Object.freeze({
+    build: 'function'
+  }),
 }

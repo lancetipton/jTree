@@ -34,15 +34,6 @@ export const buildInstance = (type, schema, settings) => {
     const instance = new type.factory(config)
     // Check for config overrides from the passed in settings
     config && typesOverride(instance, settings.types[matchType])
-    // If dynamic render path is set, and the type has a render loaded
-    // And the instance.render is not already set as the type.render
-    // Or if no instance.render exists, and a type render does, use it
-    if(
-      (settings.renderPath && type.render && instance.render !== type.render) ||
-      (!instance.render && type.render)
-    )
-      instance.render = type.render.bind(instance)
-    
 
     const editor = settings.editor || {}
     // Wrap the methods on the instance, so we can pass the Editor into them when called

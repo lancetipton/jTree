@@ -1,6 +1,6 @@
 import { isObj } from './object_util'
 import { isConstructor, logData } from './methods_util'
-import { Values } from '../constants'
+import { Values, Schema } from '../constants'
 import _get from 'lodash.get'
 
 /**
@@ -71,8 +71,8 @@ export const validateUpdate = (idOrPos, update, tree) => {
       tree, 'warn'
     )
 
-  const dataInTree = _get(tree, pos, Values.NOT_IN_TREE)
-  if(dataInTree === Values.NOT_IN_TREE) {
+  const dataInTree = _get(tree, pos, Schema.NOT_IN_TREE)
+  if(dataInTree === Schema.NOT_IN_TREE) {
     return logData(
       `Could not find any data in the tree that matches ${idOrPos}!`,
       tree, 'warn'
@@ -89,7 +89,7 @@ export const validateUpdate = (idOrPos, update, tree) => {
   const nonValid = Object
     .keys(update)
     .reduce((notValid, key) => {
-      if(Values.TREE_UPDATE_PROPS.indexOf(key) == -1 )
+      if(Schema.TREE_UPDATE_PROPS.indexOf(key) == -1 )
         notValid = key
       
       return notValid

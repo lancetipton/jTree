@@ -1,5 +1,5 @@
 import { buildTheme } from '../../styles/build_theme'
-import { Values } from 'jTConstants'
+import { Values, Schema } from 'jTConstants'
 import { Item } from '../../components'
 import Cleave from 'cleave.js'
 import { isFunc, logData, clearObj } from 'jTUtils'
@@ -96,25 +96,25 @@ class BaseType {
   }
 
   onEdit = (e, Editor) => {
-    const update = { mode: Values.MODES.EDIT }
+    const update = { mode: Schema.MODES.EDIT }
     const id = shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
     id && Editor.update(id, update)
   }
 
   onDrag = (e, Editor) => {
-    const update = { mode: Values.MODES.DRAG }
+    const update = { mode: Schema.MODES.DRAG }
     const id = shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
     id && Editor.update(id, update)
   }
 
   onDelete = (e, Editor) => {
-    const update = { id, mode: Values.MODES.DRAG }
+    const update = { id, mode: Schema.MODES.DRAG }
     const id = shouldDoDefault( e, update, Editor, this.userEvents.onDelete )
     id && Editor.remove(id)
   }
 
   getActions = mode => (
-    mode !== Values.MODES.EDIT
+    mode !== Schema.MODES.EDIT
       ? {
         onEdit: this.onEdit,
         onDrag: this.onDrag,
@@ -166,7 +166,7 @@ class BaseType {
   render = props => {
 
     const { schema } = props
-    const actions = schema.mode !== Values.MODES.EDIT
+    const actions = schema.mode !== Schema.MODES.EDIT
       ? {
         onEdit: this.onEdit,
         onDrag: this.onDrag,

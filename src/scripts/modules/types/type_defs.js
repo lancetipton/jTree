@@ -1,10 +1,10 @@
 import { logData } from 'jTUtils'
 
-const load = (renderPath) => import(
+const load = (typesPath) => import(
   /* webpackInclude: /\.js$/ */
   /* webpackChunkName: "type-[request]" */
   /* webpackMode: "lazy" */
-  `./${renderPath || 'definitions'}`
+  `./${typesPath || 'definitions'}`
   )
   .then(type => {
     if(!type || !type.default)

@@ -1,7 +1,7 @@
 import { Buttons } from './buttons'
 import { elements } from 'element-r'
 import { capitalize, isFunc } from 'jTUtils'
-import { Values } from 'jTConstants'
+import { Values, Schema } from 'jTConstants'
 import * as subComps from './sub'
 const { div, i } = elements
 
@@ -12,7 +12,7 @@ const { div, i } = elements
  * @return { object } built options 
  */
 const buildOptions = (props, type) => {
-  const isEdit = props.mode === Values.MODES.EDIT
+  const isEdit = props.mode === Schema.MODES.EDIT
   const showLabel = isEdit && props.showLabel
   const typeEl = props[`${type}El`]
 
@@ -64,7 +64,7 @@ const buildItemValue = props => {
  */
 export const Item = (props) => (
   div(
-    { className: `item ${props.mode === Values.MODES.EDIT && Values.EDIT_CLS || ''}` },
+    { className: `item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}` },
     buildItemKey(buildOptions(props, 'key')),
     buildItemValue(buildOptions(props, 'value')),
     div(

@@ -21,7 +21,7 @@ import {
   validateSource,
   validateUpdate,
 } from 'jTUtils'
-import { Values } from 'jTConstants'
+import { Values, Schema } from 'jTConstants'
 import { buildTypes, TypesCls, loopDataObj } from './types'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
@@ -53,7 +53,6 @@ const appendTreeHelper = function(rootComp, appendTree){
 }
 
 const buildFromPos = function(pos, settings, force) {
-
   if(
     !isStr(pos) ||
     !this.tree ||
@@ -69,9 +68,10 @@ const buildFromPos = function(pos, settings, force) {
     settings,
     appendTreeHelper && appendTreeHelper.bind(this)
   )
+  
+  if(pos === Schema.ROOT) return
 
   const replaceEl = upsertElement(updatedEl, buildSchema.component)
-
   return replaceEl !== updatedEl
 }
 
@@ -149,7 +149,7 @@ const createEditor = (settings, domContainer) => {
       }
 
       // Loop over the allowed props to be update
-      Values.TREE_UPDATE_PROPS
+      Schema.TREE_UPDATE_PROPS
         .map(prop => (
           // If the prop exists in the update acctions,
           // and the passed in update object
@@ -192,7 +192,7 @@ const createEditor = (settings, domContainer) => {
     
     destroy = () => {
       ACT_SOURCE = undefined
-      clearObj(this.tree.content)
+      clearObj(this.tree[Schema.ROOT])
       clearObj(this.tree.idMap)
       clearObj(this.config)
       this.Types.destroy(this)

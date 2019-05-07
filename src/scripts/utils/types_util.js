@@ -9,27 +9,23 @@ const getTypeStyles = (settings, Type) => (
       settings.styleLoader.add(Type.name, Type.getStyles(settings))
 )
 
-export const initTypeCache = (TypesCls, settings, loadedTypes, renders) => {
+export const initTypeCache = (TypesCls, settings, loadedTypes) => {
   const { BaseType, subTypes, types } = loadedTypes
   const rootTypes = { ...types }
   const joinedSubTypes = { ...subTypes, ...settings.customTypes }
   TypesCls.BaseType = new BaseType(settings.types.base)
   return buildTypeCache(
     settings,
-    { rootTypes, subTypes: joinedSubTypes, BaseType: TypesCls.BaseType },
-    renders,
+    { rootTypes, subTypes: joinedSubTypes, BaseType: TypesCls.BaseType }
   )
 }
 
-export const buildTypeCache = (settings, allTypes, renders) => {
-  const { rootTypes, subTypes, BaseType } = allTypes
-  const typeRender = renders || {}
-  
+export const buildTypeCache = (settings, allTypes) => {
+  const { rootTypes, subTypes, BaseType } = allTypes  
   const BaseTypeMeta = {
     name: BaseType.constructor.name,
     base: BaseType,
-    factory: BaseType.constructor,
-    render: typeRender.base,
+    factory: BaseType.constructor
   }
   // Ensure the styles get loaded for the base
   getTypeStyles(settings, BaseType.constructor)
@@ -41,8 +37,7 @@ export const buildTypeCache = (settings, allTypes, renders) => {
       allTypes[name] = {
         name,
         factory,
-        extends: BaseTypeMeta,
-        render: typeRender[name] || typeRender.base
+        extends: BaseTypeMeta
       }
       // Ensure the styles get loaded for each type factory
       getTypeStyles(settings, factory)
@@ -52,7 +47,6 @@ export const buildTypeCache = (settings, allTypes, renders) => {
           buildSubTypes(
             subTypes[name],
             allTypes[name],
-            typeRender,
             settings
           )
         )
@@ -74,7 +68,7 @@ export const buildTypeName = typeClsName => (
   typeClsName.split('Type').join('').toLowerCase()
 )
 
-const buildSubTypes = (subTypes, parentMeta, typeRender, settings) => (
+const buildSubTypes = (subTypes, parentMeta, settings) => (
   Object
   .values(subTypes)
   .reduce((built, subType) => {
@@ -83,8 +77,7 @@ const buildSubTypes = (subTypes, parentMeta, typeRender, settings) => (
     built[typeName] = {
       name: typeName,
       factory: subType,
-      extends: parentMeta,
-      render: typeRender[typeName] || parentMeta.render
+      extends: parentMeta
     }
     // Ensure the styles get loaded for each sub type factory
     getTypeStyles(settings, subType)

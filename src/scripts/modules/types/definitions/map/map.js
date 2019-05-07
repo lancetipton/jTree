@@ -1,6 +1,6 @@
 import BaseType from '../base'
 import { typesOverride, capitalize } from 'jTUtils'
-import { Values } from 'jTConstants'
+import { Schema, Values } from 'jTConstants'
 import { List } from '../../components'
 
 class MapType extends BaseType {
@@ -15,21 +15,19 @@ class MapType extends BaseType {
   onToggle = (e, Editor) => {
     const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
     const schema = Editor.schema(id)
-    const update = schema.mode !== 'OPEN'
-      ? { mode: 'OPEN' }
-      : { mode: undefined }
-
+    const update = { open: !schema.open }
     id && Editor.update(id, update)
   }
 
   render = props => {
+
     const { schema: { id, key, value, mode, matchType }, children } = props
-    const isRoot = props.schema.key === Values.ROOT
+    const isRoot = props.schema.key === Schema.ROOT
     // const isOpen = props.schema.open || isRoot
-    const isOpen = props.schema.mode === 'OPEN'
+    const isOpen = props.schema.open
     let classes = `list-wrapper`
     classes += isOpen && ` list-open` || ''
-    
+
     return List({
       id,
       key,

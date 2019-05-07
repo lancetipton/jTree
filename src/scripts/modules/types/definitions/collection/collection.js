@@ -1,6 +1,6 @@
 import BaseType from '../base'
 import { capitalize } from 'jTUtils'
-import { Values } from 'jTConstants'
+import { Schema } from 'jTConstants'
 import { List } from '../../components'
 
 class CollectionType extends BaseType {
@@ -27,7 +27,7 @@ class CollectionType extends BaseType {
 
 
   render = props => {
-    const isOpen = props.schema.open || props.schema.key === Values.ROOT
+    const isOpen = props.schema.open || props.schema.key === Schema.ROOT
     let classes = `list-wrapper`
     classes += isOpen && ` list-open` || ''
 

@@ -1,6 +1,6 @@
 import StringType from '../string'
 import { Item } from '../../../components'
-import { Values } from 'jTConstants'
+import { Values, Schema } from 'jTConstants'
 
 class UuidType extends StringType {
 
@@ -29,7 +29,7 @@ class UuidType extends StringType {
 
   render = props => {
     const { schema } = props
-    const actions = schema.mode !== Values.MODES.EDIT
+    const actions = schema.mode !== Schema.MODES.EDIT
       ? {
         onEdit: this.onEdit,
         onDrag: this.onDrag,
