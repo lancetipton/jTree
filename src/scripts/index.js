@@ -71,8 +71,7 @@ const buildFromPos = function(pos, settings, force) {
   
   if(pos === Schema.ROOT) return
 
-  const replaceEl = upsertElement(updatedEl, buildSchema.component)
-  return replaceEl !== updatedEl
+  upsertElement(updatedEl, buildSchema.component)
 }
 
 const createEditor = (settings, domContainer) => {
@@ -130,10 +129,8 @@ const createEditor = (settings, domContainer) => {
       if(!validData || !validData.schema || !validData.pos) return 
       // Get reference to the pos
       let { pos } = validData
-
       // Update the schema to ensure we are working with the updated data
       this.tree.schema[pos] = updateSchema(update, { ...validData.schema })
-
       // Special case for the key prop, cause we have to
       // copy the schema, and change the pos in the tree
       if(update.key){
@@ -147,7 +144,6 @@ const createEditor = (settings, domContainer) => {
           pos = updatedPos
         }
       }
-
       // Loop over the allowed props to be update
       Schema.TREE_UPDATE_PROPS
         .map(prop => (

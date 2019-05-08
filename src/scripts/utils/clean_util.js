@@ -52,6 +52,7 @@ export const clearSchema = (schema, treeSchema, removeInstance=true) => {
   _unset(schema, 'component')
   _unset(schema, 'parent')
   _unset(schema, 'instance')
+  _unset(schema, 'value')
   // Remove the schema from the tree of schemas
   schemaPos && treeSchema && _unset(treeSchema, schemaPos)
   clearObj(schema)

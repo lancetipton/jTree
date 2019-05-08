@@ -1,4 +1,5 @@
 import { logData } from './methods_util'
+import { diffUpdate } from './diff_util'
 
 export const getElement = selector => {
   if(selector instanceof HTMLElement) return selector
@@ -58,8 +59,12 @@ export const upsertElement = (element, parentSelector) => {
   // This is why the passed in element must be a dom node
   // Otherwise the replaceEl and element would be the same
   const replaceEl = document.getElementById(element.id)
+  if(replaceEl) return diffUpdate(element, replaceEl)
+  
+  return parent && parent.appendChild(element)  
+  
   // Replace original with new element
-  return replaceEl
-    ? replaceEl.parentNode.replaceChild(element, replaceEl)
-    : parent && parent.appendChild(element)
+  // return replaceEl
+  //   ? replaceEl.parentNode.replaceChild(element, replaceEl)
+  //   : parent && parent.appendChild(element)
 }

@@ -93,6 +93,7 @@ export const updateKey = (tree, pos) => {
     // Add the old pos data
     ...tree.schema[pos],
     // Overwrite the original pos with updated on
+    value: currentVal,
     pos: updatedPos
   }
 
