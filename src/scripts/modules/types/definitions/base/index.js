@@ -144,13 +144,13 @@ class BaseType {
       ))
   )
 
-  componentDidUpdate = (props, domEl, Editor) => {
+  componentDidUpdate = (props, Editor) => {
     const { schema } = props
     
-    this.buildEvents(schema, domEl)
+    this.buildEvents(schema, schema.component)
     const { parent, instance, component, ...original } = schema
     this.original = original
-    // Clear out the updated, because we just updated
+    // Clear out the updated, because the component just updated
     this.updated && clearObj(this.updated)
   }
 

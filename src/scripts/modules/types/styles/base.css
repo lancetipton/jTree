@@ -13,49 +13,65 @@
 }
 
 .j-tree-editor div.list-wrapper {
-  
+  transition: max-height @listToggleSpeed ease-in-out;
+  overflow: hidden;
+}
+
+/* 
+
+.j-tree-editor div.list-wrapper * {
+  transition: opacity @listToggleSpeed ease-in-out;
+  opacity: 1;
+}
+
+.j-tree-editor .wait-to-show > * {
+  opacity: 0;
+}
+*/
+
+.j-tree-editor div.list-wrapper.list-open {
+
 }
 
 .j-tree-editor div.list-wrapper > ul.list {
-  
+  transition: max-height @listToggleSpeed ease-in-out;
+  overflow: hidden;
+}
+
+.j-tree-editor div.list-wrapper > ul.list.list-open {
 }
 
 .j-tree-editor ul.list > li.row {
-  margin-left: 10px;
+  margin-left: @rowIndent;
   
 }
 .j-tree-editor li.row ul.list > li.row {
-  margin-left: 20px;
+  margin-left: @subRowIndent;
 }
 
 .j-tree-editor ul.list > li.row > div.header {
-  margin-left: -10px;
+  margin-left: @rowHeaderIndent;
 }
 .j-tree-editor li.row ul.list > li.row > div.header {
-  margin-left: -20px;
+  margin-left: @subHeaderRowIndent;
 }
 
 .j-tree-editor ul.list div.header .list-toggle-icon {
   text-decoration: none;
   position: relative;
-  margin-right: 10px;
-  font-size: 16px;
+  margin-right: @toggleSpacer;
+  font-size: @toggleSize;
   top: 1px;
-  -webkit-transition: -webkit-transform 1s ease-in-out;
-  -ms-transition: -ms-transform 1s ease-in-out;
-  transition: all 1s ease-in-out;
+  -webkit-transition: -webkit-transform @toggleIconSpeed ease-in-out;
+  -ms-transition: -ms-transform @toggleIconSpeed ease-in-out;
+  transition: all @toggleIconSpeed ease-in-out;
   color: @passiveToggle;
 }
 
 .j-tree-editor ul.list div.header .list-toggle-icon:hover {
   text-decoration: none;
   position: relative;
-  margin-right: 10px;
-  font-size: 16px;
   top: 1px;
-  -webkit-transition: -webkit-transform 1s ease-in-out;
-  -ms-transition: -ms-transform 1s ease-in-out;
-  transition: transform 1s ease-in-out;
   color: @activeToggle;
 }
 
@@ -69,7 +85,6 @@
 /* ---- Display Item ---- */
 .j-tree-editor ul.list > li.row > div.item {
   transition: background-color @easeSpeed ease;
-  padding: 0px 10px;
   display: flex;
   /* flex-direction: column; */
   justify-content: flex-start;
@@ -88,11 +103,14 @@
 }
 
 .j-tree-editor li.row > div.item > div.item-key {
-  font-weight: bold;
+  font-family: @itemKeyFont;
+  font-weight: @itemKeyFontWeight;
   min-width: 15px;
 }
 
 .j-tree-editor li.row > div.item > div.item-value {
+  font-family: @itemValFont;
+  font-weight: @itemValFontWeight;
   margin-left: 10px;
   min-width: 50px;
 }
@@ -168,7 +186,7 @@
 .j-tree-editor div.item > div.item-btns {
   margin-left: 30px;
   opacity: 0;
-  transition: opacity @easeSpeed ease;
+  transition: opacity @actionBtnSpeed ease;
 }
 
 .j-tree-editor div.item.item-edit > div.item-btns,
@@ -200,7 +218,7 @@
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > .icon {
   text-align: center;
   text-decoration: none;
-  transition: color @easeSpeed ease;
+  transition: color @actionBtnSpeed ease;
   font-size: 10px;
   color: @passiveBtn;
 }
@@ -228,6 +246,6 @@
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon > .icon-text {
   margin-top: 3px;
-  font-family: @raleway;
+  font-family: @actionBtnFont;
   display: block;
 }

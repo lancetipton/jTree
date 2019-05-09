@@ -179,7 +179,7 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   // If we are not on the root element of the tree, 
   // Ensure the props get cleared out and return the rendered component
   if(key !== Schema.ROOT){
-    checkCall(schema.instance.componentDidUpdate, props, component)
+    checkCall(schema.instance.componentDidUpdate, props)
     return (props = undefined) || component
   }
   
@@ -199,7 +199,19 @@ export const buildTypes = (source, settings, elementCb) => {
   if(!validateBuildTypes(source, settings.Editor)) return null
   const tree = { schema: {}, [Schema.ROOT]: source, idMap: {} }
   const rootSchema = { value: source, key: Schema.ROOT }
-  return loopDataObj(rootSchema, tree, settings, elementCb)
+  const data = loopDataObj(rootSchema, tree, settings, elementCb)
+  Object
+    .entries(data.schema)
+    .map(([ pos, schema ]) => {
+      if(!schema.instance) return
+      schema.instance.componentDidMount && schema.instance.componentDidMount({
+        tree,
+        schema,
+        parent: schema.parent,
+      })
+    })
+
+  return data
 }
 
 export function TypesCls(settings){

@@ -68,12 +68,12 @@ class CleaveType extends BaseType {
     rmOpts && clearObj(this.cleaveOpts)
   }
 
-  componentDidUpdate = (props, domEl, Editor) => {
+  componentDidUpdate = (props, Editor) => {
     const { schema } = props
     // If not in edit mode, clear out cleave
     if(schema.mode !== Schema.MODES.EDIT) this.clearCleave(false)
     // If in edit mode, and no cleave, add the cleave to the component
-    else if(!this.cleave) this.buildEvents(schema, domEl)
+    else if(!this.cleave) this.buildEvents(schema, schema.component)
     // Else update the cleave to the current raw value
     else this.cleave.setRawValue(schema.value)
     

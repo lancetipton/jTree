@@ -4,12 +4,12 @@ import { Row } from './row'
 import { ListHeader } from './list_header'
 const { div, ul } = elements
     
-const wrapClass = classes => (
+const checkExtraClass = (org, classes) => (
   typeof classes === 'string'
-    ? `list-wrapper ${classes}`
+    ? `${org} ${classes}`
     : Array.isArray(classes)
-      ? `list-wrapper ${classes.join(` `)}`
-      : `list-wrapper`
+      ? `${org} ${classes.join(` `)}`
+      : org
 )
 
 /**
@@ -19,14 +19,24 @@ const wrapClass = classes => (
  * @return { dom node }
  */
 export const List = (props) => {
-  let { children, classes, ...headerProps } = props
-  
+  let { children, classes, styles, ...headerProps } = props
+  styles = styles || {}
   children = children && children.map(child => Row(child, props)) || []
   
   headerProps.key !== Schema.ROOT &&
     children.unshift( Row( ListHeader(headerProps) ) )
 
-  return div({ className: wrapClass(classes) }, 
-    ul({ className: 'list' }, children)
+  return div(
+    {
+      className: checkExtraClass('list-wrapper', classes),
+      style: styles.wrapper
+    }, 
+    ul(
+      { 
+        className: checkExtraClass('list', classes),
+        style: styles.list
+      },
+      children
+    )
   )
 }

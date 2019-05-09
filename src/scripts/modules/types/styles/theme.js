@@ -27,6 +27,19 @@ const colors = {
   orange: '#FA7807',
 }
 
+const fonts = {
+  // Fonts
+  primary: `"Raleway", sans-serif`,
+  secondary: `"Cabin", sans-serif`,
+  third: `"Roboto", sans-serif`,
+}
+
+const speeds = {
+  fast: `0.5s`,
+  med: `0.9s`,
+  slow: `1.3s`,
+}
+
 const theme = {
   // Inputs
   inBackground: colors.white,
@@ -37,8 +50,18 @@ const theme = {
   // Toggle Action
   passiveToggle: colors.blue,
   activeToggle: colors.orange,
+  toggleIconSpeed: `0.5s`,
+  toggleSize: `16px`,
+  toggleSpacer: '10px',
   
-  // color states
+  // Lists / Rows
+  listToggleSpeed: speeds.fast,
+  rowIndent: '10px',
+  rowHeaderIndent: "-10px",
+  subRowIndent: '20px',
+  subHeaderRowIndent: "-20px",
+  
+  // Color states
   passiveBack: colors.white,
   // Group of items background color
   passiveGroupBack: colors.white,
@@ -55,10 +78,20 @@ const theme = {
   activeSave: colors.green,
   activeCancel: colors.red,
   activeDelete: colors.red,
+  actionBtnFont: fonts.primary,
+  actionBtnSpeed: speeds.fast,
   
   // Types
   typeLabelColor: colors.fadedGray,
   typeLabelSize: '10px',
+  
+  
+  // Item
+  itemKeyFont: fonts.third,
+  itemKeyFontWeight: 'bold',
+  itemValFont: fonts.third,
+  itemValFontWeight: 'normal',
+  itemTransSpeed: speeds.fast,
   
   // Sizes
   headerSize: '14px',
@@ -66,11 +99,7 @@ const theme = {
   valueSize: '12px',
   
   // Speeds
-  easeSpeed: `0.5s`,
-  // Fonts
-  raleway: `"Raleway", sans-serif`,
-  cabin: `"Cabin", sans-serif`,
-  roboto: `"Roboto", sans-serif`,
+  toggleIconSpeed: speeds.fast,
 
 }
 
