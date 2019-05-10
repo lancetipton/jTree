@@ -90,7 +90,7 @@ class MapType extends BaseType {
       parent: schema,
       matchType: 'empty',
       key: Schema.JT_EMPTY_TYPE,
-      value: Schema.JT_EMPTY_TYPE,
+      value: undefined,
     })
   }
 

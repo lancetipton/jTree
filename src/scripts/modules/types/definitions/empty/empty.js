@@ -5,7 +5,7 @@ import { Values, Schema } from 'jTConstants'
 class EmptyType extends BaseType {
 
   static priority = 1
-  static eval = (value) => (value === Schema.JT_EMPTY_TYPE)
+  static eval = (value) => (value === undefined)
 
   constructor(config){
     super({ ...config })

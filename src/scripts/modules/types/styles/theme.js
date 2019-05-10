@@ -16,8 +16,10 @@ const colors = {
 
   // Colors
   dullWhite: '#F1EFF5',
+  offGray: '#F5F5FA',
+  transGray: '#E4E3EA',
   white: '#FFFFFF',
-  gray: '#BFBEC3',
+  gray: '#BAB8BF',
   black: '#14171C',
 
   blue: '#03A9F4',
@@ -25,6 +27,8 @@ const colors = {
   green: '#4CAF50',
   red: '#FA0719',
   orange: '#FA7807',
+  lightShadow: 'box-shadow: 3px 3px 0px 0px rgba(216, 215, 220, 1)',
+  grayShadow: 'box-shadow: 3px 3px 4px -4px rgba(103, 100, 114, 0.5)',
 }
 
 const fonts = {
@@ -43,13 +47,14 @@ const speeds = {
 const theme = {
   // Inputs
   inBackground: colors.white,
-  inBorder:  `1px solid ${colors.lightGray}`,
-  inColor:  colors.lightBlack,
+  inBorder:  `1px solid ${colors.transGray}`,
+  inColor:  colors.ebonyBlack,
   inFontSize: '12px',
   
   // Toggle Action
-  passiveToggle: colors.blue,
-  activeToggle: colors.orange,
+  passiveToggle: colors.ebonyBlack,
+  activeToggle: colors.blue,
+  openToggle: colors.orange,
   toggleIconSpeed: `0.5s`,
   toggleSize: `16px`,
   toggleSpacer: '10px',
@@ -60,19 +65,20 @@ const theme = {
   rowHeaderIndent: "-10px",
   subRowIndent: '20px',
   subHeaderRowIndent: "-20px",
+  rowShadow: colors.lightShadow,
   
   // Color states
   passiveBack: colors.white,
   // Group of items background color
   passiveGroupBack: colors.white,
-  activeGroupBack: colors.dullWhite,
+  activeGroupBack: colors.offGray,
   openGroupBack: colors.white,
   // Single Item background color
   passiveItemBack: colors.white,
-  hoverItemBack: colors.dullWhite,
+  hoverItemBack: colors.offGray,
   
   // Buttons states
-  passiveBtn: colors.lightBlack,
+  passiveBtn: colors.ebonyBlack,
   activeEdit: colors.lime,
   activeDrag: colors.blue,
   activeAdd: colors.green,
@@ -93,6 +99,12 @@ const theme = {
   itemValFont: fonts.third,
   itemValFontWeight: 'normal',
   itemTransSpeed: speeds.fast,
+  itemColor: colors.ebonyBlack,
+  itemBorder: `2px solid transparent`,
+  itemHoverBorder: `2px solid ${colors.ebonyBlack}`,
+  itemEditBorder: `2px solid ${colors.lime}`,
+  itemEmptyBorder: `2px solid ${colors.orange}`,
+  
   
   // Sizes
   headerSize: '14px',
@@ -101,7 +113,9 @@ const theme = {
   
   // Speeds
   toggleIconSpeed: speeds.fast,
-
+  
+  // Disabled
+  disabledInput: colors.offGray,
 }
 
 

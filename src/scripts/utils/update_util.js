@@ -134,7 +134,7 @@ export const addChildSchema = (tree, schema, parent) => {
 
   schema.key = schema.key || schema.id
   schema.parent = parent
-  if(schema.value === Schema.JT_EMPTY_TYPE)
+  if(schema.value === undefined)
     schema.key = Schema.JT_EMPTY_TYPE
   
   if(Array.isArray(parentVal)){
@@ -145,7 +145,7 @@ export const addChildSchema = (tree, schema, parent) => {
   else {
     schema.pos = schema.pos || buildNewPos(parent.pos, schema.key, false)
     if(!checkSchemaPos(tree, schema.pos)) return
-    parentVal[schema.key] = schema.value || ''
+    parentVal[schema.key] = schema.value
   }
 
   tree.idMap[schema.id] = schema.pos

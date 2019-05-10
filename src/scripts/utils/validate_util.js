@@ -105,7 +105,7 @@ export const validateUpdate = (idOrPos, update, tree) => {
 
 
 export const validateAdd = (schema, parent) => (
-  !isObj(schema) || !schema.key || !schema.value
+  !isObj(schema) || !schema.key
     ? logData(`Add method requires a valid schema object as the first argument`, 'error')
     : !isObj(parent) || !parent.value || !parent.pos
       ? logData(`Add method requires a valid parent schema`, 'error')

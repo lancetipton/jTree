@@ -2,8 +2,14 @@ import { er, elements } from 'element-r'
 import { Icon } from './icon'
 import { capitalize } from 'jTUtils'
 import { Values } from 'jTConstants'
-const { div, style, span  } = elements
+const { div, style, span, select, i, option  } = elements
 
+const selectWrapper = (props, children) => (
+  elements.div({className: 'select-wrapper'},
+    elements.select(props, children),
+    elements.i({className: 'fas fa-sort select-icon'}), 
+  )
+)
 
 const typeLabel = type => (
   div({ className: `type-label` }, 
@@ -16,11 +22,20 @@ const typeLabel = type => (
 
 const showTypeValue = (type, props) => {
   if(type !== 'empty') return typeLabel(type)
-  
-  console.log('------------------props------------------');
-  console.log(props.Types.getFlat());
-  
-  return null
+
+  const allTypes = Object.keys(props.Types.getFlat())
+  const options = allTypes.map(value => {
+    return option({ value }, capitalize(value))
+  })
+
+  return selectWrapper({
+    class: `item-${type} item-data ${Values.EDIT_CLS}`,
+    [Values.DATA_SCHEMA_KEY]: type,
+    name: `${type}-${props.key}`,
+    value: props[type],
+  }, options)
+
+
 }
 
 const btnTypes = {

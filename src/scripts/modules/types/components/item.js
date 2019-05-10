@@ -15,7 +15,6 @@ const buildOptions = (props, type) => {
   const isEdit = props.mode === Schema.MODES.EDIT
   const showLabel = isEdit && props.showLabel
   const typeEl = props[`${type}El`]
-
   return !isEdit 
     ? subComps.display(props, type)
     : typeEl && subComps[typeEl]
@@ -28,7 +27,9 @@ const buildOptions = (props, type) => {
  * @param  { object } props - data return from the sub component input type
  * @return { dom node }
  */
-const buildItemKey = ({ showLabel, El, keyAttrs, keyVal }) => {
+const buildItemKey = ({ showLabel, El, keyAttrs, keyVal }, props) => {
+  if(props && props.type === 'empty') keyAttrs.disabled = true
+  
   const keyEl = El(keyAttrs, keyVal)
   return !showLabel
     ? keyEl
@@ -44,9 +45,10 @@ const buildItemKey = ({ showLabel, El, keyAttrs, keyVal }) => {
  * @param  { object } props - data return from the sub component input type
  * @return { dom node }
  */
-const buildItemValue = props => {
-  const { showLabel, El, valueAttrs, elValue, children } = props
-  const valEl = El(valueAttrs, isFunc(children) && children(props) || elValue)
+const buildItemValue = (itemProps, props) => {
+  const { showLabel, El, valueAttrs, elValue, children } = itemProps
+  if(props && props.type === 'empty') valueAttrs.disabled = true
+  const valEl = El(valueAttrs, isFunc(children) && children(itemProps) || elValue)
   
   return !showLabel
     ? valEl
@@ -62,14 +64,19 @@ const buildItemValue = props => {
  * @param  { object } props - passing in from the Types render method
  * @return { dom node }
  */
-export const Item = (props) => (
-  div(
-    { className: `item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}` },
-    buildItemKey(buildOptions(props, 'key')),
-    buildItemValue(buildOptions(props, 'value')),
+export const Item = (props) => {
+  let classes = `item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
+  
+  if(props && props.type === 'empty')
+    classes += ` item-empty`
+    
+  return div(
+    { className: classes },
+    buildItemKey(buildOptions(props, 'key'), props),
+    buildItemValue(buildOptions(props, 'value'), props),
     div(
       { className: `item-btns item-data` },
       Buttons(props),
     )
   )
-)
+}
