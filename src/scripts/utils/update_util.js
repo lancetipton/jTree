@@ -1,6 +1,7 @@
 import { isObj } from './object_util'
-import { logData } from './methods_util'
+import { logData, uuid } from './methods_util'
 import { clearSchema } from './clean_util'
+import { Schema } from 'jTConstants'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
 import _unset from 'lodash.unset'
@@ -12,9 +13,11 @@ import _unset from 'lodash.unset'
  * @param  { string } key - new tree node position
  * @return { string } updated tree node position
  */
-const buildNewPos = (pos, key) => {
+const buildNewPos = (pos, key, replace=true) => {
   const splitPos = pos.split('.')
-  splitPos[splitPos.length -1] = key
+  replace
+    ? (splitPos[splitPos.length -1] = key)
+    : splitPos.push(key)
 
   return splitPos.join('.')
 }
@@ -100,4 +103,53 @@ export const updateKey = (tree, pos) => {
   clearSchema(tree.schema[pos], tree.schema, false)
   // return the updated pos
   return updatedPos
+}
+
+const checkSchemaPos = (tree, pos) => (
+  tree.schema[pos]
+    ? logData(
+      `Cannot add child to tree. Schema pos already exists!`,
+      pos,
+      tree.schema[pos],
+      'error'
+    )
+    : true
+)
+
+export const addChildSchema = (tree, schema, parent) => {
+  if(!tree || !isObj(schema) || !isObj(parent)) return
+  const parentVal = _get(tree, parent.pos)
+  if(!parentVal || typeof parentVal !== 'object') return
+  
+  
+  schema.id = schema.id || uuid()
+  
+  if(tree.idMap[schema.id])
+    return logData(
+      `Can not add child to tree. Schema id already exists!`,
+      schema.id,
+      tree.schema[tree.idMap[schema.id]],
+      'error'
+    )
+
+  schema.key = schema.key || schema.id
+  schema.parent = parent
+  if(schema.value === Schema.JT_EMPTY_TYPE)
+    schema.key = Schema.JT_EMPTY_TYPE
+  
+  if(Array.isArray(parentVal)){
+    schema.pos = buildNewPos(parent.pos, parentVal.length, false)
+    if(!checkSchemaPos(tree, schema.pos)) return
+    parentVal.push(schema.value)
+  }
+  else {
+    schema.pos = schema.pos || buildNewPos(parent.pos, schema.key, false)
+    if(!checkSchemaPos(tree, schema.pos)) return
+    parentVal[schema.key] = schema.value || ''
+  }
+
+  tree.idMap[schema.id] = schema.pos
+  tree.schema[schema.pos] = schema
+
+  return true
 }

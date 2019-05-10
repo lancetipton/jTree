@@ -231,6 +231,11 @@
   color: @activeDrag;
 }
 
+.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-add:hover {
+  color: @activeAdd;
+}
+
+
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-delete:hover {
   color: @activeDelete;
 }

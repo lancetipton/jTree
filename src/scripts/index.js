@@ -1,5 +1,7 @@
 import {
+  addChildSchema,
   buildSettings,
+  callInstanceUpdates,
   checkCall,
   cleanUp,
   clearObj,
@@ -7,6 +9,7 @@ import {
   cloneDeep,
   deepMerge,
   getElement,
+  isFunc,
   isObj,
   isStr,
   logData,
@@ -18,6 +21,7 @@ import {
   updateType,
   updateValue,
   upsertElement,
+  validateAdd,
   validateSource,
   validateUpdate,
 } from 'jTUtils'
@@ -46,10 +50,12 @@ let ACT_SOURCE
  *
  * @return { void }
  */
-const appendTreeHelper = function(rootComp, appendTree){
-  const res = checkCall(appendTree, rootComp, this)
+const appendTreeHelper = function(rootComp, appendTree, tree){
+  const res = checkCall(appendTree, rootComp, this, tree)
   if(res === false || !this.element) return null
   upsertElement(rootComp, this.element)
+  const pos = tree.idMap[rootComp.id]
+  callInstanceUpdates(tree, pos)
 }
 
 const buildFromPos = function(pos, settings, force) {
@@ -60,10 +66,10 @@ const buildFromPos = function(pos, settings, force) {
     !this.tree.schema[pos]
   ) return null
 
-  const buildSchema = this.tree.schema[pos]
+  const updatedSchema = this.tree.schema[pos]
   const valueInTree = _get(this.tree, pos)  
   const updatedEl = loopDataObj(
-    buildSchema,
+    updatedSchema,
     this.tree,
     settings,
     appendTreeHelper && appendTreeHelper.bind(this)
@@ -71,7 +77,9 @@ const buildFromPos = function(pos, settings, force) {
   
   if(pos === Schema.ROOT) return
 
-  upsertElement(updatedEl, buildSchema.component)
+  upsertElement(updatedEl, updatedSchema.component)
+  callInstanceUpdates(this.tree, updatedSchema.pos)
+
 }
 
 const createEditor = (settings, domContainer) => {
@@ -180,6 +188,21 @@ const createEditor = (settings, domContainer) => {
 
       // Clear the schema from the tree schema
       clearSchema(schema, this.tree.schema)
+    }
+    
+    add = (schema, parent, replace) => {
+      const useParent = schema.parent || parent || this.tree.schema
+      // Validate the passed in data
+      if(!validateAdd(schema, useParent)) return
+
+      // Add the child schema to the parent / tree
+      if(!addChildSchema(this.tree, schema, useParent)) return
+      
+      // Rebuild the tree from parent position
+      buildFromPos.apply(this, [
+        useParent.pos,
+        settings
+      ])
     }
     
     schema = (idOrPos) => (

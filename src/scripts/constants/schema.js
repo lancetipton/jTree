@@ -20,5 +20,6 @@ export const Schema = {
     'type',
     'open',
     'matchType'
-  ])
+  ]),
+  JT_EMPTY_TYPE: 'JT_EMPTY_TYPE',
 }

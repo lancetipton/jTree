@@ -1,4 +1,4 @@
-export const Values = {
+export const Values = Object.freeze({
   CLEAVE_CLS: 'item-cleave',
   DATA_SCHEMA_KEY: 'data-schema-key',
   DATA_TREE_ID: 'data-tree-id',
@@ -29,5 +29,5 @@ export const Values = {
   ]),
   TYPE_OVERWRITE: Object.freeze({
     build: 'function'
-  }),
-}
+  })
+})

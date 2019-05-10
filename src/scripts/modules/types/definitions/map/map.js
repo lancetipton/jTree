@@ -1,50 +1,14 @@
 import BaseType from '../base'
-import { typesOverride, capitalize, clearObj, isObj } from 'jTUtils'
+import {
+  typesOverride,
+  capitalize,
+  clearObj,
+  isObj,
+  updateParentHeights,
+} from 'jTUtils'
 import { Schema, Values } from 'jTConstants'
 import { List } from '../../components'
 
-
- const tottleSize = () => {
-    setTimeout(() => {
-      const refNode = schema.component
-      if(!refNode) return
-      const isOpen = props.schema.open
-
-      if(isOpen || !this.styles.closed.maxHeight){
-        this.styles.closed.maxHeight = this.styles.closed.maxHeight || `${refNode.scrollHeight}px`
-        this.setStyle(refNode, this.styles.closed)
-      }
-      else if(!isOpen && this.styles.open.maxHeight){
-        this.setStyle(refNode, this.styles.open)
-        console.log('------------------ope to cloased------------------');
-        console.log(refNode.style);
-      }
-
-      setTimeout(() => {
-        
-        requestAnimationFrame(() => {
-
-            if(isOpen){
-              const childsLength = Array.from(refNode.children).length
-              const { closed } = this.styles
-              const initHeight = parseInt(closed.maxHeight, 10)
-              const openHeight = initHeight + (childsLength * initHeight)
-              
-              this.styles.open.maxHeight = `${openHeight}px`
-              this.styles.open.height = `${openHeight}px`
-              this.setStyle(refNode, this.styles.open)
-            }
-            else {
-              this.setStyle(refNode, this.styles.closed)
-            }
-
-
-        })
-      }, 0)
-
-    }, 0)
- }
- 
 class MapType extends BaseType {
 
   static priority = 1
@@ -70,52 +34,44 @@ class MapType extends BaseType {
     Editor.update(id, update)
   }
   
-  setStyle = (domEl, styles) => {
+  setStyle = (domEl, styles) => (
     domEl && isObj(styles) && Object
     .entries(styles)
     .map(([ rule, value ]) => domEl.style[rule] = value)
-    
-  }
+  )
   
-  setClosedHeight = (refNode) => {
+  setClosedHeight = schema => {
+    const refNode = schema.component
     if(!refNode || refNode.style.maxHeight) return
 
     this.styles.closed.maxHeight = this.styles.closed.maxHeight || `${refNode.scrollHeight}px`
     this.setStyle(refNode, this.styles.closed)
   }
   
-  setOpenHeight = (schema) => {
-    setTimeout(() => {
-      const refNode = schema.component
-      this.setClosedHeight(refNode)
-      
-      schema.open && setTimeout(() => {
-        if(!refNode) return
+  setOpenHeight = schema => {
+    const refNode = schema.component
+    if(!schema.open || !refNode) return
 
-        const childsHeight = Array
-          .from(refNode.firstChild.children)
-          .reduce((height, child) => {
-            height+= child.scrollHeight || 0
-            return height
-          }, 0)
-
-        const { closed } = this.styles
-        const initHeight = parseInt(closed.maxHeight, 10)
-        const openHeight = initHeight + childsHeight
-        this.styles.open.maxHeight = `${openHeight}px`
-        this.setStyle(refNode, this.styles.open)
+    const childsHeight = Array
+      .from(refNode.firstChild.children)
+      .reduce((height, child) => {
+        height+= child.scrollHeight || 0
+        return height
       }, 0)
-      
-    }, 0)
+    
+    const { closed } = this.styles
+    const initHeight = parseInt(closed.maxHeight, 10)
+    const openHeight = initHeight + childsHeight
+    this.styles.open.maxHeight = `${openHeight}px`
+    this.setStyle(refNode, this.styles.open) 
+    updateParentHeights(schema.parent, openHeight)
   }
   
-  // componentDidMount = (props, Editor) => {
-
-  //   props.parent && this.setClosedHeight(props.schema.component)
-  // }
+  componentDidMount = (props, Editor) => (
+    props.parent && this.setClosedHeight(props.schema)
+  )
   
   componentDidUpdate = (props, Editor) => {
-
     const { schema } = props
     const refNode = schema.component
     this.buildEvents(schema, refNode)
@@ -124,18 +80,28 @@ class MapType extends BaseType {
     // Clear out the updated, because the component just updated
     this.updated && clearObj(this.updated)
 
-    if(props.schema.open || !this.styles.closed.maxHeight)
-      this.setOpenHeight(schema)
+    props.schema.open && this.setOpenHeight(schema)
+  }
+
+  onAdd = (e, Editor) => {
+    const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+    const schema = id && Editor.schema(id)
+    schema && Editor.add({
+      parent: schema,
+      matchType: 'empty',
+      key: Schema.JT_EMPTY_TYPE,
+      value: Schema.JT_EMPTY_TYPE,
+    })
   }
 
   render = props => {
 
     const { schema: { id, key, value, mode, matchType }, children } = props
     const isRoot = props.schema.key === Schema.ROOT
-    // const isOpen = props.schema.open || isRoot
     const isOpen = props.schema.open
     const classes = isOpen && `list-open` || ''
-
+    const extra = isOpen && mode !== Schema.MODES.EDIT && { onAdd: this.onAdd } || {}
+    
     return List({
       id,
       key,
@@ -152,7 +118,7 @@ class MapType extends BaseType {
       showLabel: true,
       valueEl: 'select',
       keyInput: 'text',
-      ...this.getActions(mode),
+      ...this.getActions(mode, extra),
       onToggle: this.onToggle
     })
   }

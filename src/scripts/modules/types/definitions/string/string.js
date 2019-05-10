@@ -1,11 +1,11 @@
 import CleaveType from '../cleave'
 import { Item } from '../../components'
-import { Values } from 'jTConstants'
+import { Values, Schema } from 'jTConstants'
 
 class StringType extends CleaveType {
 
   static priority = 1
-  static eval = (value) => (typeof value === 'string')
+  static eval = (value) => (typeof value === 'string' && value !== Schema.JT_EMPTY_TYPE)
 
   constructor(config){
     super({

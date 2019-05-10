@@ -1,6 +1,31 @@
 import { logData } from './methods_util'
 import { diffUpdate } from './diff_util'
 
+/**
+ * Loop through the schema, from the bottom up
+ * Updates the Heights of the parents to ensure all content can be seen
+ * @param  { object } schema - schema at the location in the tree.schema to start the loop
+ * @param  { number } updateHeight - hight that should be added to the schemas maxHeight
+ * @return { void }
+ */
+export const updateParentHeights = (schema, updateHeight) => {
+  const domNode = schema && schema.component
+  if(!domNode || !updateHeight)
+    return
+
+  const newHeight = domNode.style.maxHeight
+    ? parseInt(domNode.style.maxHeight) + updateHeight
+    : domNode.scrollHeight + updateHeight
+
+  domNode.style.maxHeight = `${newHeight}px`
+  schema.parent && updateParentHeights(schema.parent, newHeight)
+}
+
+/**
+ * Gets domNode element base on the passed in selector
+ * @param  { string || domNode }  selector - used to find the domNode on the document
+ * @return { domNode } - found from the find selector call
+ */
 export const getElement = selector => {
   if(selector instanceof HTMLElement) return selector
   if(!selector || typeof selector !== 'string') return null
@@ -15,6 +40,11 @@ export const getElement = selector => {
   return document[selectorType](selector)
 }
 
+/**
+ * Removes a domNode from the document
+ * @param  { string || domNode } selector - used to find the domNode on the document
+ * @return { void }
+ */
 export const removeElement = selector => {
   const element = getElement(selector)
   if(!element) return

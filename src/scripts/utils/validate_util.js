@@ -44,7 +44,7 @@ export const validateSource = (source) => {
   if(!isObj(source))
     return logData(
       `Could update source. Please make sure source param is an Object or JSON parse-able string`,
-      'error',
+      'error'
     )
   return true
 }
@@ -102,3 +102,14 @@ export const validateUpdate = (idOrPos, update, tree) => {
   
   return { schema, pos }
 }
+
+
+export const validateAdd = (schema, parent) => (
+  !isObj(schema) || !schema.key || !schema.value
+    ? logData(`Add method requires a valid schema object as the first argument`, 'error')
+    : !isObj(parent) || !parent.value || !parent.pos
+      ? logData(`Add method requires a valid parent schema`, 'error')
+      : typeof parent.value !== 'object'
+        ? logData(`Parent value must equal typeof 'object' ( Object || Array )`, 'error')
+        : true
+)

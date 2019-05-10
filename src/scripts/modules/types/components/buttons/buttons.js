@@ -14,9 +14,19 @@ const typeLabel = type => (
   )
 )
 
+const showTypeValue = (type, props) => {
+  if(type !== 'empty') return typeLabel(type)
+  
+  console.log('------------------props------------------');
+  console.log(props.Types.getFlat());
+  
+  return null
+}
+
 const btnTypes = {
   onEdit: { icon: 'pen', key: 'Edit' },
   onDrag: { icon: 'hand-point-up', key: 'Drag' },
+  onAdd: { icon: 'plus-circle', key: 'Add' },
   onDelete: { icon: 'trash-alt', key: 'Delete' },
   onSave: { icon: 'check', key: 'Save' },
   onCancel: { icon: 'times', key: 'Cancel' },
@@ -51,7 +61,7 @@ export const Buttons = (props) => {
   
   return div({ className: `btns-wrapper` }, [
     div({ className: `btns-list` }, [
-    typeLabel(type),
+    showTypeValue(type, props),
       ...buildBtns(id, buttons)
     ])
   ])

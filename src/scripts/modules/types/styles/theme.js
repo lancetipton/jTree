@@ -75,6 +75,7 @@ const theme = {
   passiveBtn: colors.lightBlack,
   activeEdit: colors.lime,
   activeDrag: colors.blue,
+  activeAdd: colors.green,
   activeSave: colors.green,
   activeCancel: colors.red,
   activeDelete: colors.red,

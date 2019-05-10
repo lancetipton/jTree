@@ -1,4 +1,4 @@
-import { clearObj } from './object_util'
+import { clearObj, isObj } from './object_util'
 import { typesOverride } from './types_util'
 import { isFunc } from './methods_util'
 import _unset from 'lodash.unset'
@@ -52,10 +52,20 @@ export const buildInstance = (type, schema, settings) => {
     INSTANCE_CACHE[id] = instance
   }
   
-  
+  newInstance(schema)
   return addSchemaInstance(schema, id)
 }
 
+
+const newInstance = schema => {
+  let newInstance = true
+  schema && Object.defineProperty(schema, 'newInstance', {
+    get: () => newInstance,
+    set: update => (newInstance = undefined),
+    enumerable: true,
+    configurable: true,
+  })
+}
 
 export const addSchemaInstance = (schema, id) => {
   schema && Object.defineProperty(schema, 'instance', {
@@ -81,3 +91,30 @@ export const addCompProp = (schema, id) => {
   })
 
 }
+
+export const callInstanceUpdates = (tree, orgPos) => (
+  Object
+    .entries(tree.schema)
+    .map(([ pos, schema ]) => (
+      // Check if the update schema pos exists within the current schema pos
+      // This would mean the updated schema is a parent to the current schema
+      !schema.instance || schema.pos.indexOf(orgPos) !== 0
+        ? null
+        : !schema.newInstance
+          // If it's not a new instance, call the update method
+          ? isFunc(schema.instance.componentDidUpdate) &&
+              schema.instance.componentDidUpdate({
+                tree: tree,
+                schema,
+                parent: schema.parent,
+              })
+          // Otherwise, set newInstance to false, and call the mounting method
+          : (schema.newInstance = false) ||
+              isFunc(schema.instance.componentDidMount) &&
+                schema.instance.componentDidMount({
+                    tree: tree,
+                    schema,
+                    parent: schema.parent,
+                  })
+    ))
+)

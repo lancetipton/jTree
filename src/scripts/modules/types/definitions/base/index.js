@@ -113,17 +113,19 @@ class BaseType {
     id && Editor.remove(id)
   }
 
-  getActions = mode => (
+  getActions = (mode, extra) => (
     mode !== Schema.MODES.EDIT
       ? {
         onEdit: this.onEdit,
         onDrag: this.onDrag,
-        onDelete: this.onDelete
+        onDelete: this.onDelete,
+        ...extra
       }
       : {
         onChange: this.onChange,
         onSave: this.onSave,
         onCancel: this.onCancel,
+        ...extra
       }
   )
 

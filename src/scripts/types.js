@@ -20,13 +20,11 @@ import {
   validateBuildTypes,
   validateNewType,
 } from 'jTUtils'
-
 import _unset from 'lodash.unset'
 import { Values, Schema } from 'jTConstants'
 import TypeDefs from './modules/types'
-import stylesReset from './styles_reset.css'
-
 import StyleLoader from 'styleloader'
+
 const styleLoader = new StyleLoader()
 let TYPE_CACHE
 let LOADED_TYPES
@@ -178,14 +176,12 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   tree.idMap[component && component.id || schema.id] = schema.pos
   // If we are not on the root element of the tree, 
   // Ensure the props get cleared out and return the rendered component
-  if(key !== Schema.ROOT){
-    checkCall(schema.instance.componentDidUpdate, props)
+  if(key !== Schema.ROOT)
     return (props = undefined) || component
-  }
   
   // Only the root component should get to this point
   // Call the appendTree method to add the component tree to the dom
-  elementCb && checkCall(elementCb, component, settings.editor.appendTree)
+  elementCb && checkCall(elementCb, component, settings.editor.appendTree, tree)
   // Set component and props to undefined, to ensure it get's cleaned up
   // as it's longer being used
   component = undefined
@@ -199,19 +195,8 @@ export const buildTypes = (source, settings, elementCb) => {
   if(!validateBuildTypes(source, settings.Editor)) return null
   const tree = { schema: {}, [Schema.ROOT]: source, idMap: {} }
   const rootSchema = { value: source, key: Schema.ROOT }
-  const data = loopDataObj(rootSchema, tree, settings, elementCb)
-  Object
-    .entries(data.schema)
-    .map(([ pos, schema ]) => {
-      if(!schema.instance) return
-      schema.instance.componentDidMount && schema.instance.componentDidMount({
-        tree,
-        schema,
-        parent: schema.parent,
-      })
-    })
 
-  return data
+  return loopDataObj(rootSchema, tree, settings, elementCb)
 }
 
 export function TypesCls(settings){
@@ -219,6 +204,21 @@ export function TypesCls(settings){
   class Types {
 
     get = () => TYPE_CACHE
+    
+    getFlat = (startType) => {
+      return Object
+        .entries((startType || TYPE_CACHE).children)
+        .reduce((flatList, [ key, obj ]) => {
+          flatList[key] = obj
+          if(obj.children)
+            flatList = {
+              ...flatList,
+              ...this.getFlat(obj)
+            }
+
+          return flatList
+        }, {})
+    }
     
     clear = (includeClass=true) => {
       clearTypeData(this, TYPE_CACHE, includeClass)
@@ -281,7 +281,6 @@ export function TypesCls(settings){
   return typesCls.load(settings.typesPath)
     .then(loadedTypes => {
       settings.styleLoader = styleLoader
-      styleLoader.add(`jt-style-reset`, stylesReset)
       TYPE_CACHE = initTypeCache(
         typesCls,
         settings,
