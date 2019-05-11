@@ -58,34 +58,52 @@ export const validateSource = (source) => {
  */
 export const validateUpdate = (idOrPos, update, tree) => {
   const { prop, value } = update
-
+  
   if(!idOrPos)
     return logData(
       `Update requires an id or position as it's first argument!`,
       idOrPos, tree, 'warn'
     )
+
+  // Get the pos to be updated
   const pos =  tree.idMap[idOrPos] || idOrPos
-  if(!pos)
+
+  // Check if the pos exists,
+  if(!pos || !tree.schema[pos])
     return logData(
       `Could not find position with ${idOrPos}. Are you sure it exists in the tree!`,
       tree, 'warn'
     )
 
+  // Get the current data in the tree, and the current schema
   const dataInTree = _get(tree, pos, Schema.NOT_IN_TREE)
-  if(dataInTree === Schema.NOT_IN_TREE) {
+  const schema = tree.schema[pos]
+  const isEmptyType = schema.matchType === Schema.EMPTY
+  //  Check if data in the tree, or if it was an empty type
+  if(
+    dataInTree === Schema.NOT_IN_TREE && (!schema || !isEmptyType))
     return logData(
       `Could not find any data in the tree that matches ${idOrPos}!`,
       tree, 'warn'
     )
-  }
   
+  // Check if the update is an object
   if(!isObj(update))
     return logData(
       `Update method second argument must be an object!`,
       update, tree, 'warn'
     )
   
-  const schema = tree.schema[pos]
+  // Ensure the key is updated when dealing with an empty object
+  // Check If key is empty type, and if this is a matchType update
+  // If key is empty type, then we should be updating the matchType
+  if(schema.key === Schema.JT_EMPTY_TYPE && !update.matchType)
+    return logData(
+      `A valid key is required to update the item!`,
+      update, tree, schema, 'warn'
+    )
+
+  // Validate the update properties, to ensure we only update what is allowed
   const nonValid = Object
     .keys(update)
     .reduce((notValid, key) => {
@@ -95,11 +113,10 @@ export const validateUpdate = (idOrPos, update, tree) => {
       return notValid
     }, false)
   
+  // If no valid update props, log and return
   if(nonValid)
-    return logData(`${nonValid} is not a valid update property`, 'warn')
-  
+    return logData(`${nonValid} is not a valid update property`, update, tree, 'warn')
 
-  
   return { schema, pos }
 }
 

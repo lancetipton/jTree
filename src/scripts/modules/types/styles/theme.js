@@ -23,12 +23,29 @@ const colors = {
   black: '#14171C',
 
   blue: '#03A9F4',
-  lime: '#0FCED1',
-  green: '#4CAF50',
+  lime: '#00cec9',
+  green: '#55efc4',
   red: '#FA0719',
   orange: '#FA7807',
+  // lime: '#0FCED1',
+  // green: '#4CAF50',
   lightShadow: 'box-shadow: 3px 3px 0px 0px rgba(216, 215, 220, 1)',
   grayShadow: 'box-shadow: 3px 3px 4px -4px rgba(103, 100, 114, 0.5)',
+  
+  
+  white1: '#FEFEFE',
+  white2: '#FCFCFE',
+  white3: '#FBFBFD',
+  white4: '#FAFAFC',
+  gray1: '#F5F5FA',
+  gray2: '#D6D6DB',
+  gray3: '#B8B8BB',
+  gray4: '#99999C',
+  gray5: '#7A7A7D',
+  gray6: '#5C5C5E',
+  gray7: '#3D3D3E',
+  gray8: '#1F1F1F',
+
 }
 
 const fonts = {
@@ -48,11 +65,11 @@ const theme = {
   // Inputs
   inBackground: colors.white,
   inBorder:  `1px solid ${colors.transGray}`,
-  inColor:  colors.ebonyBlack,
+  inColor:  colors.gray8,
   inFontSize: '12px',
   
   // Toggle Action
-  passiveToggle: colors.ebonyBlack,
+  passiveToggle: colors.gray7,
   activeToggle: colors.blue,
   openToggle: colors.orange,
   toggleIconSpeed: `0.5s`,
@@ -71,16 +88,17 @@ const theme = {
   passiveBack: colors.white,
   // Group of items background color
   passiveGroupBack: colors.white,
-  activeGroupBack: colors.offGray,
+  activeGroupBack: colors.gray1,
   openGroupBack: colors.white,
   // Single Item background color
   passiveItemBack: colors.white,
-  hoverItemBack: colors.offGray,
+  hoverItemBack: colors.gray1,
+  activeItemBack: colors.gray1,
   
   // Buttons states
-  passiveBtn: colors.ebonyBlack,
+  passiveBtn: colors.gray7,
   activeEdit: colors.lime,
-  activeDrag: colors.blue,
+  activeDrag: colors.orange,
   activeAdd: colors.green,
   activeSave: colors.green,
   activeCancel: colors.red,
@@ -99,9 +117,9 @@ const theme = {
   itemValFont: fonts.third,
   itemValFontWeight: 'normal',
   itemTransSpeed: speeds.fast,
-  itemColor: colors.ebonyBlack,
+  itemColor: colors.gray8,
   itemBorder: `2px solid transparent`,
-  itemHoverBorder: `2px solid ${colors.ebonyBlack}`,
+  itemHoverBorder: `2px solid ${colors.gray8}`,
   itemEditBorder: `2px solid ${colors.lime}`,
   itemEmptyBorder: `2px solid ${colors.orange}`,
   
@@ -115,7 +133,7 @@ const theme = {
   toggleIconSpeed: speeds.fast,
   
   // Disabled
-  disabledInput: colors.offGray,
+  disabledInput: colors.gray1,
 }
 
 

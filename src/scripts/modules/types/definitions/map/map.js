@@ -43,8 +43,9 @@ class MapType extends BaseType {
   setClosedHeight = schema => {
     const refNode = schema.component
     if(!refNode || refNode.style.maxHeight) return
-
+    
     this.styles.closed.maxHeight = this.styles.closed.maxHeight || `${refNode.scrollHeight}px`
+
     this.setStyle(refNode, this.styles.closed)
   }
   
@@ -74,12 +75,18 @@ class MapType extends BaseType {
   componentDidUpdate = (props, Editor) => {
     const { schema } = props
     const refNode = schema.component
+    
+    if(refNode && refNode.firstChild){
+      this.styles.closed.maxHeight = `${refNode.firstChild.scrollHeight}px`
+      this.setStyle(refNode, this.styles.closed)
+    }
+
     this.buildEvents(schema, refNode)
     const { parent, instance, component, ...original } = schema
     this.original = original
     // Clear out the updated, because the component just updated
     this.updated && clearObj(this.updated)
-
+    
     props.schema.open && this.setOpenHeight(schema)
   }
 
@@ -100,7 +107,12 @@ class MapType extends BaseType {
     const isRoot = props.schema.key === Schema.ROOT
     const isOpen = props.schema.open
     const classes = isOpen && `list-open` || ''
-    const extra = isOpen && mode !== Schema.MODES.EDIT && { onAdd: this.onAdd } || {}
+    let actions = { onToggle: this.onToggle }
+    
+    actions = isOpen && mode !== Schema.MODES.EDIT && {
+      ...actions,
+      onAdd: this.onAdd,
+    } || actions
     
     return List({
       id,
@@ -118,8 +130,7 @@ class MapType extends BaseType {
       showLabel: true,
       valueEl: 'select',
       keyInput: 'text',
-      ...this.getActions(mode, extra),
-      onToggle: this.onToggle
+      ...this.getActions(mode, actions),
     })
   }
 

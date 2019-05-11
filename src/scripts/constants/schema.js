@@ -22,4 +22,5 @@ export const Schema = {
     'matchType'
   ]),
   JT_EMPTY_TYPE: 'JT_EMPTY_TYPE',
+  EMPTY: 'empty',
 }

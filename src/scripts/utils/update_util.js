@@ -46,8 +46,10 @@ export const updateSchema = (update, schema) => (
  * @param  { object } schema - data that defines the object at the current pos
  * @return { void }
  */
-export const updateType = () => {
-  
+export const updateType = (tree, pos, schema) => {
+  console.log(tree);
+  console.log(pos);
+  console.log(schema);
 }
 
 /**

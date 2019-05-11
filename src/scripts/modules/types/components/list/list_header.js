@@ -41,7 +41,7 @@ export const ListHeader = props => {
     onClick: props.onToggle,
     [Values.DATA_TREE_ID]: id,
   }
-  
+
   return div({ className: classes },
     Icon(null, null, {
       icon: {

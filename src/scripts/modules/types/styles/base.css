@@ -94,7 +94,7 @@
   border-left: @itemEmptyBorder;
 }
 
-.j-tree-editor ul.list > li.row > div.item.item-edit,
+
 .j-tree-editor ul.list > li.row > div.item:hover {
   background-color: @hoverItemBack;
   position: relative; 
@@ -103,6 +103,7 @@
 }
 .j-tree-editor ul.list > li.row > div.item.item-edit {
   border-left: @itemEditBorder;
+  background-color: @activeItemBack;
 }
 
 .j-tree-editor li.row > div.item > div.item-data {
@@ -173,7 +174,12 @@
   margin-top: 5px;
 }
 
-.j-tree-editor li.row > div.item.item-edit > div > label {
+.j-tree-editor li.row > div.item .item-data-wrapper.item-type-wrapper {
+  margin-top: 0px;
+  margin-right: 20px;
+}
+
+.j-tree-editor li.row > div.item.item-edit label.item-label {
   font-weight: bold;
   font-size: 10px;
   position: absolute;
@@ -195,8 +201,6 @@
   margin-right: 20px;
 }
 
-.j-tree-editor li.row > div.item-edit .select-wrapper select.item-edit, .j-tree-editor li.row > div.item.item-edit > div > .item-edit
-
 .j-tree-editor li.row > div.item-edit .select-wrapper select.item-edit:disabled, .j-tree-editor li.row > div.item.item-edit > div > .item-edit:disabled {
   background-color: @disabledInput;
   cursor: not-allowed;
@@ -204,7 +208,7 @@
 
 /* ---- Action Button ---- */
 .j-tree-editor div.item > div.item-btns {
-  margin-left: 30px;
+  margin-left: 20px;
   opacity: 0;
   transition: opacity @actionBtnSpeed ease;
 }

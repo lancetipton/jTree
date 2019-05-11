@@ -205,10 +205,14 @@ export function TypesCls(settings){
 
     get = () => TYPE_CACHE
     
-    getFlat = (startType) => {
+    getFlat = (startType, opts={}) => {
+      const filter = Array.isArray(opts.filter) && opts.filter || []
+      
       return Object
         .entries((startType || TYPE_CACHE).children)
         .reduce((flatList, [ key, obj ]) => {
+          if(filter.indexOf(key) !== -1) return flatList
+            
           flatList[key] = obj
           if(obj.children)
             flatList = {

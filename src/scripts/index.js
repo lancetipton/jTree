@@ -34,7 +34,7 @@ import _unset from 'lodash.unset'
 import { DEF_SETTINGS } from './constants'
 
 const UPDATE_ACTIONS = {
-  // type: updateType,
+  matchType: updateType,
   value: updateValue,
 }
 
@@ -154,14 +154,15 @@ const createEditor = (settings, domContainer) => {
       }
       // Loop over the allowed props to be update
       Schema.TREE_UPDATE_PROPS
-        .map(prop => (
+        .map(prop => {
           // If the prop exists in the update acctions,
           // and the passed in update object
           // Then call the action to update it
           update[prop] &&
             UPDATE_ACTIONS[prop] &&
             UPDATE_ACTIONS[prop](this.tree, pos, this.tree.schema[pos])
-        ))
+          
+        })
 
       // Rebuild the tree from this position
       buildFromPos.apply(this, [
