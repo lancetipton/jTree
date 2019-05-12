@@ -8,7 +8,8 @@ class NumberType extends CleaveType {
 
   static priority = 1
   static eval = (value) => (typeof value === 'number')
-
+  static defaultValue = (newType, schema, settings) => 0
+  
   constructor(config){
     super({
       ...config,

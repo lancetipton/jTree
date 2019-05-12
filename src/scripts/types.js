@@ -122,14 +122,26 @@ const checkPropsChange = (props, check) => (
 )
 
 export const loopDataObj = (curSchema, tree, settings, elementCb) => {
-  const { value, key, parent, pos } = curSchema
-  const matchTypes = settings.Editor.Types.getTypes(value, settings)  
-  const type = checkMultiMatches(matchTypes, curSchema, tree, settings)
+  const { value, key, parent, pos, skipType } = curSchema
+  const Types = settings.Editor.Types
+
+  // Get the matchTypes for the value
+  // skipType gets set when empty value is added, and the type was updated
+  // This will switch it to edit mode, but the key and value will be empty
+  // It also set the type when it was switched
+  // So skip check the types here, so we don't override it
+  const matchTypes = !skipType && Types.getValueTypes(value, settings)
+
+  // Get the type based on the found types, or the current type
+  // If skipType is set, but use the current type on the schema
+  const type = skipType
+    ? Types.get(curSchema.matchType)
+    : checkMultiMatches(matchTypes, curSchema, tree, settings)
 
   // Check if the type has a factory to call, if not just return
   if(!type || !type.factory || !isConstructor(type.factory))
     return tree
-  
+ 
   // Build an updated schema based on the new settings
   const schema = buildSchema(
     curSchema,
@@ -138,7 +150,7 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
     settings
   )
 
-    // If not the root element, set the parent to the schema
+  // If not the root element, set the parent to the schema
   key !== Schema.ROOT && (schema.parent = parent)
   
   // If an old schema exists at this pos, clear it out
@@ -146,8 +158,11 @@ export const loopDataObj = (curSchema, tree, settings, elementCb) => {
   tree.schema[schema.pos] = schema
   // Props helper to make it easier to manage
   let props = { schema, tree, settings }
+  
   // Check if there is a shouldUpdate method, and is so call it
-  const shouldUpdate = checkCall(schema.instance.shouldComponentUpdate, curSchema, props)
+  const shouldUpdate = checkCall(
+    schema.instance.shouldComponentUpdate, curSchema, props
+  )
 
   if(shouldUpdate === false){
     // checkCall(schema.instance.componentWillUnmount, props, schema.component)
@@ -203,7 +218,7 @@ export function TypesCls(settings){
   
   class Types {
 
-    get = () => TYPE_CACHE
+    get = name => (!name && TYPE_CACHE || (this.getFlat() || {})[name])
     
     getFlat = (startType, opts={}) => {
       const filter = Array.isArray(opts.filter) && opts.filter || []
@@ -255,7 +270,7 @@ export function TypesCls(settings){
       TYPE_CACHE = initTypeCache(this, settings)
     }
     
-    getTypes = value => {
+    getValueTypes = value => {
       const matchTypes = getMatchTypes.apply(
         this, 
         [

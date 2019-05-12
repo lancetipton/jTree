@@ -5,8 +5,9 @@ import { Values, Schema } from 'jTConstants'
 class StringType extends CleaveType {
 
   static priority = 1
-  static eval = (value) => (typeof value === 'string' && value !== Schema.JT_EMPTY_TYPE)
-
+  static eval = (value) => (typeof value === 'string')
+  static defaultValue = (newType, schema, settings) => ''
+  
   constructor(config){
     super({
       ...config,

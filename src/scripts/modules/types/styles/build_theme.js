@@ -1,5 +1,6 @@
 import stylesReset from './styles_reset.css'
 import base from './base.css'
+import modal from './modal.css'
 import orgTheme from './theme'
 import { deepMerge } from 'jTUtils'
 
@@ -36,7 +37,7 @@ export const buildTheme = settings => {
     : orgTheme
   
   const useStyles = settings.styles
-    ? deepMerge(stylesReset, base, settings.styles)
+    ? deepMerge(stylesReset, base, modal, settings.styles)
     : base
   
   return {

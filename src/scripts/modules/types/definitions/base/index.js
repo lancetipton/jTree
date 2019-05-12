@@ -51,7 +51,7 @@ class BaseType {
   static priority = 0
   static matchHelper = () => {}
   static eval = (value) => (typeof value === 'string')
-
+  static defaultValue = (newType, schema, settings) => ''
   static getStyles = (settings) => buildTheme(settings)
   
   constructor(config){
@@ -65,7 +65,14 @@ class BaseType {
   userEvents = {}
   updated = {}
   original = {}
-  
+
+  shouldDoDefault = (e, update, Editor, userEvent) => {
+    const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+    return !id
+      ? noId()
+      : userEvent && userEvent(e, update, id, Editor) === false || id
+  }
+
   onChange = (e, Editor) => {
     const input =  e.target || e.currentTarget
     const value = input.value
@@ -85,31 +92,38 @@ class BaseType {
 
   onSave = (e, Editor) => {
     const update = { ...this.updated, mode: undefined }
-    const id = shouldDoDefault( e, update, Editor, this.userEvents.onSave )
+    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onSave )
     id && Editor.update(id, update)
   }
 
   onCancel = (e, Editor) => {
     const update = { mode: undefined, value: this.original.value }
-    const id = shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
-    id && Editor.update(id, update)
+    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
+    if(!id) return
+
+    // Check the skipType, if true, that means cancel was pressed
+    // Without the key / value ever being saved, so remove the item
+    const schema = Editor.schema(id)
+    schema && schema.skipType
+      ? Editor.remove(id)
+      : Editor.update(id, update)
   }
 
   onEdit = (e, Editor) => {
     const update = { mode: Schema.MODES.EDIT }
-    const id = shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
+    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
     id && Editor.update(id, update)
   }
 
   onDrag = (e, Editor) => {
     const update = { mode: Schema.MODES.DRAG }
-    const id = shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
+    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
     id && Editor.update(id, update)
   }
 
   onDelete = (e, Editor) => {
     const update = { id, mode: Schema.MODES.DRAG }
-    const id = shouldDoDefault( e, update, Editor, this.userEvents.onDelete )
+    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onDelete )
     id && Editor.remove(id)
   }
 

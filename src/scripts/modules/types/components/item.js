@@ -45,7 +45,7 @@ const buildItemKey = ({ showLabel, El, keyAttrs, keyVal }, props) => {
  */
 const buildItemValue = (itemProps, props) => {
   const { showLabel, El, valueAttrs, elValue, children } = itemProps
-  if(props && props.type === 'empty') valueAttrs.disabled = true
+  if(props && props.type === Schema.EMPTY) valueAttrs.disabled = true
   const valEl = El(valueAttrs, isFunc(children) && children(itemProps) || elValue)
   
   return !showLabel
@@ -65,7 +65,7 @@ const buildItemValue = (itemProps, props) => {
 export const Item = (props) => {
   let classes = `item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
   
-  if(props && props.type === 'empty')
+  if(props && props.type === Schema.EMPTY)
     classes += ` item-empty`
     
   return div(

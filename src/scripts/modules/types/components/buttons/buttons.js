@@ -1,7 +1,7 @@
 import { er, elements } from 'element-r'
 import { Icon } from './icon'
 import { capitalize } from 'jTUtils'
-import { Values } from 'jTConstants'
+import { Values, Schema } from 'jTConstants'
 import { selectWrapper, inputWrapper } from '../sub'
 const { div, style, span, option } = elements
 const btnTypes = {
@@ -23,10 +23,10 @@ const typeLabel = type => (
 )
 
 const showTypeValue = (props, type) => {
-  if(type !== 'empty' || !props.Types) return typeLabel(type)
+  if(type !== Schema.EMPTY || !props.Types) return typeLabel(type)
 
   const options = Object
-    .keys(props.Types.getFlat(null, { filter: [ 'empty' ] }))
+    .keys(props.Types.getFlat(null, { filter: [ Schema.EMPTY ] }))
     .map(value => option({
       value,
       selected: props.matchType === value

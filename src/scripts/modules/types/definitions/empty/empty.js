@@ -6,9 +6,16 @@ class EmptyType extends BaseType {
 
   static priority = 1
   static eval = (value) => (value === undefined)
+  static defaultValue = (newType, schema, settings) => undefined
 
   constructor(config){
     super({ ...config })
+  }
+
+  onCancel = (e, Editor) => {
+    const update = { remove: true }
+    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
+    id && Editor.remove(id)
   }
 
   onTypeChange = (e, Editor) => {
@@ -41,7 +48,7 @@ class EmptyType extends BaseType {
       key: '',
       value: '',
       Types,
-      type: 'empty',
+      type: Schema.EMPTY,
       showLabel: true,
       keyInput: 'text',
       mode: Schema.MODES.EDIT,

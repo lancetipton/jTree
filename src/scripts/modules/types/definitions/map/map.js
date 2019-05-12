@@ -7,13 +7,14 @@ import {
   updateParentHeights,
 } from 'jTUtils'
 import { Schema, Values } from 'jTConstants'
-import { List } from '../../components'
+import { List, Modal } from '../../components'
 
 class MapType extends BaseType {
 
   static priority = 1
   static eval = value => typeof value === 'object' && !Array.isArray(value)
-
+  static defaultValue = (newType, schema, settings) => {}
+  
   constructor(config){
     super({ ...config })
   }
@@ -95,9 +96,8 @@ class MapType extends BaseType {
     const schema = id && Editor.schema(id)
     schema && Editor.add({
       parent: schema,
-      matchType: 'empty',
-      key: Schema.JT_EMPTY_TYPE,
-      value: undefined,
+      mode: Schema.MODES.ADD,
+      matchType: Schema.EMPTY,
     })
   }
 

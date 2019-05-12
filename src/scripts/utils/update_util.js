@@ -1,6 +1,7 @@
 import { isObj } from './object_util'
-import { logData, uuid } from './methods_util'
+import { logData, uuid, isFunc } from './methods_util'
 import { clearSchema } from './clean_util'
+import { clearInstance, buildInstance } from './schema_util'
 import { Schema } from 'jTConstants'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
@@ -23,6 +24,31 @@ const buildNewPos = (pos, key, replace=true) => {
 }
 
 /**
+ * Checks if the passed in pos already exists in the tree
+ * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { string } pos - location in the tree to check
+ */
+const checkSchemaPos = (tree, pos, checkExists) => (
+  checkExists
+    ? !tree.schema[pos]
+      ? logData(
+        `Cannot update schema in tree. Schema does not exist!`,
+        pos,
+        tree.schema[pos],
+        'error'
+      )
+      : true
+    : tree.schema[pos]
+      ? logData(
+        `Cannot add child to tree. Schema pos already exists!`,
+        pos,
+        tree.schema[pos],
+        'error'
+      )
+      : true
+)
+
+/**
  * Updates the schema with the passed in update object
  * @param  { object } update - object containing updates to the schema
  * @param  { object } schema - data that defines the object at the current pos
@@ -39,6 +65,15 @@ export const updateSchema = (update, schema) => (
     }, schema)
 )
 
+
+  // // Ensure the key exists and is not empty 
+  // if(!schema.key || schema.key === Schema.JS_EMPTY_TYPE)
+  //   schema.key = schema.id || uuid()
+
+  // // Check if the pos is empty, and update it to the key
+  // if(pos.indexOf(Schema.JS_EMPTY_TYPE) !== 0)
+  //   schema.pos = buildNewPos(pos, schema.key)
+
 /**
  * Updates the matchType of the tree node at the passed in pos
  * @param  { object } tree - object containing the entire jTree object structure 
@@ -46,10 +81,42 @@ export const updateSchema = (update, schema) => (
  * @param  { object } schema - data that defines the object at the current pos
  * @return { void }
  */
-export const updateType = (tree, pos, schema) => {
-  console.log(tree);
-  console.log(pos);
-  console.log(schema);
+export const updateType = (tree, pos, schema, settings) => {
+  if(!pos || !isObj(schema))
+    return logData(
+      `The pos and schema object are required to update the schema type`,
+      pos,
+      schema,
+      'error'
+    )
+  
+  // Ensure the passed in pos exists in the tree
+  if(!checkSchemaPos(tree, pos, true)) return
+  
+  // Remove the old instance
+  clearInstance(schema.id)
+  _unset(schema, 'instance')
+
+  // Get the type to switch to
+  const newType = settings.Editor.Types.get(schema.matchType)
+  if(!newType)
+    return logData(
+      `Can not update type. Type ${schema.matchType} in not a configured type`,
+      pos,
+      schema,
+      settings.Editor.Types.get(),
+      'error'
+    )
+
+  if(!schema.value && isFunc(newType.factory.defaultValue))
+    schema.value = newType.factory.defaultValue(schema, settings)
+  
+  if(schema.value && !newType.factory.eval(schema.value) &&  isFunc(newType.factory.error))
+    schema.error = newType.factory.error(schema, settings)
+  
+  schema.skipType = true
+  schema.instance = buildInstance(newType, schema, settings)
+  schema.mode = Schema.MODES.EDIT
 }
 
 /**
@@ -59,7 +126,12 @@ export const updateType = (tree, pos, schema) => {
  * @param  { object } schema - data that defines the object at the current pos
  * @return { void }
  */
-export const updateValue = (tree, pos) => _set(tree, pos, tree.schema[pos].value)
+export const updateValue = (tree, pos, schema, settings) => {
+  const factory = schema.instance.constructor
+  return !schema.skipType && !schema.value || !factory.eval(schema.value)
+      ? (schema.error = isFunc(factory.error) && factory.error(schema, settings))
+      : _set(tree, pos, schema.value)
+}
 
 /**
  * Updates the position of an node in the tree
@@ -107,22 +179,17 @@ export const updateKey = (tree, pos) => {
   return updatedPos
 }
 
-const checkSchemaPos = (tree, pos) => (
-  tree.schema[pos]
-    ? logData(
-      `Cannot add child to tree. Schema pos already exists!`,
-      pos,
-      tree.schema[pos],
-      'error'
-    )
-    : true
-)
-
+/**
+ * Adds a child schema to parent schema or tree
+ * @param  {any} tree - full source and schema of entire data
+ * @param  {any} schema - new schema to add
+ * @param  {any} parent - parent schema to add child schema to
+ * @return  { boolean } - true if schema is added to the parent
+ */
 export const addChildSchema = (tree, schema, parent) => {
   if(!tree || !isObj(schema) || !isObj(parent)) return
   const parentVal = _get(tree, parent.pos)
   if(!parentVal || typeof parentVal !== 'object') return
-  
   
   schema.id = schema.id || uuid()
   
@@ -136,8 +203,6 @@ export const addChildSchema = (tree, schema, parent) => {
 
   schema.key = schema.key || schema.id
   schema.parent = parent
-  if(schema.value === undefined)
-    schema.key = Schema.JT_EMPTY_TYPE
   
   if(Array.isArray(parentVal)){
     schema.pos = buildNewPos(parent.pos, parentVal.length, false)

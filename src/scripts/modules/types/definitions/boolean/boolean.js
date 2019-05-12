@@ -5,7 +5,8 @@ class BooleanType extends BaseType {
 
   static priority = 1
   static eval = (value) => (typeof value === 'boolean')
-
+  static defaultValue = () => true
+  
   constructor(config){
     super({ ...config })
   }

@@ -2,6 +2,7 @@ import { isObj } from './object_util'
 import { isConstructor, logData } from './methods_util'
 import { Values, Schema } from '../constants'
 import _get from 'lodash.get'
+import _unset from 'lodash.unset'
 
 /**
  * Validates a new type to ensure if has not already been registered
@@ -76,12 +77,10 @@ export const validateUpdate = (idOrPos, update, tree) => {
     )
 
   // Get the current data in the tree, and the current schema
-  const dataInTree = _get(tree, pos, Schema.NOT_IN_TREE)
   const schema = tree.schema[pos]
   const isEmptyType = schema.matchType === Schema.EMPTY
   //  Check if data in the tree, or if it was an empty type
-  if(
-    dataInTree === Schema.NOT_IN_TREE && (!schema || !isEmptyType))
+  if(!schema && !isEmptyType)
     return logData(
       `Could not find any data in the tree that matches ${idOrPos}!`,
       tree, 'warn'
@@ -97,9 +96,9 @@ export const validateUpdate = (idOrPos, update, tree) => {
   // Ensure the key is updated when dealing with an empty object
   // Check If key is empty type, and if this is a matchType update
   // If key is empty type, then we should be updating the matchType
-  if(schema.key === Schema.JT_EMPTY_TYPE && !update.matchType)
+  if(schema.mode === Schema.MODES.ADD && !update.matchType)
     return logData(
-      `A valid key is required to update the item!`,
+      `A valid type is required to update the item!`,
       update, tree, schema, 'warn'
     )
 
@@ -122,7 +121,7 @@ export const validateUpdate = (idOrPos, update, tree) => {
 
 
 export const validateAdd = (schema, parent) => (
-  !isObj(schema) || !schema.key
+  !isObj(schema)
     ? logData(`Add method requires a valid schema object as the first argument`, 'error')
     : !isObj(parent) || !parent.value || !parent.pos
       ? logData(`Add method requires a valid parent schema`, 'error')

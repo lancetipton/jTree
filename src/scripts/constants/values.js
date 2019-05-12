@@ -4,7 +4,6 @@ export const Values = Object.freeze({
   DATA_TREE_ID: 'data-tree-id',
   DEFAULT_TYPES: 'definitions',
   EDIT_CLS: 'item-edit',
-  KEY_MODS: Object.freeze([ 'shift', 'alt', 'ctrl', 'cmd' ]),
   LOG_TYPES: Object.freeze([
     'error',
     'dir',

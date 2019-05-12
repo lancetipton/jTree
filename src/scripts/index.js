@@ -137,12 +137,19 @@ const createEditor = (settings, domContainer) => {
       if(!validData || !validData.schema || !validData.pos) return 
       // Get reference to the pos
       let { pos } = validData
+
       // Update the schema to ensure we are working with the updated data
       this.tree.schema[pos] = updateSchema(update, { ...validData.schema })
+      let schema = this.tree.schema[pos]
+
+      // If there's an update, and skipType exists before the matchType check
+      // Remove it, because this should an update after the type already update
+      schema.skipType && !update.matchType && _unset(schema, 'skipType')
+
       // Special case for the key prop, cause we have to
       // copy the schema, and change the pos in the tree
       if(update.key){
-        const updatedPos = updateKey(this.tree, pos, this.tree.schema[pos])
+        const updatedPos = updateKey(this.tree, pos, schema, settings)
         // If no updated pos came back
         // There was an issue updating, so just return
         if(updatedPos){
@@ -160,8 +167,7 @@ const createEditor = (settings, domContainer) => {
           // Then call the action to update it
           update[prop] &&
             UPDATE_ACTIONS[prop] &&
-            UPDATE_ACTIONS[prop](this.tree, pos, this.tree.schema[pos])
-          
+            UPDATE_ACTIONS[prop](this.tree, pos, schema, settings)
         })
 
       // Rebuild the tree from this position
@@ -170,6 +176,7 @@ const createEditor = (settings, domContainer) => {
         settings
       ])
 
+      schema = undefined
       validData.schema = undefined
     }
     

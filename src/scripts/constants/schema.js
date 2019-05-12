@@ -1,10 +1,10 @@
 export const Schema = {
   MODES: Object.freeze({
+    ADD: 'ADD',
     EDIT: 'EDIT',
     DRAG: 'DRAG',
-    REMOVE: 'REMOVE'
+    REMOVE: 'REMOVE',
   }),
-  NOT_IN_TREE: 'NOT_IN_TREE',
   PROPS_CHECK: Object.freeze([
     'tree',
     'Editor',
@@ -21,6 +21,6 @@ export const Schema = {
     'open',
     'matchType'
   ]),
-  JT_EMPTY_TYPE: 'JT_EMPTY_TYPE',
+  EMPTY_TYPE: 'EmptyType',
   EMPTY: 'empty',
 }

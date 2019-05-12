@@ -13,12 +13,20 @@ export const getInstanceCache = id => (
   id && INSTANCE_CACHE[id] || INSTANCE_CACHE
 )
 
+/**
+ * Removes an instance from the instance cache
+ * @param  {any} id - id of the instance to be removed
+ * @return { boolean } - if the instance was removed
+ */
 export const clearInstance = id => {
-  if(!id || !INSTANCE_CACHE[id]) return
+  if(!id || !INSTANCE_CACHE[id]) return false
+
   isFunc(INSTANCE_CACHE[id].componentWillUnmount) &&
     INSTANCE_CACHE[id].componentWillUnmount()
 
   _unset(INSTANCE_CACHE, id)
+
+  return true
 }
 
  
