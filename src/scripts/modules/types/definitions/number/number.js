@@ -17,7 +17,7 @@ class NumberType extends CleaveType {
         numeral: true,
         delimiter: '',
         stripLeadingZeroes: false,
-        ...config.cleave,
+        ...(config || {}).cleave,
       }
     })
   }

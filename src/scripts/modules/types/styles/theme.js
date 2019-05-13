@@ -71,7 +71,8 @@ const theme = {
   // Toggle Action
   passiveToggle: colors.gray7,
   activeToggle: colors.blue,
-  openToggle: colors.orange,
+  editToggle: colors.orange,
+  headerOpenToggle: colors.lime,
   toggleIconSpeed: `0.5s`,
   toggleSize: `16px`,
   toggleSpacer: '10px',
@@ -80,8 +81,8 @@ const theme = {
   listToggleSpeed: speeds.fast,
   rowIndent: '10px',
   rowHeaderIndent: "-10px",
-  subRowIndent: '20px',
-  subHeaderRowIndent: "-20px",
+  subRowIndent: '30px',
+  subHeaderRowIndent: "-30px",
   rowShadow: colors.lightShadow,
   
   // Color states
@@ -119,10 +120,10 @@ const theme = {
   itemTransSpeed: speeds.fast,
   itemColor: colors.gray8,
   itemBorder: `2px solid transparent`,
-  itemHoverBorder: `2px solid ${colors.gray8}`,
-  itemEditBorder: `2px solid ${colors.lime}`,
+  itemHoverBorder: `2px solid ${colors.blue}`,
+  itemEditBorder: `2px solid ${colors.orange}`,
   itemEmptyBorder: `2px solid ${colors.orange}`,
-  
+  headerOpenBorder: `2px solid ${colors.lime}`,
   
   // Sizes
   headerSize: '14px',

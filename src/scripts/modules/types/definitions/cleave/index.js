@@ -4,8 +4,10 @@ import { clearObj } from 'jTUtils'
 import { Values, Schema } from 'jTConstants'
 
 const getCleaveEl = (Editor, id) => {
-  const { component } = Editor.schema(id)
-  return component && component.getElementsByClassName(Values.CLEAVE_CLS)[0]
+  const schema = Editor.schema(id)
+  return schema &&
+    schema.component &&
+    schema.component.getElementsByClassName(Values.CLEAVE_CLS)[0]
 }
 
 class CleaveType extends BaseType {
@@ -85,9 +87,10 @@ class CleaveType extends BaseType {
   }
   
   componentWillUnmount = (Editor) => {
+    // Set to undefined, because when the instance gets remove, we don't want it 
+    // to remove the value; it's a ref to the actual value in the tree
+    this.original.value = undefined
     this.clearCleave()
-    clearObj(this.original)
-    clearObj(this.updated)
   }
 
 }

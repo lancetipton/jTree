@@ -12,11 +12,8 @@ export const updateParentHeights = (schema, updateHeight) => {
   const domNode = schema && schema.component
   if(!domNode || !updateHeight)
     return
-
-  const newHeight = domNode.style.maxHeight
-    ? parseInt(domNode.style.maxHeight) + updateHeight
-    : domNode.scrollHeight + updateHeight
-
+  
+  const newHeight = domNode.scrollHeight + updateHeight
   domNode.style.maxHeight = `${newHeight}px`
   schema.parent && updateParentHeights(schema.parent, newHeight)
 }

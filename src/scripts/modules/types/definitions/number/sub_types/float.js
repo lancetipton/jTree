@@ -13,33 +13,21 @@ class FloatType extends NumberType {
     super(config)
   }
 
-  onEdit = e => {
-    console.log(this);
-  }
-
-  onDrag = e => {
-    console.log(this);
-  }
-
-  onDelete = e => {
-    console.log(this);
-  }
-
-  shouldComponentUpdate = (params) => {}
-
   render = props => {
-    
-    const { schema } = props
+    const { schema: { id, key, value, mode, matchType } } = props
     return Item({
-      id: schema.id,
-      key: schema.key,
-      value: schema.value,
-      type: schema.matchType,
-      onEdit: this.onEdit,
-      onDrag: this.onDrag,
-      onDelete: this.onDelete
+      id,
+      key,
+      value,
+      mode,
+      type: matchType,
+      showLabel: true,
+      cleave: true,
+      keyInput: 'text',
+      ...this.getActions(mode)
     })
   }
+
 }
 
 export default FloatType

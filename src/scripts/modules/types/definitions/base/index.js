@@ -101,10 +101,10 @@ class BaseType {
     const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
     if(!id) return
 
-    // Check the skipType, if true, that means cancel was pressed
+    // Check the pending, if true, that means cancel was pressed
     // Without the key / value ever being saved, so remove the item
     const schema = Editor.schema(id)
-    schema && schema.skipType
+    schema && schema.pending
       ? Editor.remove(id)
       : Editor.update(id, update)
   }
@@ -181,8 +181,9 @@ class BaseType {
   }
 
   componentWillUnmount = (Editor) => {
-    clearObj(this.original)
-    clearObj(this.updated)
+    // Set to undefined, because when the instance gets remove, we don't want it 
+    // to remove the value; it's a ref to the actual value in the tree
+    this.original.value = undefined
   }
 
   render = props => {

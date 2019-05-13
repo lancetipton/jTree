@@ -4,14 +4,16 @@ export { default as cloneDeep } from 'lodash.clonedeep'
 
 export const cloneJson = obj => JSON.parse(JSON.stringify(obj))
 
-export const clearObj = obj => (
+export const clearObj = (obj, filter) => {
   obj && Object
     .entries(obj)
     .map(([key, value]) => {
+      if(filter && filter.indexOf(key) !== -1) return
       if(typeof value === 'object') clearObj(value)
       _unset(obj, key)
     })
-)
+}
+
 
 export const isObj = obj => typeof obj === 'object' && !Array.isArray(obj)
 

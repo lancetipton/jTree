@@ -8,17 +8,9 @@
   align-items: flex-start;
 }
 
-.j-tree-editor ul > li {
-  
-}
-
 .j-tree-editor div.list-wrapper {
   transition: max-height @listToggleSpeed ease-in-out;
   overflow: hidden;
-}
-
-.j-tree-editor div.list-wrapper.list-open {
-
 }
 
 .j-tree-editor div.list-wrapper > ul.list {
@@ -26,12 +18,8 @@
   overflow: hidden;
 }
 
-.j-tree-editor div.list-wrapper > ul.list.list-open {
-}
-
 .j-tree-editor ul.list > li.row {
   margin-left: @rowIndent;
-  
 }
 .j-tree-editor li.row ul.list > li.row {
   margin-left: @subRowIndent;
@@ -47,10 +35,11 @@
   transition: all @toggleIconSpeed ease-in-out;
 }
 
-.j-tree-editor li.row ul.list > li.row > div.header:hover {
-  /* color: @activeToggle; */
+.j-tree-editor ul.list > li.row > div.item.open:hover,
+.j-tree-editor ul.list > li.row > div.header.open {
+  background-color: @hoverItemBack;
+  border-bottom: @headerOpenBorder;
 }
-
 
 .j-tree-editor ul.list div.header .toggle-icon {
   text-decoration: none;
@@ -63,18 +52,24 @@
   cursor: pointer;
 }
 
-.j-tree-editor li.row ul.list > li.row > div.header:hover .toggle-icon {
+.j-tree-editor ul.list > li.row > div.header:hover .toggle-icon {
   text-decoration: none;
   position: relative;
   top: 1px;
   color: @activeToggle;
 }
 
-.j-tree-editor ul.list div.header .toggle-icon.open {
+.j-tree-editor ul.list > li.row > div.header:hover .toggle-icon.open,
+.j-tree-editor ul.list > li.row > div.header .toggle-icon.open {
   transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
-  color: @activeToggle;
+  color: @headerOpenToggle;
+}
+
+.j-tree-editor ul.list > li.row > div.item.header.item-edit:hover .toggle-icon,
+.j-tree-editor ul.list > li.row > div.item.header.item-edit .toggle-icon {
+  color: @editToggle;
 }
 
 /* ---- Display Item ---- */
@@ -86,28 +81,25 @@
   align-items: center;
   padding: 2px 10px;
   margin-bottom: 4px;
-  border-left: @itemBorder;
+  border-bottom: @itemBorder;
   transition: all @toggleIconSpeed ease-in-out;
 }
 
 .j-tree-editor ul.list > li.row > div.item.item-edit.item-empty {
-  border-left: @itemEmptyBorder;
+  border-bottom: @itemEmptyBorder;
 }
 
 
 .j-tree-editor ul.list > li.row > div.item:hover {
   background-color: @hoverItemBack;
   position: relative; 
-  border-left: @itemHoverBorder;
-
+  border-bottom: @itemHoverBorder;
 }
+
+.j-tree-editor ul.list > li.row > div.item.header.item-edit,
 .j-tree-editor ul.list > li.row > div.item.item-edit {
-  border-left: @itemEditBorder;
+  border-bottom: @itemEditBorder;
   background-color: @activeItemBack;
-}
-
-.j-tree-editor li.row > div.item > div.item-data {
-  
 }
 
 .j-tree-editor li.row > div.item > div.item-key {
@@ -119,8 +111,6 @@
 .j-tree-editor li.row > div.item.header > div.item-data {
   cursor: pointer;
 }
-
-
 
 .j-tree-editor li.row > div.item > div.item-value {
   font-family: @itemValFont;

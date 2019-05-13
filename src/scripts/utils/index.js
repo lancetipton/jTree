@@ -1,5 +1,6 @@
 export * from './clean_util'
 export * from './dom_util'
+export * from './instance_util'
 export * from './methods_util'
 export * from './object_util'
 export * from './schema_util'

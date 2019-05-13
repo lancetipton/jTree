@@ -1,8 +1,8 @@
 import stylesReset from './styles_reset.css'
 import base from './base.css'
-import modal from './modal.css'
 import orgTheme from './theme'
 import { deepMerge } from 'jTUtils'
+
 
 const fillBlocks = (block, theme) => (
   Object

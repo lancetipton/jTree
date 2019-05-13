@@ -24,9 +24,10 @@ import {
   validateAdd,
   validateSource,
   validateUpdate,
+  loopSource,
 } from 'jTUtils'
 import { Values, Schema } from 'jTConstants'
-import { buildTypes, TypesCls, loopDataObj } from './types'
+import { buildTypes, TypesCls } from './types'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
 import _unset from 'lodash.unset'
@@ -68,7 +69,7 @@ const buildFromPos = function(pos, settings, force) {
 
   const updatedSchema = this.tree.schema[pos]
   const valueInTree = _get(this.tree, pos)  
-  const updatedEl = loopDataObj(
+  const updatedEl = loopSource(
     updatedSchema,
     this.tree,
     settings,
@@ -142,9 +143,9 @@ const createEditor = (settings, domContainer) => {
       this.tree.schema[pos] = updateSchema(update, { ...validData.schema })
       let schema = this.tree.schema[pos]
 
-      // If there's an update, and skipType exists before the matchType check
-      // Remove it, because this should an update after the type already update
-      schema.skipType && !update.matchType && _unset(schema, 'skipType')
+      // If there's an update, and pending exists before the matchType check
+      // Remove it, pending only gets set on matchType update
+      schema.pending && !update.matchType && _unset(schema, 'pending')
 
       // Special case for the key prop, cause we have to
       // copy the schema, and change the pos in the tree

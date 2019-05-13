@@ -36,7 +36,9 @@ const buildHeaderKey = (props, toggleProps) => {
 export const ListHeader = props => {
   const { id, key, value, type, isOpen } = props
   const iconCls = isOpen && `open` || ``
-  const classes = `header item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
+  
+  const classes = `${iconCls} header item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
+
   const toggleProps = {
     onClick: props.onToggle,
     [Values.DATA_TREE_ID]: id,

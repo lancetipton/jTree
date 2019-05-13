@@ -1,7 +1,7 @@
 import { isObj } from './object_util'
 import { logData, uuid, isFunc } from './methods_util'
 import { clearSchema } from './clean_util'
-import { clearInstance, buildInstance } from './schema_util'
+import { clearInstance, buildInstance } from './instance_util'
 import { Schema } from 'jTConstants'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
@@ -114,7 +114,7 @@ export const updateType = (tree, pos, schema, settings) => {
   if(schema.value && !newType.factory.eval(schema.value) &&  isFunc(newType.factory.error))
     schema.error = newType.factory.error(schema, settings)
   
-  schema.skipType = true
+  schema.pending = true
   schema.instance = buildInstance(newType, schema, settings)
   schema.mode = Schema.MODES.EDIT
 }
@@ -128,7 +128,7 @@ export const updateType = (tree, pos, schema, settings) => {
  */
 export const updateValue = (tree, pos, schema, settings) => {
   const factory = schema.instance.constructor
-  return !schema.skipType && !schema.value || !factory.eval(schema.value)
+  return !schema.pending && !schema.value || !factory.eval(schema.value)
       ? (schema.error = isFunc(factory.error) && factory.error(schema, settings))
       : _set(tree, pos, schema.value)
 }

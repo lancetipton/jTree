@@ -21,10 +21,10 @@ const checkExtraClass = (org, classes) => (
 export const List = (props) => {
   let { children, classes, styles, ...headerProps } = props
   styles = styles || {}
-  children = children && children.map(child => Row(child, props)) || []
+  children = children && children.map(child => Row({}, child)) || []
   
   headerProps.key !== Schema.ROOT &&
-    children.unshift( Row( ListHeader(headerProps) ) )
+    children.unshift( Row({ className: 'list-header' }, ListHeader(headerProps) ) )
 
   return div(
     {

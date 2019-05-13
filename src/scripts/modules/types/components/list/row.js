@@ -2,7 +2,12 @@ import { elements } from 'element-r'
 const { li } = elements
 
 
-export const Row = (child, props) => {
-  // const { schema: { id }, schema } = props
-  return li({ className: 'row' }, child )
-}
+export const Row = (rowProps, child, props) => (
+  li(
+    {
+      ...rowProps,
+      className: `row${rowProps.className && ' ' + rowProps.className || ''}`
+    },
+    child
+  )
+)
