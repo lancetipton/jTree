@@ -68,6 +68,14 @@ const buildBtns = (id, props) => (
   Object
     .keys(btnTypes)
     .reduce((actions, key) => {
+      if(props.isRoot){
+        key === 'onAdd'
+          ? actions.push(buildIcon( props[key], key, id ))
+          : null
+
+        return actions
+      }
+
       props[key] && actions.push(buildIcon( props[key], key, id ))
       return actions
     }, [])

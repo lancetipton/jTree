@@ -9,6 +9,7 @@ import {
   renderInstance,
 } from './instance_util'
 import _unset from 'lodash.unset'
+import _get from 'lodash.get'
 import { Schema } from 'jTConstants'
 
 const checkPropsChange = (props, check) => (
@@ -52,8 +53,6 @@ export const buildSchema = (curSchema, type, settings) => {
     schema,
     settings
   )
-  
-  schema.key === Schema.ROOT && (schema.open = true)
 
   return schema
 }
@@ -78,19 +77,17 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   // Check if the type has a factory to call, if not just return
   if(!type || !type.factory || !isConstructor(type.factory))
     return tree
- 
   // Build an updated schema based on the new settings
   const schema = buildSchema(
     curSchema,
     type,
     settings
   )
-  
-  console.log('------------------settings------------------');
-  console.log(settings);
-  
+
   // If not the root element, set the parent to the schema
-  key !== Schema.ROOT && (schema.parent = parent)
+  key !== Schema.ROOT
+    ? (schema.parent = parent)
+    : (schema.isRoot = true)
   
   // If an old schema exists at this pos, clear it out
   // Add the schema to the tree based on pos
@@ -113,6 +110,11 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
     return ''
   }
 
+  if(schema.key === Schema.ROOT && !curSchema.id){
+    props.schema.open = _get(settings, 'Editor.config.root.start') === 'open'
+    props.schema.keyText = _get(settings, 'Editor.config.root.title', schema.key)
+  }
+
   // Render the component and it's children
   let component = renderInstance(
     key,
@@ -129,6 +131,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   // Add the dom components Id to the idMap
   // This will help with looking up the schema later
   tree.idMap[component && component.id || schema.id] = schema.pos
+
   // If we are not on the root element of the tree, 
   // Ensure the props get cleared out and return the rendered component
   if(key !== Schema.ROOT)

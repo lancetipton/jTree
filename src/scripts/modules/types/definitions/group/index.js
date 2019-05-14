@@ -34,13 +34,20 @@ class GroupType extends BaseType {
     if(!schema) return
 
     const update = { open: !schema.open }
+
+    // --- Does the opposite of the didUpdate method below --- //
+    // Check if the store is open, but the update is changing to closed
     if(this.store.isOpen && !update.open){
+    // If true, close the object before the update is called
       this.store.isOpen = false
       
       const refNode = schema.component
-
+      // First update the maxHeight, to `close the object`
       refNode.style.maxHeight = this.store.closedMaxHt
+      // Use a timeout to wait until the object is closed
       return setTimeout(() => {
+        // Then update the store, can call the update method
+        // Now the object have been closed
         this.store.currentMaxHt = this.store.closedMaxHt
         Editor.update(id, update)
       }, this.toggleSpeed || 500)
@@ -64,12 +71,23 @@ class GroupType extends BaseType {
   
   componentDidMount = (props, Editor) => {
     const refNode = props.schema.component
-    if(!props.schema.parent || !refNode || refNode.style.maxHeight) return
-    
+    if(!refNode || refNode.style.maxHeight) return
+
     // Set the currentMax height
     this.store.currentMaxHt = `${refNode.scrollHeight}px`
     this.store.closedMaxHt = this.store.currentMaxHt
     refNode.style.maxHeight = this.store.currentMaxHt
+
+    // If it's the root node, it defaults to open
+    if(props.schema.isRoot && props.schema.open){
+      this.store.isOpen = true
+    // So use the header child height to set the default closed height
+      const rootHeader = document.getElementById(Values.JT_ROOT_HEADER_ID)
+      if(!rootHeader) return
+
+      this.store.closedMaxHt = `${rootHeader.scrollHeight}px`
+    }
+
     this.getTransSpeed(refNode)
   }
 
@@ -85,14 +103,19 @@ class GroupType extends BaseType {
     if(!refNode) return
     
     const childrenHt = getChildrenHt(refNode)
-
+    
+    // --- Does the opposite of the toggle method above --- //
+    // Check if the schema is open, but the local store is closed
     if(!this.store.isOpen && schema.open){
+    // If true, set the store to open, and update the maxHeight of the element
       this.store.isOpen = true
       this.store.currentMaxHt = `${childrenHt}px`
       // Only set in open, so it keeps the height when about to close
       refNode.style.maxHeight = this.store.currentMaxHt
     }
-
+    // If there are parents, but update the parents height
+    // This ensures the parent height does not but off the children
+    // when the children are a sub map or collection
     schema.parent && updateParentHeights(schema, childrenHt)
   }
 
@@ -108,14 +131,15 @@ class GroupType extends BaseType {
   }
 
   render = props => {
-    const { schema: { id, key, value, mode, matchType, keyType }, children } = props
+    const {
+      schema: { id, key, value, mode, matchType, keyType, keyText, isRoot, open },
+      children,
+    } = props
 
-    const isRoot = props.schema.key === Schema.ROOT
-    const isOpen = props.schema.open
-    const classes = isOpen && `list-open` || ''
+    const classes = open && `list-open` || ''
     let actions = { onToggle: this.onToggle }
     
-    actions = isOpen && mode !== Schema.MODES.EDIT && {
+    actions = open && mode !== Schema.MODES.EDIT && {
       ...actions,
       onAdd: this.onAdd,
     } || actions
@@ -126,10 +150,11 @@ class GroupType extends BaseType {
       value,
       mode,
       classes,
-      isOpen,
       isRoot,
       children,
+      keyText,
       keyType: keyType || 'text',
+      isOpen: open,
       styles: {
         // Always set the height to be the currentMax height
         // When opened, height will be updated in componentDidUpdate

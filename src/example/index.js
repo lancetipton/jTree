@@ -66,9 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // onChange: onChange,
             // onSave: onSave,
             // onCancel: onCancel,
-            // Source object to be edited
             source: testData,
-            title: 'Dom Tree',
+            // Source object to be edited
+            root: {
+              start: 'open',
+                // Defaults to closed
+              title: 'j-Tree',
+                // Header title of the object
+                // Defaults to Object Tree
+            },
             iconType: 'far',
             styles: {},
             appendTree: () => {}

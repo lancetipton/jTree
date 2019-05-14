@@ -6,5 +6,9 @@ export const EditorConfig = Object.freeze({
   onCancel: Values.NO_OP,
   source: undefined,
   iconType: 'far',
-  styles: {}
+  styles: {},
+  root: {
+    start: 'closed',
+    title: 'Object Tree'
+  }
 })

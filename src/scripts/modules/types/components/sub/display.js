@@ -4,7 +4,7 @@ import { elements } from 'element-r'
 export const display = (props, type) => ({ 
   El: elements.div,
   elValue: props.value,
-  keyVal: `${props.key}:`,
+  keyVal: `${props.keyText || props.key} `,
   editCls: '',
   [`${type}Attrs`]: { class: `item-${type} item-data` }
 })

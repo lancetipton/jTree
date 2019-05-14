@@ -25,6 +25,7 @@ const newInstance = schema => {
 }
 
 const buildChild = (childKey, child, props, loopChildren) => {
+
   if(props.schema.open)
     return loopChildren(
       getChildSchema(childKey, child, props),
