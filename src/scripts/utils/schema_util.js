@@ -39,10 +39,14 @@ export const buildSchema = (curSchema, type, settings) => {
     ...curSchema,
     pos: buildInstancePos(curSchema.key, curSchema.parent),
     id: curSchema.id || uuid(),
+    keyType: curSchema.parent && Array.isArray(curSchema.parent.value)
+      ? 'number' 
+      : 'text',
     matchType: curSchema.matchType || buildTypeName(
       type.name || type.factory.name
     )
   }
+  
   !schema.instance && buildInstance(
     type,
     schema,
@@ -57,7 +61,7 @@ export const buildSchema = (curSchema, type, settings) => {
 export const loopSource = (curSchema, tree, settings, elementCb) => {
   const { value, key, parent, pos, pending } = curSchema
   const Types = settings.Editor.Types
-
+  
   // Get the matchTypes for the value
   // pending gets set when empty value is added, and the type was updated
   // This will switch it to edit mode, but the key and value will be empty
@@ -81,7 +85,10 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
     type,
     settings
   )
-
+  
+  console.log('------------------settings------------------');
+  console.log(settings);
+  
   // If not the root element, set the parent to the schema
   key !== Schema.ROOT && (schema.parent = parent)
   
@@ -129,7 +136,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   
   // Only the root component should get to this point
   // Call the appendTree method to add the component tree to the dom
-  elementCb && checkCall(elementCb, component, settings.editor.appendTree, tree)
+  elementCb && checkCall(elementCb, component, settings.Editor.config.appendTree, tree)
   // Set component and props to undefined, to ensure it get's cleaned up
   // as it's longer being used
   component = undefined

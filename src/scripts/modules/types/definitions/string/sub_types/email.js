@@ -1,13 +1,8 @@
 import StringType from '../string'
 
 class EmailType extends StringType {
-  constructor(settings){
-    super(settings)
-    // if(settings.priorities && settings.priorities.email)
-    //   this.#priority = settings.priorities.email
-  }
 
-  #priority = 2
+  static priority = 2
 
   static eval = value => {
     if (
@@ -21,6 +16,11 @@ class EmailType extends StringType {
     const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/
     return Boolean(regex.test(value))
   }
+
+  constructor(config){
+    super(config)
+  }
+
 
 }
 

@@ -37,7 +37,7 @@ const showTypeValue = (props, type) => {
   }, 'Select Type...'))
     
   return inputWrapper(
-    { type: 'type', showLabel: true },
+    { type: type, showLabel: true },
     selectWrapper(
       {
         class: `item-matchType item-data ${Values.EDIT_CLS}`,

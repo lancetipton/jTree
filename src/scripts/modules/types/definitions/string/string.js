@@ -20,7 +20,7 @@ class StringType extends CleaveType {
   }
 
   render = props => {
-    const { schema: { id, key, value, mode, matchType } } = props
+    const { schema: { id, key, value, mode, matchType, keyType } } = props
     return Item({
       id,
       key,
@@ -28,7 +28,7 @@ class StringType extends CleaveType {
       mode,
       type: matchType,
       showLabel: true,
-      keyInput: 'text',
+      keyType: keyType || 'text',
       ...this.getActions(mode)
     })
   }

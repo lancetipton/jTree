@@ -14,7 +14,7 @@ class FloatType extends NumberType {
   }
 
   render = props => {
-    const { schema: { id, key, value, mode, matchType } } = props
+    const { schema: { id, key, value, mode, matchType, keyType } } = props
     return Item({
       id,
       key,
@@ -23,7 +23,7 @@ class FloatType extends NumberType {
       type: matchType,
       showLabel: true,
       cleave: true,
-      keyInput: 'text',
+      keyType: keyType || 'text',
       ...this.getActions(mode)
     })
   }

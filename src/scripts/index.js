@@ -26,7 +26,7 @@ import {
   validateUpdate,
   loopSource,
 } from 'jTUtils'
-import { Values, Schema } from 'jTConstants'
+import { Values, Schema, EditorConfig } from 'jTConstants'
 import { buildTypes, TypesCls } from './types'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
@@ -43,10 +43,10 @@ const UPDATE_ACTIONS = {
 let ACT_SOURCE
 
 /**
- * Checks if the settings.editor.appendTree method exists, and calls it
+ * Checks if the settings.Editor.config.appendTree method exists, and calls it
  * If response is not false, it will add the rootComp the Dom
  * @param  { dom element } rootComp of the source data passed to the Editor
- * @param  { function } appendTree - from settings.editor.appendTree ( from user )
+ * @param  { function } appendTree - from settings.Editor.config.appendTree ( from user )
  *                                 - should always be bound to the Editor Class
  *
  * @return { void }
@@ -83,7 +83,7 @@ const buildFromPos = function(pos, settings, force) {
 
 }
 
-const createEditor = (settings, domContainer) => {
+const createEditor = (settings, editorConfig, domContainer) => {
 
   class jTree {
     
@@ -93,8 +93,8 @@ const createEditor = (settings, domContainer) => {
           this.Types = Types
           this.element = domContainer
           this.element.classList.add(Values.ROOT_CLASS)
-          const { source, ...config } = settings.editor
-          this.config = { ...config }
+          const { source, ...config } = editorConfig
+          this.config = config
           settings.Editor = this
           return source && this.setSource(source, true)
         })
@@ -247,13 +247,14 @@ const init = (opts) => {
     )
   
   // Remove element, and showLogs cause we don't need them anymore
-  const { element, showLogs, ...options } = opts
+  const { element, showLogs, editor, ...options } = opts
   // Clean up the opts.element so we don't have a memory leak
   opts.element = undefined
   // Build the settings by joining with the default settings
   const settings = deepMerge(DEF_SETTINGS, options)
+  const editorConfig = deepMerge(EditorConfig, editor)
   // Create the jTree Editor
-  const Editor = createEditor(settings, domContainer)
+  const Editor = createEditor(settings, editorConfig, domContainer)
   return Editor
 }
 

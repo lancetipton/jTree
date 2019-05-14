@@ -208,7 +208,7 @@ class BaseType {
       mode: schema.mode,
       showLabel: true,
       type: schema.matchType,
-      keyInput: 'text',
+      keyType: schema.keyType || 'text',
       ...actions
     })
   }

@@ -16,18 +16,18 @@ const buildKeyEl = ({ showLabel, El, keyAttrs, keyVal }) => {
 }
 
 const buildHeaderKey = (props, toggleProps) => {
-  const { key } = props
+  const { key, keyType, mode } = props
 
   return props.mode !== Schema.MODES.EDIT
     ? div({
         className: 'item-key item-data',
         ...toggleProps,
-      }, `${props.key}:`)
+      }, `${key}:`)
     : buildKeyEl(
         subComps.input({
-        key: props.key,
-        value: props.key,
-        keyInput: 'text',
+        key,
+        value: key,
+        keyType: keyType || 'text',
         showLabel: true,
       }, 'key')
     )
@@ -36,8 +36,11 @@ const buildHeaderKey = (props, toggleProps) => {
 export const ListHeader = props => {
   const { id, key, value, type, isOpen } = props
   const iconCls = isOpen && `open` || ``
+  const rootCls = key === Schema.ROOT
+    ? 'root'
+    : ''
   
-  const classes = `${iconCls} header item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
+  const classes = `${iconCls} ${rootCls} header item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
 
   const toggleProps = {
     onClick: props.onToggle,
@@ -60,6 +63,6 @@ export const ListHeader = props => {
       },
       `${capitalize(type)}`
     ),
-    div({ className: `item-btns item-data` }, Buttons(props))
+    !rootCls && div({ className: `item-btns item-data` }, Buttons(props)) || null
   )
 }

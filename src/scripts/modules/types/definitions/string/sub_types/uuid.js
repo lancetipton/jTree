@@ -27,34 +27,6 @@ class UuidType extends StringType {
     })
   }
 
-  render = props => {
-    const { schema } = props
-    const actions = schema.mode !== Schema.MODES.EDIT
-      ? {
-        onEdit: this.onEdit,
-        onDrag: this.onDrag,
-        onDelete: this.onDelete
-      }
-      : {
-        onChange: this.onChange,
-        onSave: this.onSave,
-        onCancel: this.onCancel,
-      }
-
-    return Item({
-      id: schema.id,
-      key: schema.key,
-      value: schema.value,
-      mode: schema.mode,
-      cleave: true,
-      showLabel: true,
-      type: schema.matchType,
-      keyInput: 'text',
-      ...actions
-    })
-  }
-
-
 }
 
 export default UuidType

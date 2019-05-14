@@ -76,13 +76,16 @@
 .j-tree-editor ul.list > li.row > div.item {
   transition: background-color @easeSpeed ease;
   display: flex;
-  /* flex-direction: column; */
   justify-content: flex-start;
   align-items: center;
   padding: 2px 10px;
   margin-bottom: 4px;
   border-bottom: @itemBorder;
   transition: all @toggleIconSpeed ease-in-out;
+}
+
+.j-tree-editor ul.list > li.row > div.item.root {
+  min-height: 36px;
 }
 
 .j-tree-editor ul.list > li.row > div.item.item-edit.item-empty {

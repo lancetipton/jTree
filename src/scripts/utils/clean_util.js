@@ -4,7 +4,7 @@ import { logData } from './methods_util'
 import _unset from 'lodash.unset'
 
 const cleanSettingsObj = settings => {
-  clearObj(settings.editor)
+  clearObj(settings.Editor.config)
   clearObj(settings)
 }
 

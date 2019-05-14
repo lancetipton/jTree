@@ -12,7 +12,7 @@ class BooleanType extends BaseType {
   }
 
   render = props => {
-    const { schema: { id, key, value, mode, matchType } } = props
+    const { schema: { id, key, value, mode, matchType, keyType } } = props
     const options = Array.isArray(this.config.options)
       ? this.config.options
       : [ 'true', 'false']
@@ -26,7 +26,7 @@ class BooleanType extends BaseType {
       type: matchType,
       showLabel: true,
       valueEl: 'select',
-      keyInput: 'text',
+      keyType: keyType || 'text',
       ...this.getActions(mode)
     })
   }

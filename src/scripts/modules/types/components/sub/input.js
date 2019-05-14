@@ -9,23 +9,23 @@ import { capitalize } from 'jTUtils'
  * 
  * @return { dom node }
  */
-const getAttrs = (props, type) => (
-  type == 'key'
+const getAttrs = (props, type) => {
+  return type == 'key'
     ? {
       class: `item-key item-data ${Values.EDIT_CLS}`,
-      type: props.keyInput || 'text',
+      type: props.keyType || 'text',
       value: props.key,
       [Values.DATA_SCHEMA_KEY]: type,
       name: `key-${props.key}`
     }
     : {
       class: `item-value item-data ${Values.EDIT_CLS} ${props.cleave && Values.CLEAVE_CLS || ''}`,
-      type: props.valueInput || 'text',
+      type: props.valueType || 'text',
       [Values.DATA_SCHEMA_KEY]: type,
       name: `value-${props.key}`,
       value: props.value,
     }
-)
+}
 
 /**
  * Wraps an input element to help with styling and placement ( i.e. position: relative )
@@ -52,9 +52,9 @@ export const inputWrapper = (props, children) => {
  * @param  { object } props - data passed in from TypeClass instance
  * @param  { object } props.showLabel - should show input label
  * @param  { object } props.value - value of the element
- * @param  { object } props.valueInput - value input type if editing
+ * @param  { object } props.valueType - value input type if editing
  * @param  { object } props.key - key being edited
- * @param  { object } props.keyInput - key input type if editing
+ * @param  { object } props.keyType - key input type if editing
  * @param  { string } type - which property the input is being built for ( key || value )
  * 
  * @return { object } - object with properties used to create an input domNode

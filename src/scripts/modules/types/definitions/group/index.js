@@ -108,7 +108,7 @@ class GroupType extends BaseType {
   }
 
   render = props => {
-    const { schema: { id, key, value, mode, matchType }, children } = props
+    const { schema: { id, key, value, mode, matchType, keyType }, children } = props
 
     const isRoot = props.schema.key === Schema.ROOT
     const isOpen = props.schema.open
@@ -129,6 +129,7 @@ class GroupType extends BaseType {
       isOpen,
       isRoot,
       children,
+      keyType: keyType || 'text',
       styles: {
         // Always set the height to be the currentMax height
         // When opened, height will be updated in componentDidUpdate
@@ -137,7 +138,6 @@ class GroupType extends BaseType {
       type: matchType,
       showLabel: true,
       valueEl: 'select',
-      keyInput: 'text',
       ...this.getActions(mode, actions),
     })
   }

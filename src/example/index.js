@@ -42,58 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ? TypeTree.children.map
       : TypeTree.children.string
   }
-  
-  // Custom Type Class added to this instance of the Editor
-  class MyCustomTypeClass {
-    constructor(config){
-      /*
-        * Will be passed the type config from settings.types.myCustomType
-          * Comes from settings passed in on initialization of the jTree Editor
-      */
-    }
-    static eval = value => {
-      /*
-        * **Required Class Method**
-        * Must return a Boolean ( true / false )
-        * Determines if the current value is a match
-          * If `true`, this `Type Class` will be used to manage the value
-      */
-    }
-
-    static priority = 0
-    /*
-      * **Required** 
-      * Instance private variable
-      * Must be a number
-      * Determines which `Type Class` to use when more then one is matched
-        * If higher then all others, it will be used
-    */
     
-
-    shouldComponentUpdate = (params) => {
-      const { value, key, meta, tree, parent, settings } = params
-      
-      /*
-        * Instance method ( function )
-        * Override the inherited 'Parent Class' method
-        * Gets the private #priority variable 
-        * Params
-          1. object
-            * Values
-              * value - current value to build for
-              * key - reference key to access the value from the parent
-              * meta - Metadata of this `Type Class`
-              * tree - Current state of the source data passed in on Editor instantiation 
-                * comes from `settings.editor.source`
-              * parent - object within the tree that holds this value
-                * One of type array || object
-              * settings
-                * Current settings used to build the jTree Editor
-                  * **NOT** the `Type Class` config from `settings.types.myCustomType`
-      */
-    }
-  }
-  
   const numOnChange = (event, update, id, Editor) => {
     // console.log('------------------ Num onChange ------------------');
   }
@@ -119,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // onCancel: onCancel,
             // Source object to be edited
             source: testData,
+            title: 'Dom Tree',
             iconType: 'far',
             styles: {},
             appendTree: () => {}

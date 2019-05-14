@@ -34,13 +34,7 @@ const cardValidate = {
 
 class CardType extends StringType {
 
-  constructor(settings){
-    super(settings)
-    // if(settings.priorities && settings.priorities.card)
-    //   this.#priority = settings.priorities.card
-  }
-  
-  #priority = 2
+  static priority = 2
   
   static eval = value => {
     let validCard
@@ -54,6 +48,11 @@ class CardType extends StringType {
       ? luhn(value)
       : false
   }
+
+  constructor(config){
+    super(config)
+  }
+  
 
 }
 

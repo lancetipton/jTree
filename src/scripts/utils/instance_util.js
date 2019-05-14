@@ -107,15 +107,15 @@ export const buildInstance = (type, schema, settings) => {
     // Check for config overrides from the passed in settings
     config && typesOverride(instance, settings.types[matchType])
 
-    const editor = settings.editor || {}
+    const editorConfig = settings.Editor.config || {}
     // Wrap the methods on the instance, so we can pass the Editor into them when called
     Object.keys(instance).map(key => {
       if(!isFunc(instance[key])) return
       const oldMethod = instance[key]
       
       instance[key] = (...args) => {
-        const hasOverride = isFunc(editor[key])
-        if( !hasOverride || settings.editor[key](...args) !== false )
+        const hasOverride = isFunc(editorConfig[key])
+        if( !hasOverride || settings.Editor.config[key](...args) !== false )
           return oldMethod(...args, settings.Editor)
       }
     })

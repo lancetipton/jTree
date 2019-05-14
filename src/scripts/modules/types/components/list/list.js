@@ -1,5 +1,4 @@
 import { elements } from 'element-r'
-import { Schema } from 'jTConstants'
 import { Row } from './row'
 import { ListHeader } from './list_header'
 const { div, ul } = elements
@@ -21,10 +20,8 @@ const checkExtraClass = (org, classes) => (
 export const List = (props) => {
   let { children, classes, styles, ...headerProps } = props
   styles = styles || {}
-  children = children && children.map(child => Row({}, child)) || []
-  
-  headerProps.key !== Schema.ROOT &&
-    children.unshift( Row({ className: 'list-header' }, ListHeader(headerProps) ) )
+  children = children && children.map(child => Row({}, child)) || []  
+  children.unshift( Row({ className: 'list-header' }, ListHeader(headerProps) ) )
 
   return div(
     {

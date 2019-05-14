@@ -39,7 +39,7 @@ class EmptyType extends BaseType {
 
   render = props => {
     const {
-      schema: { id, key, value, mode, matchType },
+      schema: { id, key, value, mode, matchType, keyType },
       settings: { Editor: { Types } }
     } = props
 
@@ -50,7 +50,7 @@ class EmptyType extends BaseType {
       Types,
       type: Schema.EMPTY,
       showLabel: true,
-      keyInput: 'text',
+      keyType: keyType || 'text',
       mode: Schema.MODES.EDIT,
       ...this.getActions(Schema.MODES.EDIT, { onTypeChange: this.onTypeChange })
     })
