@@ -66,7 +66,7 @@
       "^.+\\.js$": "babel-jest"
     },
     "testMatch": [
-      "<rootDir>/src/__tests__/**/*.js?(x)"
+      "<rootDir>/src/**/__tests__/*.js?(x)"
     ],
     "collectCoverageFrom": [
       "<rootDir>/src/loader.js"

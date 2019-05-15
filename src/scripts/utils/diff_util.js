@@ -1,4 +1,4 @@
-import { DIFF } from 'jTConstants'
+import { DIFF } from '../constants'
 const { NODE_TYPES, EVENT_ATTRS, SAME_NODE } = DIFF
 
 const NODE_NAME_CHECK = {
@@ -163,7 +163,7 @@ const updateChildren = (newNode, oldNode) => {
       continue
     
     if (same(newChild, oldChild)) {
-      morphed = diffUpdate(newChild, oldChild)
+      morphed = runNodeDiff(newChild, oldChild)
       morphed !== oldChild && oldNode.replaceChild(morphed, oldChild) && offset++
       continue
     }
@@ -177,36 +177,37 @@ const updateChildren = (newNode, oldNode) => {
     }
 
     if (oldMatch) {
-      morphed = diffUpdate(newChild, oldMatch)
+      morphed = runNodeDiff(newChild, oldMatch)
       if (morphed !== oldMatch) offset++
       oldNode.insertBefore(morphed, oldChild)
       continue
     }
 
     if (!newChild.id && !oldChild.id) {
-      morphed = diffUpdate(newChild, oldChild)
+      morphed = runNodeDiff(newChild, oldChild)
       morphed !== oldChild && oldNode.replaceChild(morphed, oldChild) && offset++
       continue
     }
 
     oldNode.insertBefore(newChild, oldChild) && offset++
-    
   }
+
 }
 
-const checkForNode = (newNode, oldNode) => {
+const runNodeDiff = (newNode, oldNode) => {
   if (!oldNode) return newNode
   else if (!newNode) return null
   else if (newNode.isSameNode && newNode.isSameNode(oldNode)) return oldNode
   else if (newNode.tagName !== oldNode.tagName) return newNode 
-}
 
-export const diffUpdate = (newNode, oldNode) => {
-  const foundNode = checkForNode(newNode, oldNode)
-  if(foundNode) return foundNode
-  
   updateParent(newNode, oldNode)
   updateChildren(newNode, oldNode)
 
   return oldNode
+}
+
+export const diffUpdate = (newNode, oldNode, options={}) => {
+  return options.childrenOnly
+    ? (updateChildren(newNode, oldNode) || oldNode)
+    : runNodeDiff(newNode, oldNode)
 }
