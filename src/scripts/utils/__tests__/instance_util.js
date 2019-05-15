@@ -1,23 +1,23 @@
-const InstanceUtil = require('../instance_util.js')
+// const InstanceUtil = require('../instance_util.js')
 
-describe('Instance Util', () => {
+// describe('Instance Util', () => {
 
-  describe('clearInstanceCache', () => {
-  })
+//   describe('clearInstanceCache', () => {
+//   })
 
-  describe('getInstanceCache', () => {
-  })
+//   describe('getInstanceCache', () => {
+//   })
 
-  describe('clearInstance', () => {
-  })
+//   describe('clearInstance', () => {
+//   })
 
-  describe('buildInstance', () => {
-  })
+//   describe('buildInstance', () => {
+//   })
 
-  describe('addSchemaInstance', () => {
-  })
+//   describe('addSchemaInstance', () => {
+//   })
   
-  describe('addCompProp', () => {
-  })
+//   describe('addCompProp', () => {
+//   })
 
-})
+// })

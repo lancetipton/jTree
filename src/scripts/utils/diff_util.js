@@ -1,6 +1,48 @@
 import { DIFF } from '../constants'
 const { NODE_TYPES, EVENT_ATTRS, SAME_NODE } = DIFF
 
+const updateOption = (newNode, oldNode) => (
+  updateAttribute(newNode, oldNode, 'selected')
+)
+
+const updateInput = (newNode, oldNode) => {
+  const newValue = newNode.value
+  const oldValue = oldNode.value
+  updateAttribute(newNode, oldNode, 'checked')
+  updateAttribute(newNode, oldNode, 'disabled')
+  
+  
+  if (newValue !== oldValue) {
+    oldNode.setAttribute('value', newValue)
+    oldNode.value = newValue
+  }
+
+  if (newValue === 'null') {
+    oldNode.value = ''
+    oldNode.removeAttribute('value')
+  }
+  
+  !newNode.hasAttributeNS(null, 'value')
+    ? oldNode.removeAttribute('value')
+    : oldNode.type === 'range'
+      ? oldNode.value = newValue
+      : null
+}
+
+
+const updateTextarea = (newNode, oldNode) => {
+  const newValue = newNode.value
+  if (newValue !== oldNode.value) oldNode.value = newValue
+  
+  if(!oldNode.firstChild || oldNode.firstChild.nodeValue === newValue)
+    return
+  
+  if(newValue === '' && oldNode.firstChild.nodeValue === oldNode.placeholder)
+    return
+
+  oldNode.firstChild.nodeValue = newValue
+}
+
 const NODE_NAME_CHECK = {
   INPUT: updateInput,
   OPTION: updateOption,
@@ -77,49 +119,6 @@ const copyEvents = (newNode, oldNode) => (
   ))
 )
 
-const updateOption = (newNode, oldNode) => (
-  updateAttribute(newNode, oldNode, 'selected')
-)
-
-const updateInput = (newNode, oldNode) => {
-  const newValue = newNode.value
-  const oldValue = oldNode.value
-
-  updateAttribute(newNode, oldNode, 'checked')
-  updateAttribute(newNode, oldNode, 'disabled')
-
-  if (newValue !== oldValue) {
-    oldNode.setAttribute('value', newValue)
-    oldNode.value = newValue
-  }
-
-  if (newValue === 'null') {
-    oldNode.value = ''
-    oldNode.removeAttribute('value')
-  }
-  
-  !newNode.hasAttributeNS(null, 'value')
-    ? oldNode.removeAttribute('value')
-    : oldNode.type === 'range'
-      ? oldNode.value = newValue
-      : null
-}
-
-
-const updateTextarea = (newNode, oldNode) => {
-  const newValue = newNode.value
-  if (newValue !== oldNode.value) oldNode.value = newValue
-  
-  if(!oldNode.firstChild || oldNode.firstChild.nodeValue === newValue)
-    return
-  
-  if(newValue === '' && oldNode.firstChild.nodeValue === oldNode.placeholder)
-    return
-
-  oldNode.firstChild.nodeValue = newValue
-}
-
-
 const updateAttribute = (newNode, oldNode, name) => {
   if(newNode[name] === oldNode[name])
     return
@@ -141,7 +140,6 @@ const same = (a, b) => (
           : a[key] === b[key]
   ), false)
 )
-
 
 const updateChildren = (newNode, oldNode) => {
 

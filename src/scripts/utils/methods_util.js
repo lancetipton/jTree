@@ -14,11 +14,14 @@ export const setLogs = log => (SHOW_LOGS = log)
  * @return { void }
  */
 export const logData = (...args) => {
-  let type = args.pop()
+  if(!args.length) return
+  
+  let type = args.length === 1 ? 'dir' : args.pop()
   if(!SHOW_LOGS && type !== 'error') return
-  if(Values.LOG_TYPES.indexOf(type) === -1 ) type = 'dir'
 
-  console[type](...args)
+  Values.LOG_TYPES.indexOf(type) !== -1
+    ? console[type](...args)
+    : console.dir(...args, type)
 }
 
 /**
