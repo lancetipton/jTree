@@ -67,7 +67,7 @@ export const Item = (props) => {
   
   if(props && props.type === Schema.EMPTY)
     classes += ` item-empty`
-    
+
   return div(
     { className: classes },
     buildItemKey(buildOptions(props, 'key'), props),

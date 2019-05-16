@@ -93,6 +93,9 @@ export const validateUpdate = (idOrPos, update, tree) => {
       update, tree, 'warn'
     )
   
+  if(update.mode === Schema.MODES.REMOVE)
+    return { schema, pos }
+  
   // Ensure the key is updated when dealing with an empty object
   // Check If key is empty type, and if this is a matchType update
   // If key is empty type, then we should be updating the matchType

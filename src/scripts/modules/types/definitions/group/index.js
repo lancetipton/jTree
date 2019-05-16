@@ -49,6 +49,8 @@ class GroupType extends BaseType {
         // Then update the store, can call the update method
         // Now the object have been closed
         this.store.currentMaxHt = this.store.closedMaxHt
+        // TODO: double check that this is working properly
+        refNode.style.maxHeight = ''
         Editor.update(id, update)
       }, this.toggleSpeed || 500)
     }
@@ -117,12 +119,25 @@ class GroupType extends BaseType {
     // This ensures the parent height does not but off the children
     // when the children are a sub map or collection
     schema.parent && updateParentHeights(schema, childrenHt)
+    setTimeout(() => {
+      // TODO: double check that this is working properly
+      refNode.style.maxHeight = ''
+    }, 500)
   }
 
 
   onAdd = (e, Editor) => {
     const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
     const schema = id && Editor.schema(id)
+    const update = {
+      parent: schema,
+      mode: Schema.MODES.ADD,
+      matchType: Schema.EMPTY,
+    }
+
+    if(Array.isArray(schema.value))
+      update.key = schema.value.length
+    
     schema && Editor.add({
       parent: schema,
       mode: Schema.MODES.ADD,

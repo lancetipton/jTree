@@ -89,7 +89,7 @@ export const updateType = (tree, pos, schema, settings) => {
       schema,
       'error'
     )
-  
+
   // Ensure the passed in pos exists in the tree
   if(!checkSchemaPos(tree, pos, true)) return
   
@@ -108,11 +108,17 @@ export const updateType = (tree, pos, schema, settings) => {
       'error'
     )
 
-  if(!schema.value && isFunc(newType.factory.defaultValue))
+  let hasValue = schema.value || schema.value === 0 || schema.value === ''
+  
+  if(!hasValue && isFunc(newType.factory.defaultValue))
     schema.value = newType.factory.defaultValue(schema, settings)
   
-  if(schema.value && !newType.factory.eval(schema.value) &&  isFunc(newType.factory.error))
+  hasValue = schema.value || schema.value === 0 || schema.value === ''
+  if(hasValue && !newType.factory.eval(schema.value) &&  isFunc(newType.factory.error))
     schema.error = newType.factory.error(schema, settings)
+  
+  if(hasValue && !schema.error)
+    _set(tree, schema.pos, schema.value)
   
   schema.pending = true
   schema.instance = buildInstance(newType, schema, settings)

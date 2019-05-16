@@ -2,6 +2,15 @@ import { Values } from 'jTConstants'
 import { elements } from 'element-r'
 import { label } from './label'
 import { capitalize } from 'jTUtils'
+
+const getValue = (val, text) => {
+  return text
+    ? text
+    : (val || val === 0 || val === '')
+      ? (val + '').toString()
+      : ''
+}
+
 /**
  * Gets the attributes for the input element, based on the passed in type
  * @param  { object } props - data passed in from TypeClass instance
@@ -9,12 +18,12 @@ import { capitalize } from 'jTUtils'
  * 
  * @return { dom node }
  */
-const getAttrs = (props, type) => {
+const getAttrs = (props, type, keyVal, elVal) => {
   return type == 'key'
     ? {
       class: `item-key item-data ${Values.EDIT_CLS}`,
       type: props.keyType || 'text',
-      value: props.key,
+      value: keyVal,
       [Values.DATA_SCHEMA_KEY]: type,
       name: `key-${props.key}`
     }
@@ -23,7 +32,7 @@ const getAttrs = (props, type) => {
       type: props.valueType || 'text',
       [Values.DATA_SCHEMA_KEY]: type,
       name: `value-${props.key}`,
-      value: props.value,
+      value: elVal,
     }
 }
 
@@ -59,12 +68,18 @@ export const inputWrapper = (props, children) => {
  * 
  * @return { object } - object with properties used to create an input domNode
  */
-export const input = (props, type) => ({ 
+export const input = (props, type) => {
+  
+  const keyVal = type === 'key' && getValue(props.key, props.keyText)
+  const elValue = type === 'value' && getValue(props.value, props.valueText)
+
+  return { 
+    keyVal,
+    elValue,
     El: elements.input,
     isEdit: true,
     showLabel: props.showLabel,
-    keyVal: '',
     editCls: Values.EDIT_CLS,
-    elValue: props.value,
-    [`${type}Attrs`]: getAttrs(props, type)
-})
+    [`${type}Attrs`]: getAttrs(props, type, keyVal, elValue)
+  }
+}

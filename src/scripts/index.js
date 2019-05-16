@@ -183,18 +183,22 @@ const createEditor = (settings, editorConfig, domContainer) => {
     
     remove = idOrPos => {
       // Ensure the passed in update object is valid
-      const validData = validateUpdate(idOrPos, {}, this.tree)
+      const validData = validateUpdate(idOrPos, { mode: Schema.MODES.REMOVE }, this.tree)
       // And Ensure we have a schema and pos to use
       if(!validData || !validData.schema || !validData.pos) return 
       const { pos, schema } = validData
 
       // Clear the data from the tree
       _unset(this.tree, pos)
-
+      _unset(this.tree.idMap, schema.id)
+      
+      // If parent is an array, Update the parent in place, and remove the value from it
+      Array.isArray(schema.parent.value) &&
+        schema.parent.value.splice(pos.split('.').pop(), 1);
+        
       // Remove move the element from the dom
       const domNode = schema.component
       removeElement(domNode, domNode.parentNode)
-
       // Clear the schema from the tree schema
       clearSchema(schema, this.tree.schema)
     }
