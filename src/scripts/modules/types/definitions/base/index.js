@@ -31,13 +31,6 @@ const addCustomEvents = (config, userEvents) => (
     ))
 )
 
-const shouldDoDefault = (e, update, Editor, userEvent) => {
-  const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
-  return !id
-    ? noId()
-    : userEvent && userEvent(e, update, id, Editor) === false || id
-}
-
 const addAllowedConfigOpts = config => (
   Values.TYPES_CONFIG_OPTS
     .reduce((typeConf, opt) => (
@@ -45,7 +38,18 @@ const addAllowedConfigOpts = config => (
     )
 )
 
-let STYLES_LOADED
+const callEditor = (e, update, usrEvent, type, Editor) => {
+  const id = shouldDoDefault( e, update, Editor, usrEvent )
+  id && Editor[type] && Editor[type](id, update)
+}
+
+const shouldDoDefault = (e, update, Editor, userEvent) => {
+  const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+  return !id
+    ? noId()
+    : userEvent && userEvent(e, update, id, Editor) === false || id
+}
+
 class BaseType {
 
   static priority = 0
@@ -66,39 +70,45 @@ class BaseType {
   updated = {}
   original = {}
 
-  shouldDoDefault = (e, update, Editor, userEvent) => {
-    const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
-    return !id
-      ? noId()
-      : userEvent && userEvent(e, update, id, Editor) === false || id
-  }
-
   onChange = (e, Editor) => {
     const input =  e.target || e.currentTarget
-    const value = input.value
+    // Get the key for the input
     const key = input.getAttribute(Values.DATA_SCHEMA_KEY)
-
+    // Build our update object
+    const update = {
+      key,
+      value: input.value,
+      original: this.original[key]
+    }
+    // Check input type, and if it has the CLEAVE_CLS
+    // Which means is should be a number
+    if(input.nodeName === 'INPUT' && input.classList.contains(Values.NUMBER_CLS)){
+      // Check if the input should be a number
+      const numVal = Number(update.value)
+      // If it's a valid number use that instead
+      !isNaN(numVal) && (update.value = numVal)
+    }
+    
+    // Ensure we have a valid key and value, and there was an update
     if(
-      (value === undefined || key === undefined) ||
-      (this.original[key] && this.original[key] === value)
+      (update.value === undefined || update.key === undefined) ||
+      (this.original[update.key] && this.original[update.key] === update.value) ||
+      isNaN(update.value)
     ) return
     
-    value &&  this.config.expandOnChange !== false && this.setWidth(input)
-    const update = { key, value, original: this.original[key] }
-
-    return (this.userEvents.onChange(e, update, this.original.id, Editor) !== false) && 
-      ( this.updated[key] = update.value )
-  }
-
-  onSave = (e, Editor) => {
-    const update = { ...this.updated, mode: undefined }
-    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onSave )
-    id && Editor.update(id, update)
+    // Check if the input width should be update to match the value
+    update.value &&  this.config.expandOnChange !== false && this.setWidth(input)
+    // Call the userEvent to check if it should be updated
+    // Then update the value locally
+    // When the save action is called, this value will then be saved to the tree
+    return (
+      this.userEvents.onChange(e, update, this.original.id, Editor) !== false
+      ) && ( this.updated[update.key] = update.value )
   }
 
   onCancel = (e, Editor) => {
     const update = { mode: undefined, value: this.original.value }
-    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
+    const id = shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
     if(!id) return
 
     // Check the pending, if true, that means cancel was pressed
@@ -109,24 +119,48 @@ class BaseType {
       : Editor.update(id, update)
   }
 
+  onSave = (e, Editor) => {
+    callEditor(
+      e,
+      { ...this.updated, mode: undefined },
+      this.userEvents.onSave,
+      'update',
+      Editor
+    )
+  }
+
   onEdit = (e, Editor) => {
-    const update = { mode: Schema.MODES.EDIT }
-    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
-    id && Editor.update(id, update)
+    callEditor(
+      e,
+      { mode: Schema.MODES.EDIT },
+      this.userEvents.onEdit,
+      'update',
+      Editor
+    )
   }
 
   onDrag = (e, Editor) => {
-    const update = { mode: Schema.MODES.DRAG }
-    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onEdit )
-    id && Editor.update(id, update)
+    callEditor(
+      e,
+      { mode: Schema.MODES.DRAG },
+      this.userEvents.onDrag,
+      'update',
+      Editor
+    )
   }
-
+  
   onDelete = (e, Editor) => {
-    const update = { id, mode: Schema.MODES.DRAG }
-    const id = this.shouldDoDefault( e, update, Editor, this.userEvents.onDelete )
-    id && Editor.remove(id)
+    callEditor(
+      e,
+      { mode: Schema.MODES.REMOVE },
+      this.userEvents.onDelete,
+      'remove',
+      Editor
+    )
   }
-
+  
+  shouldDoDefault = (...args) => shouldDoDefault(...args)
+  
   getActions = (mode, extra) => (
     mode !== Schema.MODES.EDIT
       ? {
@@ -182,24 +216,13 @@ class BaseType {
 
   componentWillUnmount = (Editor) => {
     // Set to undefined, because when the instance gets remove, we don't want it 
-    // to remove the value; it's a ref to the actual value in the tree
+    // to remove the value; because it's a ref to the actual value in the tree
     this.original.value = undefined
   }
 
   render = props => {
 
     const { schema } = props
-    const actions = schema.mode !== Schema.MODES.EDIT
-      ? {
-        onEdit: this.onEdit,
-        onDrag: this.onDrag,
-        onDelete: this.onDelete
-      }
-      : {
-        onChange: this.onChange,
-        onSave: this.onSave,
-        onCancel: this.onCancel,
-      }
 
     return Item({
       id: schema.id,
@@ -208,8 +231,9 @@ class BaseType {
       mode: schema.mode,
       showLabel: true,
       type: schema.matchType,
+      keyEdit: !schema.parent || !Array.isArray(schema.parent.value),
       keyType: schema.keyType || 'text',
-      ...actions
+      ...getActions(schema.mode)
     })
   }
   

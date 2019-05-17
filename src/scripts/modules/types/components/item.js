@@ -28,6 +28,7 @@ const buildOptions = (props, type) => {
  * @return { dom node }
  */
 const buildItemKey = ({ showLabel, El, keyAttrs, keyVal }, props) => {
+  if(props && props.keyEdit === false) keyAttrs.disabled = true
   const keyEl = El(keyAttrs, keyVal)
   return !showLabel
     ? keyEl

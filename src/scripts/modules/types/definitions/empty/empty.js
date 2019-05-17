@@ -51,6 +51,7 @@ class EmptyType extends BaseType {
       type: Schema.EMPTY,
       showLabel: true,
       keyType: keyType || 'text',
+      keyEdit: !parent || !Array.isArray(parent.value),
       mode: Schema.MODES.EDIT,
       ...this.getActions(Schema.MODES.EDIT, { onTypeChange: this.onTypeChange })
     })

@@ -79,12 +79,12 @@ const theme = {
   
   // Lists / Rows
   listToggleSpeed: speeds.fast,
+  listEmptyColor: colors.gray3,
   rowIndent: '10px',
   rowHeaderIndent: "-10px",
   subRowIndent: '30px',
   subHeaderRowIndent: "-30px",
   rowShadow: colors.lightShadow,
-  
   // Color states
   passiveBack: colors.white,
   // Group of items background color

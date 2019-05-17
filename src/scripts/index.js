@@ -141,7 +141,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       // Update the schema to ensure we are working with the updated data
       this.tree.schema[pos] = updateSchema(update, { ...validData.schema })
-      let schema = this.tree.schema[pos]
+      const schema = this.tree.schema[pos]
 
       // If there's an update, and pending exists before the matchType check
       // Remove it, pending only gets set on matchType update
@@ -176,9 +176,6 @@ const createEditor = (settings, editorConfig, domContainer) => {
         pos,
         settings
       ])
-
-      schema = undefined
-      validData.schema = undefined
     }
     
     remove = idOrPos => {

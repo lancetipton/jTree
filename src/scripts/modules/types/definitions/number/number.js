@@ -15,15 +15,16 @@ class NumberType extends CleaveType {
       ...config,
       cleave: {
         numeral: true,
-        delimiter: '',
+        numeralThousandsGroupStyle: 'none',
         stripLeadingZeroes: false,
+        numeralDecimalScale: 0,
         ...(config || {}).cleave,
       }
     })
   }
-  
+
   render = props => {
-    const { schema: { id, key, value, mode, matchType, keyType } } = props
+    const { schema: { id, key, value, mode, matchType, keyType, parent } } = props
 
     return Item({
       id,
@@ -33,6 +34,8 @@ class NumberType extends CleaveType {
       type: matchType,
       showLabel: true,
       cleave: true,
+      isNumber: true,
+      keyEdit: !parent || !Array.isArray(parent.value),
       keyType: keyType || 'text',
       ...this.getActions(mode)
     })

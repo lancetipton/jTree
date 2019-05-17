@@ -178,6 +178,7 @@ class GroupType extends BaseType {
       type: matchType,
       showLabel: true,
       valueEl: 'select',
+      keyEdit: !props.schema.parent || !Array.isArray(props.schema.parent.value),
       ...this.getActions(mode, actions),
     })
   }

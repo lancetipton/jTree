@@ -21,18 +21,37 @@ class CleaveType extends BaseType {
   }
   
   onCleaveChange = (e, Editor) => {
-    const { rawValue } = e.target
-    const value = parseInt(rawValue)
+    // Sometimes this method gets called before the cleave is initialized
+    // So if no cleave, but return 
+    if(!this.cleave) return
+    // If there is no cleave element, then just return
+    // this method should never have been called
+    if(!this.cleave.element)
+      return console.warn(`Called onCleaveChange but no cleave element exists`, this)
+
     const update = {
-      value,
-      key: this.original.key,
+      value: e.target.rawValue,
+      key: this.cleave.element.getAttribute(Values.DATA_SCHEMA_KEY),
       original: this.original.value
     }
+
+    // Check if the input should be a number
+    if(this.cleave.element.classList.contains(Values.NUMBER_CLS)){
+      const numVal = Number(update.value)
+      // If it's a valid number use that instead
+      !isNaN(numVal) && (update.value = numVal)
+    }
+
+    // Ensure we have a valid key and value, and there was an update
+    if(
+      (update.value === undefined || update.key === undefined) ||
+      (this.original[update.key] && this.original[update.key] === update.value)
+    ) return
 
     this.config.expandOnChange !== false &&
       this.setWidth(getCleaveEl(Editor, this.original.id))
 
-    this.original.value !== value &&
+    return this.original.value !== update.value &&
       this.userEvents.onChange(e, update, this.original.id, Editor) !== false &&
       (this.updated.value = update.value)
   }
@@ -45,7 +64,7 @@ class CleaveType extends BaseType {
       this.cleave && this.clearCleave()
       // Create a new cleave instance, with the current domNode
       this.cleave = new Cleave(domNode, this.cleaveOpts)
-      // Set the inital cleave value
+      // Set the initial cleave value
       this.cleave.setRawValue(schema.value)
       return true
     }
@@ -55,10 +74,12 @@ class CleaveType extends BaseType {
     domNode && Array
       .from(domNode.getElementsByTagName('input'))
       .map(input => {
-        const isCleave = !this.cleave && this.checkCleave(schema, input)
         // Checks if it has the cleave class
         // Catches changes for the key input
-        !isCleave && (domNode.oninput = this.onChange)
+        !this.cleave && this.checkCleave(schema, input)
+          ? (domNode.oninput = undefined)
+          : (domNode.oninput = this.onChange)
+
         this.config.expandOnChange !== false && this.setWidth(input)
       })
   )

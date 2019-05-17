@@ -19,16 +19,20 @@ const getValue = (val, text) => {
  * @return { dom node }
  */
 const getAttrs = (props, type, keyVal, elVal) => {
-  return type == 'key'
+  let classes = `item-data ${Values.EDIT_CLS}`
+  type !== 'key' && props.cleave && (classes += ` ${Values.CLEAVE_CLS}`)
+  props.isNumber && (classes += ` ${Values.NUMBER_CLS}`)
+  
+  return type === 'key'
     ? {
-      class: `item-key item-data ${Values.EDIT_CLS}`,
+      class: classes,
       type: props.keyType || 'text',
       value: keyVal,
       [Values.DATA_SCHEMA_KEY]: type,
       name: `key-${props.key}`
     }
     : {
-      class: `item-value item-data ${Values.EDIT_CLS} ${props.cleave && Values.CLEAVE_CLS || ''}`,
+      class: classes,
       type: props.valueType || 'text',
       [Values.DATA_SCHEMA_KEY]: type,
       name: `value-${props.key}`,

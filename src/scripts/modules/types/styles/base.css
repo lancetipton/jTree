@@ -18,12 +18,22 @@
   overflow: hidden;
 }
 
+
+/* ---- Row ---- */
 .j-tree-editor ul.list > li.row {
   margin-left: @rowIndent;
 }
 .j-tree-editor li.row ul.list > li.row {
   margin-left: @subRowIndent;
   color: @itemColor;
+}
+
+.j-tree-editor ul.list > li.row.list-empty,
+.j-tree-editor li.row ul.list > li.row.list-empty {
+  width: 100%;
+  text-align: center;
+  margin-left: 0px;
+  color: @listEmptyColor;
 }
 
 .j-tree-editor ul.list > li.row > div.header {
@@ -71,6 +81,8 @@
 .j-tree-editor ul.list > li.row > div.item.header.item-edit .toggle-icon {
   color: @editToggle;
 }
+
+
 
 /* ---- Display Item ---- */
 .j-tree-editor ul.list > li.row > div.item {
@@ -209,6 +221,7 @@
   transition: opacity @actionBtnSpeed ease;
 }
 
+.j-tree-editor div.item.open > div.item-btns,
 .j-tree-editor div.item.item-edit > div.item-btns,
 .j-tree-editor div.item:hover > div.item-btns {
   opacity: 1;

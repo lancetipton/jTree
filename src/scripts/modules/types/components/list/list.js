@@ -1,7 +1,7 @@
 import { elements } from 'element-r'
 import { Row } from './row'
 import { ListHeader } from './list_header'
-const { div, ul } = elements
+const { div, ul, span } = elements
     
 const checkExtraClass = (org, classes) => (
   typeof classes === 'string'
@@ -10,6 +10,16 @@ const checkExtraClass = (org, classes) => (
       ? `${org} ${classes.join(` `)}`
       : org
 )
+
+const addEmpty = (rows, props) => {
+  props.isOpen &&
+    props.children &&
+    !props.children.length && 
+    rows.push(Row(
+      { className: 'list-empty' },
+      span({ className: 'list-empty-text' }, 'Empty')
+    ))
+}
 
 /**
  * Build list of items based on passed in children
@@ -20,8 +30,10 @@ const checkExtraClass = (org, classes) => (
 export const List = (props) => {
   let { children, classes, styles, ...headerProps } = props
   styles = styles || {}
-  children = children && children.map(child => Row({}, child)) || []  
-  children.unshift( Row({ className: 'list-header' }, ListHeader(headerProps) ) )
+
+  const rows = children && children.map(child => Row({}, child)) || []  
+  rows.unshift( Row({ className: 'list-header' }, ListHeader(headerProps) ) )
+  addEmpty(rows, props)
 
   return div(
     {
@@ -33,7 +45,7 @@ export const List = (props) => {
         className: checkExtraClass('list', classes),
         style: styles.list
       },
-      children
+      rows
     )
   )
 }

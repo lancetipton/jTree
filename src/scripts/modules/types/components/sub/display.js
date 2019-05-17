@@ -1,18 +1,22 @@
 import { Values } from 'jTConstants'
 import { elements } from 'element-r'
 
-const getValue = (val, text) => {
+const getValue = (val, text, prefix='') => {
   return text
-    ? text
+    ? `${prefix}${text}`
     : (val || val === 0 || val === '')
-      ? (val + '').toString()
+      ? `${prefix}${(val + '').toString()}`
       : ''
 }
 
 export const display = (props, type) => {
 
-  const keyVal = type === 'key' && getValue(props.key, props.keyText) || ''
-  const elValue = type === 'value' && getValue(props.value, props.valueText) || ''
+  const keyVal = type === 'key'
+    ? getValue(props.key, props.keyText, props.keyPrefix)
+    : ''
+  const elValue = type === 'value'
+    ? getValue(props.value, props.valueText, props.valPrefix)
+    : ''
 
   return {
     keyVal,
