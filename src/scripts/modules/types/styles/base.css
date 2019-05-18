@@ -11,6 +11,7 @@
 .j-tree-editor div.list-wrapper {
   transition: max-height @listToggleSpeed ease-in-out;
   overflow: hidden;
+  border: 1px solid #aaa;
 }
 
 .j-tree-editor div.list-wrapper > ul.list {
@@ -28,12 +29,24 @@
   color: @itemColor;
 }
 
+/* ---- Empty Eow ---- */
 .j-tree-editor ul.list > li.row.list-empty,
 .j-tree-editor li.row ul.list > li.row.list-empty {
   width: 100%;
   text-align: center;
   margin-left: 0px;
   color: @listEmptyColor;
+}
+
+.j-tree-editor ul.list > li.row.list-empty .list-empty-text {
+  margin: 8px 5px 8px;
+  display: inline-block;
+  padding: 0px 10%;
+  font-size: 12px;
+}
+
+.j-tree-editor ul.list > li.row.list-empty .list-empty-text .list-empty-icon {
+  margin-right: 5px;
 }
 
 .j-tree-editor ul.list > li.row > div.header {

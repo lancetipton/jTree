@@ -4,6 +4,7 @@ import { Item } from '../../../components'
 class MoneyType extends NumberType {
 
   static priority = 2
+  static defaultValue = '$0'
   static eval = value => {
     return typeof value === 'string' && value.indexOf('$') !== -1
   }

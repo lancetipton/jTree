@@ -3,7 +3,8 @@ import StringType from '../string'
 class EmailType extends StringType {
 
   static priority = 2
-
+  static defaultValue = ''
+  static allowEmptyValue = ''
   static eval = value => {
     if (
       !value ||

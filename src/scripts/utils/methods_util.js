@@ -18,7 +18,9 @@ export const logData = (...args) => {
   
   let type = args.length === 1 ? 'dir' : args.pop()
   if(!SHOW_LOGS && type !== 'error') return
-
+  else if(typeof args[0] === 'string')
+    args[0] = `[ ${type.toUpperCase()} ] ${args[0]}`  
+    
   Values.LOG_TYPES.indexOf(type) !== -1
     ? console[type](...args)
     : console.dir(...args, type)

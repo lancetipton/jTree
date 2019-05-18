@@ -23,4 +23,10 @@ export const Schema = {
   ]),
   EMPTY_TYPE: 'EmptyType',
   EMPTY: 'empty',
+  TYPE_CLASS_CHECK: Object.freeze([
+    'name',
+    'priority',
+    'defaultValue',
+    'eval'
+  ])
 }

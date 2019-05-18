@@ -12,8 +12,6 @@ const outputNames = isDev && '[contenthash].[name]' || '[name]'
 const outputPath = path.resolve(__dirname, buildPath)
 const paths = [ buildPath ]
 
-
-
 const wpConfig = {
   mode: NODE_ENV || 'development',
   devtool: isDev ? 'inline-source-map' : 'source-map',
@@ -62,6 +60,9 @@ const wpConfig = {
       { from: './src/example/test_data.js' },
       { from: './src/example/github.css' },
     ]),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    }),
     // new webpack.HashedModuleIdsPlugin()
   ],
   resolve: {

@@ -1,7 +1,7 @@
 import { elements } from 'element-r'
 import { Row } from './row'
 import { ListHeader } from './list_header'
-const { div, ul, span } = elements
+const { div, ul, i } = elements
     
 const checkExtraClass = (org, classes) => (
   typeof classes === 'string'
@@ -17,7 +17,10 @@ const addEmpty = (rows, props) => {
     !props.children.length && 
     rows.push(Row(
       { className: 'list-empty' },
-      span({ className: 'list-empty-text' }, 'Empty')
+      div({ className: 'list-empty-text' },
+        i({className:'fas fa-ban fa-rotate-90 list-empty-icon'}),
+        'Empty'
+      )
     ))
 }
 

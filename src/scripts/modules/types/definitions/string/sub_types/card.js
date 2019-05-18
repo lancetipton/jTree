@@ -1,4 +1,5 @@
 import StringType from '../string'
+import { Item } from '../../../components'
 
 const luhn = cardnumber => {
   const getdigits = /\d/g
@@ -35,7 +36,8 @@ const cardValidate = {
 class CardType extends StringType {
 
   static priority = 2
-  
+  static defaultValue = ''
+  // static allowEmptyValue = ''
   static eval = value => {
     let validCard
     Object
@@ -50,9 +52,30 @@ class CardType extends StringType {
   }
 
   constructor(config){
-    super(config)
+    super({
+      ...config,
+      cleave: {
+        creditCard: true,
+        ...(config && config.cleave || {}),
+      }
+    })
   }
   
+  render = props => {
+    const { schema: { id, key, value, mode, matchType, keyType, parent } } = props
+    return Item({
+      id,
+      key,
+      value,
+      mode,
+      type: matchType,
+      showLabel: true,
+      cleave: true,
+      keyEdit: !parent || !Array.isArray(parent.value),
+      keyType: keyType || 'text',
+      ...this.getActions(mode)
+    })
+  }
 
 }
 

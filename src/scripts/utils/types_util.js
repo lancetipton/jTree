@@ -1,4 +1,5 @@
 import { isObj, mapCb } from './object_util'
+import { validateMatchType } from './validate_util'
 import { Values } from '../constants'
 
 const getTypeStyles = (settings, Type) => (
@@ -11,6 +12,8 @@ const getTypeStyles = (settings, Type) => (
 
 export const initTypeCache = (TypesCls, settings, loadedTypes) => {
   const { BaseType, subTypes, types } = loadedTypes
+  if(!validateMatchType(BaseType)) return
+
   const rootTypes = { ...types }
   const joinedSubTypes = { ...subTypes, ...settings.customTypes }
   TypesCls.BaseType = new BaseType(settings.types.base)
@@ -34,6 +37,8 @@ export const buildTypeCache = (settings, allTypes) => {
   BaseTypeMeta.children = Object
     .entries(rootTypes)
     .reduce((allTypes, [ name, factory ]) => {
+      if(!validateMatchType(factory)) return allTypes
+      
       allTypes[name] = {
         name,
         factory,
@@ -72,7 +77,8 @@ const buildSubTypes = (subTypes, parentMeta, settings) => (
   Object
   .values(subTypes)
   .reduce((built, subType) => {
-    if(typeof subType !== 'function' || !subType.name) return built
+    if(!validateMatchType(subType)) return built
+
     const typeName = buildTypeName(subType.name)
     built[typeName] = {
       name: typeName,

@@ -49,8 +49,6 @@ class GroupType extends BaseType {
         // Then update the store, can call the update method
         // Now the object have been closed
         this.store.currentMaxHt = this.store.closedMaxHt
-        // TODO: double check that this is working properly
-        refNode.style.maxHeight = ''
         Editor.update(id, update)
       }, this.toggleSpeed || 500)
     }
@@ -86,8 +84,8 @@ class GroupType extends BaseType {
     // So use the header child height to set the default closed height
       const rootHeader = document.getElementById(Values.JT_ROOT_HEADER_ID)
       if(!rootHeader) return
-
       this.store.closedMaxHt = `${rootHeader.scrollHeight}px`
+
     }
 
     this.getTransSpeed(refNode)
@@ -98,14 +96,14 @@ class GroupType extends BaseType {
     this.setOriginal(schema)
     // Clear out the updated, because the component just updated
     this.updated && clearObj(this.updated)
-
-    // ----- height update
+    
+    // ----- height update ----- //
     // If no comp || not open just return
     const refNode = schema.component
     if(!refNode) return
     
     const childrenHt = getChildrenHt(refNode)
-    
+
     // --- Does the opposite of the toggle method above --- //
     // Check if the schema is open, but the local store is closed
     if(!this.store.isOpen && schema.open){
@@ -115,14 +113,11 @@ class GroupType extends BaseType {
       // Only set in open, so it keeps the height when about to close
       refNode.style.maxHeight = this.store.currentMaxHt
     }
-    // If there are parents, but update the parents height
-    // This ensures the parent height does not but off the children
-    // when the children are a sub map or collection
-    schema.parent && updateParentHeights(schema, childrenHt)
-    setTimeout(() => {
-      // TODO: double check that this is working properly
-      refNode.style.maxHeight = ''
-    }, 500)
+
+    // If the schema is open, update all the parent heights
+    // This ensures the parent height does not cut off the children
+    // when a child grows larger
+    schema.open && updateParentHeights(schema, childrenHt)
   }
 
 

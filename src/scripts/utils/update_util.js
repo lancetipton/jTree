@@ -8,6 +8,51 @@ import _set from 'lodash.set'
 import _unset from 'lodash.unset'
 
 /**
+ * Checks if the schemas current value matches any allowed types for the new type
+ * The newType must have a static prop allowEmptyValue
+ * Which can be any of
+ *       * Array - [ check if the value matches any values in the array ]
+ *       * Object - [ check if the value is an empty object ]
+ *       * true - [ match the value to empty object || array || string || 0 ]
+ * @param  {any} newType - Object built by the types util ( requires newType.factory )
+ * @param  {any} schema - Current schema of the item being checked
+ * @return boolean of if the value is an equal value for the type
+ */
+const checkEmptyType = (newType, schema) => {
+  const { allowEmptyValue } = newType.factory
+  if(allowEmptyValue === undefined) return false
+  
+  // If exact match, just return true
+  if(schema.value === allowEmptyValue) return true
+
+  const valIsObj = typeof schema.value === 'object'
+  const valIsEmptyObj = valIsObj && Object.keys(schema.value).length === 0
+  // Check allow empty is true
+  // Then check the types, and use that to check if it's empty
+  if(allowEmptyValue === true)
+    return valIsObj
+      ? valIsEmptyObj
+      : schema.value === 0 || schema.value === ''
+  
+  // Cache so vars for easy lookup
+  const allowType = typeof allowEmptyValue
+  const allowIsObj = allowType === 'object'
+  const allowArr = allowIsObj && Array.isArray(allowEmptyValue)
+
+  // If the type if an array, then loop over the array, and see if any match 
+  // the current value
+  if(allowArr)
+    return allowEmptyValue
+      .reduce((hasEmpty, allowedEmpty) => {
+        return hasEmpty
+          ? hasEmpty
+          : (allowIsObj && valIsEmptyObj) || schema.value === allowedEmpty
+      })
+
+  // If it's an object, but not array
+  return allowIsObj && typeof valIsEmptyObj  
+}
+/**
  * Builds a new pos, by switching the pos for the key
  * Only works at a single level
  * @param  { string } pos - current tree node position
@@ -109,20 +154,31 @@ export const updateType = (tree, pos, schema, settings) => {
     )
 
   let hasValue = schema.value || schema.value === 0 || schema.value === ''
-  
+
   if(!hasValue && isFunc(newType.factory.defaultValue))
     schema.value = newType.factory.defaultValue(schema, settings)
   
+  // Check if it has a value
   hasValue = schema.value || schema.value === 0 || schema.value === ''
-  if(hasValue && !newType.factory.eval(schema.value) &&  isFunc(newType.factory.error))
+  // Check if the value is an empty type
+    const hasEmpty = checkEmptyType(newType, schema)
+  // If we have a value and it's not an empty type, then run an eval check on it
+  // If it fails, set the error on the schema. The Types determine how to handel it
+  if(
+    hasValue &&
+    (!hasEmpty && !newType.factory.eval(schema.value)) && 
+    isFunc(newType.factory.error)
+  )
     schema.error = newType.factory.error(schema, settings)
   
+  // If there's a value, and no error, then set it in the tree
   if(hasValue && !schema.error)
     _set(tree, schema.pos, schema.value)
   
   schema.pending = true
   schema.instance = buildInstance(newType, schema, settings)
   schema.mode = Schema.MODES.EDIT
+
 }
 
 /**

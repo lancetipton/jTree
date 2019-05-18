@@ -1,5 +1,10 @@
 window.TEST_DOM_DATA = {
-  test: [],
+  object: {}
+  // array: [],
+  // object: {
+  //   string: '12345',
+  //   number: 12345
+  // }
   // '0': 9999999,
   // '1': {
   //   'id': '3af353c4-64f9-4edf-8324-bcbdf37d88cc',

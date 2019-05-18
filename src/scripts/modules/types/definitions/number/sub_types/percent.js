@@ -4,14 +4,41 @@ import { Item } from '../../../components'
 class PercentType extends NumberType {
   
   static priority = 2
-  static eval = (value) => (
-    typeof value === 'string' &&
-    parseFloat(value) &&
-    value.indexOf('%') !== -1
-  )
+  static defaultValue = '%0'
+  static eval = value => {
+    return typeof value === 'string' && value.indexOf('%') !== -1
+  }
+
 
   constructor(config){
-    super(config)
+    super({
+      ...config,
+      cleave: {
+        numeral: true,
+        numeralThousandsGroupStyle: 'none',
+        stripLeadingZeroes: false,
+        numeralDecimalScale: 2,
+        prefix: '%',
+        noImmediatePrefix: true,
+        ...(config || {}).cleave,
+      }
+    })
+  }
+
+  render = props => {
+    const { schema: { id, key, value, mode, matchType, keyType, parent } } = props
+    return Item({
+      id,
+      key,
+      value,
+      mode,
+      type: matchType,
+      showLabel: true,
+      cleave: true,
+      keyEdit: !parent || !Array.isArray(parent.value),
+      keyType: keyType || 'text',
+      ...this.getActions(mode)
+    })
   }
 
 }

@@ -5,7 +5,7 @@ import {
   isObj,
   loopSource,
   validateBuildTypes,
-  validateNewType,
+  validateMatchType,
 } from 'jTUtils'
 import _unset from 'lodash.unset'
 import { Values, Schema } from 'jTConstants'
@@ -60,7 +60,7 @@ export function TypesCls(settings){
     }
     
     register = newType => {
-      if(!validateNewType(newType, TYPE_CACHE))
+      if(!validateMatchType(newType, TYPE_CACHE))
         return null
     }
 

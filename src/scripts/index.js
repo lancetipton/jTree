@@ -160,6 +160,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
           pos = updatedPos
         }
       }
+
       // Loop over the allowed props to be update
       Schema.TREE_UPDATE_PROPS
         .map(prop => {
@@ -172,10 +173,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
         })
 
       // Rebuild the tree from this position
-      buildFromPos.apply(this, [
-        pos,
-        settings
-      ])
+      buildFromPos.apply(this, [ pos, settings ])
     }
     
     remove = idOrPos => {

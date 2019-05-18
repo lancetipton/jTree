@@ -39,7 +39,6 @@ export const getMatchTypes = function(TYPE_CACHE, value, parent, settings, match
     if(!factory || !factory.eval || !factory.eval(value))
       return
 
-    // TODO: priority not being set correctly
     // Need to only set highest prioirty if there is a match
     const updatedPriority = setHighestPriority(matches, priority)
 

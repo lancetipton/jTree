@@ -2,7 +2,9 @@ import NumberType from '../number'
 import { Item } from '../../../components'
 
 class FloatType extends NumberType {
+
   static priority = 2
+  static defaultValue = 0.0
   static eval = (value) => (
     typeof value === 'number' &&
       Number(value) === value && 

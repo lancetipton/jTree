@@ -10,12 +10,22 @@ import _unset from 'lodash.unset'
  * @param  { Object } TYPE_CACHE - stores currently registered type classes
  * @return { boolean }
  */
-export const validateNewType = (newType, TYPE_CACHE) => {
-  if(!newType.name)
-    return logData(`Type could not be registered. Types require a name property!`, 'error')
-  if(TYPE_CACHE[newType.name])
-    return logData(`Type with name ${newType.name} already registered!`, 'error')
-  if(!isConstructor(newType))
+export const validateMatchType = (checkType, TYPE_CACHE) => {
+  const failedClsProps = Schema.TYPE_CLASS_CHECK
+    .reduce((failedCheck, prop) => {
+      !(checkType.hasOwnProperty(prop)) && failedCheck.push(prop)
+      return failedCheck
+    }, [])
+  
+  if(failedClsProps.length)
+      return logData(
+        `Could not register type '${checkType.name || 'Type'}'. It's missing these static properties:\n\t${failedClsProps.join('\n\t')}`,
+        'error'
+      )
+
+  if(TYPE_CACHE && TYPE_CACHE[checkType.name])
+    return logData(`Type with name ${checkType.name} is already registered!`, 'error')
+  if(!isConstructor(checkType))
     return logData(`New Types must be a constructor!`, 'error')
 
   return true
@@ -123,12 +133,12 @@ export const validateUpdate = (idOrPos, update, tree) => {
 }
 
 
-export const validateAdd = (schema, parent) => (
-  !isObj(schema)
+export const validateAdd = (schema, parent) => {
+  return !isObj(schema)
     ? logData(`Add method requires a valid schema object as the first argument`, 'error')
     : !isObj(parent) || !parent.value || !parent.pos
       ? logData(`Add method requires a valid parent schema`, 'error')
       : typeof parent.value !== 'object'
-        ? logData(`Parent value must equal typeof 'object' ( Object || Array )`, 'error')
+        ? logData(`Parent value must equal type 'object' ( Object || Array )`, 'error')
         : true
-)
+}
