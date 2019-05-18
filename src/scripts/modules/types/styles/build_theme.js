@@ -1,6 +1,6 @@
 import stylesReset from './styles_reset.css'
 import base from './base.css'
-import orgTheme from './theme'
+import { getTheme, updateTheme } from './theme'
 import { deepMerge } from 'jTUtils'
 
 const fillBlocks = (block, theme) => (
@@ -29,18 +29,30 @@ const fillStyles = (theme, useStyles) => (
   ), {})
 )
 
+const setTheme = update => {
+  updateTheme(update)
+  return buildTheme(update)
+}
 
-export const buildTheme = settings => {
+const buildTheme = settings => {
+  const builtTheme = getTheme()
   const useTheme = settings.theme
-    ? deepMerge(orgTheme, settings.theme)
-    : orgTheme
+    ? deepMerge(builtTheme, settings.theme)
+    : builtTheme
   
   const useStyles = settings.styles
-    ? deepMerge(stylesReset, base, modal, settings.styles)
+    ? deepMerge(stylesReset, base, settings.styles)
     : base
   
-  return {
+  const filled = {
     ...stylesReset,
     ...fillStyles(useTheme, useStyles)
   }
+
+  return filled
+}
+
+export {
+  buildTheme,
+  setTheme as updateTheme
 }

@@ -37,7 +37,6 @@
 }
 .j-tree-editor blockquote:before, .j-tree-editor blockquote:after,
 .j-tree-editor q:before, .j-tree-editor q:after {
-  content: '';
 	content: none;
 }
 .j-tree-editor table {
@@ -47,4 +46,9 @@
 .j-tree-editor ul, .j-tree-editor ol, .j-tree-editor ul > li, .j-tree-editor ol > li {
   margin: 0px;
   padding: 0px;
+}
+
+.j-tree-editor *,
+.j-tree-editor *:focus {
+  outline: none;
 }

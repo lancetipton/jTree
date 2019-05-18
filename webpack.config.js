@@ -12,6 +12,11 @@ const outputNames = isDev && '[contenthash].[name]' || '[name]'
 const outputPath = path.resolve(__dirname, buildPath)
 const paths = [ buildPath ]
 
+const indexPage = isDev
+  ? { from: './src/example/dev_index.html', to: './index.html' } 
+  : { from: './src/example/index.html' }  
+  
+
 const wpConfig = {
   mode: NODE_ENV || 'development',
   devtool: isDev ? 'inline-source-map' : 'source-map',
@@ -54,7 +59,7 @@ const wpConfig = {
   plugins: [
     new CleanWebpackPlugin(paths, {}),
     new CopyWebpackPlugin([
-      { from: './src/example/index.html' },
+      indexPage,
       { from: './src/example/index.css' },
       { from: './src/example/index.js' },
       { from: './src/example/test_data.js' },

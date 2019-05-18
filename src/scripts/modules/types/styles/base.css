@@ -1,3 +1,8 @@
+
+.j-tree-editor {
+  font-family: @fontThird;
+}
+
 .j-tree-editor ul {
   margin: 0px;
   padding-left: 0px;
@@ -9,24 +14,24 @@
 }
 
 .j-tree-editor div.list-wrapper {
-  transition: max-height @listToggleSpeed ease-in-out;
+  transition: max-height @speed05 ease-in-out;
   overflow: hidden;
-  border: 1px solid #aaa;
+  /* border: 1px solid #aaa; */
 }
 
 .j-tree-editor div.list-wrapper > ul.list {
-  transition: max-height @listToggleSpeed ease-in-out;
+  transition: max-height @speed05 ease-in-out;
   overflow: hidden;
 }
 
 
 /* ---- Row ---- */
 .j-tree-editor ul.list > li.row {
-  margin-left: @rowIndent;
+  margin-left: @size20;
 }
 .j-tree-editor li.row ul.list > li.row {
-  margin-left: @subRowIndent;
-  color: @itemColor;
+  margin-left: @size20;
+  color: @gray8;
 }
 
 /* ---- Empty Eow ---- */
@@ -35,7 +40,7 @@
   width: 100%;
   text-align: center;
   margin-left: 0px;
-  color: @listEmptyColor;
+  color: @gray3;
 }
 
 .j-tree-editor ul.list > li.row.list-empty .list-empty-text {
@@ -50,28 +55,27 @@
 }
 
 .j-tree-editor ul.list > li.row > div.header {
-  margin-left: @rowHeaderIndent;
+  margin-left: @size20Neg;
 }
 .j-tree-editor li.row ul.list > li.row > div.header {
-  margin-left: @subHeaderRowIndent;
-  /* color: @passiveToggle; */
-  transition: all @toggleIconSpeed ease-in-out;
+  margin-left: @size20Neg;
+  transition: all @speed05 ease-in-out;
 }
 
 .j-tree-editor ul.list > li.row > div.item.open:hover,
 .j-tree-editor ul.list > li.row > div.header.open {
-  background-color: @hoverItemBack;
+  background-color: @itemOpenBackColor;
   border-bottom: @headerOpenBorder;
 }
 
 .j-tree-editor ul.list div.header .toggle-icon {
   text-decoration: none;
   position: relative;
-  margin-right: @toggleSpacer;
-  font-size: @toggleSize;
+  margin-right: @size10;
+  font-size: @size16;
   top: 1px;
-  transition: all @toggleIconSpeed ease-in-out;
-  color: @passiveToggle;
+  transition: all @speed05 ease-in-out;
+  color: @gray7;
   cursor: pointer;
 }
 
@@ -79,7 +83,7 @@
   text-decoration: none;
   position: relative;
   top: 1px;
-  color: @activeToggle;
+  color: @toggleHoverColor;
 }
 
 .j-tree-editor ul.list > li.row > div.header:hover .toggle-icon.open,
@@ -87,30 +91,29 @@
   transform: rotate(90deg);
   -ms-transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
-  color: @headerOpenToggle;
+  color: @toggleOpenColor;
 }
 
 .j-tree-editor ul.list > li.row > div.item.header.item-edit:hover .toggle-icon,
 .j-tree-editor ul.list > li.row > div.item.header.item-edit .toggle-icon {
-  color: @editToggle;
+  color: @toggleEditColor;
 }
 
 
 
 /* ---- Display Item ---- */
 .j-tree-editor ul.list > li.row > div.item {
-  transition: background-color @easeSpeed ease;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  padding: 3px 10px 0px;
+  padding: 10px 10px 8px;
   margin-bottom: 4px;
   border-bottom: @itemBorder;
-  transition: all @toggleIconSpeed ease-in-out;
+  transition: all @speed05 ease-in-out;
 }
 
 .j-tree-editor ul.list > li.row > div.item.root {
-  min-height: 36px;
+  /* min-height: 36px; */
 }
 
 .j-tree-editor ul.list > li.row > div.item.item-edit.item-empty {
@@ -119,7 +122,7 @@
 
 
 .j-tree-editor ul.list > li.row > div.item:hover {
-  background-color: @hoverItemBack;
+  background-color: @itemHoverBackColor;
   position: relative; 
   border-bottom: @itemHoverBorder;
 }
@@ -127,12 +130,12 @@
 .j-tree-editor ul.list > li.row > div.item.header.item-edit,
 .j-tree-editor ul.list > li.row > div.item.item-edit {
   border-bottom: @itemEditBorder;
-  background-color: @activeItemBack;
+  background-color: @itemActiveBackColor;
 }
 
 .j-tree-editor li.row > div.item > div.item-key {
-  font-family: @itemKeyFont;
-  font-weight: @itemKeyFontWeight;
+  font-family: @fontThird;
+  font-weight: @fontBold;
   min-width: 15px;
 }
 
@@ -141,8 +144,8 @@
 }
 
 .j-tree-editor li.row > div.item > div.item-value {
-  font-family: @itemValFont;
-  font-weight: @itemValFontWeight;
+  font-family: @fontThird;
+  font-weight: @fontNormal;
   margin-left: 10px;
   min-width: 50px;
 }
@@ -170,23 +173,28 @@
   top: 23px;
   font-size: 12px;
   pointer-events: none;
-  color: @inColor;
+  color: @gray8;
 }
 
 .j-tree-editor li.row > div.item-edit .select-wrapper select.item-edit,
 .j-tree-editor li.row > div.item.item-edit > div > .item-edit {
-  background-color: @inBackground;
+  background-color: @itemEditBackColor;
   display: inline-block;
   min-width: 130px;
   max-width: 100%;
-  max-height: 30px;
-  margin-top: 15px;
-  margin-bottom: 10px;
-  padding: 5px;
-  font-size: @inFontSize;
-  border: @inBorder;
-  color: @inColor;
+  max-height: @size30;
+  margin-top: @size16;
+  margin-bottom: @size10;
+  padding: @size5;
+  font-size: @size12;
+  border: @inputEditBorder;
+  color: @gray8;
 }
+.j-tree-editor li.row > div.item.item-edit > div > .item-edit:focus {
+  border-bottom: @inputFocusBorderBottom;
+}
+
+
 .j-tree-editor li.row > div.item .item-data-wrapper {
   position: relative;
 }
@@ -201,12 +209,12 @@
 }
 
 .j-tree-editor li.row > div.item.item-edit label.item-label {
-  font-weight: bold;
-  font-size: 10px;
+  font-weight: @fontBold;
+  font-size: @size10;
   position: absolute;
   top: 0;
   opacity: 1;
-  color: @inColor;
+  color: @gray8;
 }
 
 .j-tree-editor li.row > div.item.item-edit > div > label.item-key-label {
@@ -219,84 +227,89 @@
 }
 
 .j-tree-editor li.row > div.item.item-edit > div.item-key-wrapper {
-  margin-right: 20px;
+  margin-right: @size20;
 }
 
 .j-tree-editor li.row > div.item-edit .select-wrapper select.item-edit:disabled, .j-tree-editor li.row > div.item.item-edit > div > .item-edit:disabled {
-  background-color: @disabledInput;
+  background-color: @inputDisabledBackColor;
   cursor: not-allowed;
+  opacity: @inputDisabledOpacity;
+  color: @inputDisabledColor;
 }
 
 /* ---- Action Button ---- */
 .j-tree-editor div.item > div.item-btns {
-  margin-left: 20px;
-  opacity: 0;
-  transition: opacity @actionBtnSpeed ease;
+  margin-left: @size20;
+  opacity: @passiveBtnOpacity;
+  transition: opacity @speed05 ease;
+  position: relative;
+  top: 2px;
 }
 
 .j-tree-editor div.item.open > div.item-btns,
 .j-tree-editor div.item.item-edit > div.item-btns,
 .j-tree-editor div.item:hover > div.item-btns {
-  opacity: 1;
+  opacity: @activeBtnOpacity;
+  top: 0px;
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper > div.btns-list {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7px 0px 2px;
+  position: relative;
+  top: 2px;
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper div.type-label {
-  font-size: @typeLabelSize;
+  font-size: @size10;
   color: @typeLabelColor;
   position: relative;
   top: -3px;
-  margin-right: 10px;
+  margin-right: @size10;
 }
-
 
 /* ---- Action Icons ---- */
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper {
-  margin: 0 5px;
+  margin: 0 @size5;
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > .icon {
   text-align: center;
   text-decoration: none;
-  transition: color @actionBtnSpeed ease;
-  font-size: 10px;
-  color: @passiveBtn;
+  transition: color @speed05 ease;
+  font-size: @size10;
+  color: @passiveBtnColor;
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-edit:hover {
-  color: @activeEdit;
+  color: @activeEditColor;
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-drag:hover {
-  color: @activeDrag;
+  color: @activeDragColor;
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-add:hover {
-  color: @activeAdd;
+  color: @activeAddColor;
 }
 
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-delete:hover {
-  color: @activeDelete;
+  color: @activeDeleteColor;
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-save:hover {
-  color: @activeSave;
+  color: @activeSaveColor;
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-cancel:hover {
-  color: @activeCancel;
+  color: @activeCancelColor;
 }
 
 
 .j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon > .icon-text {
   margin-top: 3px;
-  font-family: @actionBtnFont;
+  font-family: @fontPrimary;
   display: block;
 }
