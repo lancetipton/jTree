@@ -39,6 +39,7 @@ const addAllowedConfigOpts = config => (
 )
 
 const callEditor = (e, update, usrEvent, type, Editor) => {
+  e && e.stopPropagation()
   const id = shouldDoDefault( e, update, Editor, usrEvent )
   id && Editor[type] && Editor[type](id, update)
 }
@@ -50,6 +51,23 @@ const shouldDoDefault = (e, update, Editor, userEvent) => {
     : userEvent && userEvent(e, update, id, Editor) === false || id
 }
 
+const updateValue = (update, input, value) => {
+  // Check input type, and if it has the CLEAVE_CLS
+  // Which means is should be a number
+  if(input.nodeName === 'INPUT' && input.classList.contains(Values.NUMBER_CLS)){
+    // Check if the input should be a number
+    const numVal = Number(value)
+    // If it's a valid number use that instead
+    !isNaN(numVal) && (update.value = numVal)
+  }
+  // Check if the original is a boolean, if the value is a string boolean version
+  else if(typeof update.original === 'boolean' && (value === 'false' || value === 'true'))
+    update.value = value === 'true'
+  // Just set the value to update if none of the above
+  else update.value = value
+
+}
+
 class BaseType {
 
   static priority = 0
@@ -57,7 +75,7 @@ class BaseType {
   static eval = (value) => (typeof value === 'string')
   static defaultValue = (newType, schema, settings) => ''
   static getStyles = (settings) => buildTheme(settings)
-  static error = (schema, settings) => (`Invalid input format`)
+  static error = ({ message }) => (message || `Invalid input format`)
 
   constructor(config){
     if(!config) return
@@ -76,23 +94,16 @@ class BaseType {
     // Get the key for the input
     const key = input && input.getAttribute(Values.DATA_SCHEMA_KEY)
     if(!key || !input) return
+
+    // Get the values to compare
+    const original = this.original[key]
+    const value = input.value
     // Build our update object
-    const update = {
-      key,
-      value: input.value,
-      original: this.original[key]
-    }
-    // Check input type, and if it has the CLEAVE_CLS
-    // Which means is should be a number
-    if(input.nodeName === 'INPUT' && input.classList.contains(Values.NUMBER_CLS)){
-      // Check if the input should be a number
-      const numVal = Number(update.value)
-      // If it's a valid number use that instead
-      !isNaN(numVal) && (update.value = numVal)
-    }
-    
-    // Ensure we have a valid key and value, and there was an update
-    if(this.original[update.key] === update.value) return
+    const update = { key, original }
+    // Set the value to update
+    updateValue(update, input, value)
+    // Ensure these was a change, before we call the update
+    if(original === update.value) return
 
     // Check if the input width should be update to match the value
     update.value &&  this.config.expandOnChange !== false && this.setWidth(input)
@@ -101,10 +112,12 @@ class BaseType {
     // When the save action is called, this value will then be saved to the tree
     if(this.userEvents.onChange(e, update, this.original.id, Editor) !== false)
       this.updated[update.key] = update.value
-    
+
   }
 
   onCancel = (e, Editor) => {
+    e.stopPropagation()
+
     const update = { mode: undefined, value: this.original.value }
     const id = shouldDoDefault( e, update, Editor, this.userEvents.onCancel )
     if(!id) return

@@ -61,6 +61,11 @@
 .j-tree-editor ul.list > li.row > div.header {
   margin-left: @size20Neg;
 }
+
+.j-tree-editor ul.list > li.row > div.header.item-has-toggle {
+  cursor: pointer;
+}
+
 .j-tree-editor li.row ul.list > li.row > div.header {
   margin-left: @size20Neg;
   transition: all @speed05 ease-in-out;
@@ -146,7 +151,7 @@
 
 .j-tree-editor li.row > div.item.item-error .item-error-message .item-error-text {
   position: relative;
-  bottom: 5px;
+  bottom: 10px;
 }
 
 
@@ -178,7 +183,7 @@
 }
 
 .j-tree-editor li.row > div.item.header > div.item-data {
-  cursor: pointer;
+
 }
 
 .j-tree-editor li.row > div.item > div.item-value {

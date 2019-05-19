@@ -29,7 +29,8 @@ const getAttrs = (props, type, keyVal, elVal) => {
       type: props.keyType || 'text',
       value: keyVal,
       [Values.DATA_SCHEMA_KEY]: type,
-      name: `key-${props.key}`
+      name: `key-${props.key}`,
+      disabled: props.disabled,
     }
     : {
       class: classes,
@@ -37,6 +38,7 @@ const getAttrs = (props, type, keyVal, elVal) => {
       [Values.DATA_SCHEMA_KEY]: type,
       name: `value-${props.key}`,
       value: elVal,
+      disabled: props.disabled,
     }
 }
 

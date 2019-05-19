@@ -17,15 +17,12 @@ const buildKeyEl = ({ showLabel, El, keyAttrs, keyVal }) => {
     )
 }
 
-const buildHeaderKey = (props, toggleProps) => {
+const buildHeaderKey = (props) => {
   const { key, keyType, mode, keyText } = props
   const text = `${keyText || key} `
 
   return props.mode !== Schema.MODES.EDIT
-    ? div({
-        className: 'item-key item-data',
-        ...toggleProps,
-      }, text)
+    ? div({ className: 'item-key item-data' }, text)
     : buildKeyEl(
         subComps.input({
         key,
@@ -36,19 +33,40 @@ const buildHeaderKey = (props, toggleProps) => {
     )
 }
 
+const buildHeaderValue = (props) => {
+  
+  const { mode, type } = props
+  const typeName = capitalize(type)  
+  if(mode !== Schema.MODES.EDIT)
+    return div({ className: 'item-value item-data' }, typeName)
+  
+  const inputData = subComps.input({
+    value: typeName,
+    valueType: 'text',
+    showLabel: true,
+    disabled: true,
+  }, 'value')
+  
+  return div(
+    { className: 'item-data-wrapper item-value-wrapper' },
+    subComps.label(`value-${type}`, 'Type'),
+    inputData.El(inputData.valueAttrs, inputData.elValue)
+  )
+}
+
 export const ListHeader = props => {
-  const { id, key, value, type, isOpen, isRoot, error } = props
+  const { id, isOpen, isRoot, error } = props
   const iconCls = isOpen && `open` || ``
   const rootCls = isRoot ? `root` : ``
   const classes = `${iconCls} ${rootCls} header item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}${ error && ' item-error' || '' }`
 
-  const wrapperProps = { className: classes }
-  if(isRoot) wrapperProps.id = Values.JT_ROOT_HEADER_ID
-  
-  const toggleProps = {
-    onClick: props.onToggle,
-    [Values.DATA_TREE_ID]: id,
+  const wrapperProps = { className: classes, [Values.DATA_TREE_ID]: id }
+  if(props.onToggle){
+    wrapperProps.className += ' item-has-toggle'
+    wrapperProps.onClick = props.onToggle
   }
+  
+  if(isRoot) wrapperProps.id = Values.JT_ROOT_HEADER_ID
 
   return div(
     wrapperProps,
@@ -56,17 +74,14 @@ export const ListHeader = props => {
       icon: {
         className: `icon toggle-icon fas fa-angle-right ${iconCls}`,
         title: `Toggle open / closed`,
-        ...toggleProps,
+        onClick: props.onToggle,
+        [Values.DATA_TREE_ID]: id,
       }
     }),
-    buildHeaderKey(props, toggleProps),
-    !rootCls && div(
-      {
-        className: 'item-value item-data',
-        ...toggleProps,
-      },
-      `${capitalize(type)}`
-    ) || null,
+    buildHeaderKey(props),
+    !rootCls 
+      ? buildHeaderValue(props)
+      : null,
     div({ className: `item-btns item-data` }, Buttons(props)),
     errorMessage(error)
   )

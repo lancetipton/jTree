@@ -27,10 +27,12 @@ class GroupType extends BaseType {
   store = {}
 
   onToggle = (e, Editor) => {
+    e.stopPropagation()
     const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
     if(!id) return
 
     const schema = Editor.schema(id)
+    // If no schema just return, cause we cant update
     if(!schema) return
 
     const update = { open: !schema.open }
@@ -38,7 +40,7 @@ class GroupType extends BaseType {
     // --- Does the opposite of the didUpdate method below --- //
     // Check if the store is open, but the update is changing to closed
     if(this.store.isOpen && !update.open){
-    // If true, close the object before the update is called
+      // If true, close the object before the update is called
       this.store.isOpen = false
       
       const refNode = schema.component
@@ -52,7 +54,7 @@ class GroupType extends BaseType {
         Editor.update(id, update)
       }, this.toggleSpeed || 500)
     }
-    
+
     Editor.update(id, update)
   }
   
@@ -95,6 +97,7 @@ class GroupType extends BaseType {
     const { schema } = props
 
     this.setOriginal(schema)
+
     // Clear out the updated, because the component just updated
     this.updated && clearObj(this.updated)
     
@@ -124,6 +127,8 @@ class GroupType extends BaseType {
 
 
   onAdd = (e, Editor) => {
+    e.stopPropagation()
+
     const id = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
     const schema = id && Editor.schema(id)
     const update = {
@@ -149,14 +154,12 @@ class GroupType extends BaseType {
       },
       children,
     } = props
-
+    const notEditMode = mode !== Schema.MODES.EDIT
     const classes = open && `list-open` || ''
-    let actions = { onToggle: this.onToggle }
-    
-    actions = open && mode !== Schema.MODES.EDIT && {
-      ...actions,
-      onAdd: this.onAdd,
-    } || actions
+    let actions = {
+      onToggle: notEditMode && this.onToggle,
+      onAdd: open && notEditMode && this.onAdd
+    }
 
     return List({
       id,

@@ -20,7 +20,7 @@ class BooleanType extends BaseType {
     return Item({
       id,
       key,
-      value,
+      value: value.toString(),
       mode,
       options,
       error,

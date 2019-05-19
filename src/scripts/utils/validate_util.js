@@ -171,7 +171,7 @@ export const validateAdd = (schema, parent) => {
  */
 export const validateKey = (key, tree, pos, schema) => {
   if(!key && key !== 0)
-    return { error: `Key '${key}'' must not be falsy!` }
+    return { error: `Can not set key to a falsy value!` }
 
   if(!tree.schema[pos])
     return  { error: `Position '${pos}' does not exist, can not update key!` }

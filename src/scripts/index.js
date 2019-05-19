@@ -18,12 +18,13 @@ import {
   parseJSONString,
   removeElement,
   setLogs,
+  upsertElement,
   updateKey,
   updateSchema,
   updateSchemaError,
+  updateSchemaProp,
   updateType,
   updateValue,
-  upsertElement,
   validateAdd,
   validateKey,
   validateSource,
@@ -41,6 +42,9 @@ import { DEF_SETTINGS } from './constants'
 const UPDATE_ACTIONS = {
   matchType: updateType,
   value: updateValue,
+  open: updateSchemaProp,
+  mode: updateSchemaProp,
+  error: updateSchemaProp
 }
 
 // Cache holder for active source data
@@ -140,14 +144,14 @@ const doUpdateData = (jTree, update, pos, schema, settings) => {
       // If the prop exists in the update actions,
       // and the passed in update object
       // Then call the action to update it
-      invalid = update[prop] && 
-        checkCall(UPDATE_ACTIONS[prop], jTree.tree, pos, schema, settings)
+      invalid = prop in update && 
+        checkCall(UPDATE_ACTIONS[prop], jTree.tree, pos, schema, settings, prop)
       
       if(!invalid) return
         invalid.prop = prop
         invalid.value = update[prop]
     })
-
+  
   return invalid && invalid.error
     ? handelUpdateError(
       jTree,
@@ -240,16 +244,18 @@ const createEditor = (settings, editorConfig, domContainer) => {
         pos = updatedPos
         
       }
-
+    
       // If there's an update, and pending exists before the matchType check
       // Remove it, pending only gets set on matchType update
-      schema.pending && !update.matchType && _unset(schema, 'pending')
+      this.tree.schema[pos].pending &&
+        !update.matchType &&
+        _unset(this.tree.schema[pos], 'pending')
+
       // Update the schema data, if nothing is returned,
       // then the update failed, so just return
       if(!doUpdateData(this, update, pos, schema, settings))
         return
-      
-      this.tree.schema[pos] = { ...this.tree.schema[pos], ...schema }
+
       schema = undefined
       validData.schema = undefined
       // Rebuild the tree from this position

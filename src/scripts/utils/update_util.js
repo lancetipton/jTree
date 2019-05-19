@@ -174,9 +174,6 @@ export const updateType = (tree, pos, schema, settings) => {
     instance: buildInstance(newType, schema, settings),
     mode: Schema.MODES.EDIT,
   }
-  console.log('------------------tree.schema[pos]------------------');
-  console.log(tree.schema[pos]);
-
 }
 
 /**
@@ -190,9 +187,9 @@ export const updateValue = (tree, pos, schema, settings) => {
   // Get ref to the constructor from the tree, it does not exist in the 
   // current schema copy
   const factory = tree.schema[pos].instance.constructor
-  if(!schema.pending && !schema.value || !factory.eval(schema.value))
+  if('value' in schema && !factory.eval(schema.value))
     return { error: `'${schema.value} it not a valid value for ${factory.name}` }
-  
+
   _set(tree, pos, schema.value)
   _set(tree.schema[pos], 'value', schema.value)
 }
@@ -206,6 +203,9 @@ export const updateValue = (tree, pos, schema, settings) => {
  * @return { string } - updated position based on the new key
  */
 export const updateKey = (tree, pos, schema, settings) => {
+  if(!schema.key)
+    return { error: `Can not set key to a falsy value!` }
+    
   // Cache the current value at that pos
   const currentVal = _get(tree, pos)
   // Get the new pos based on the update key and old pos
@@ -241,6 +241,18 @@ export const updateKey = (tree, pos, schema, settings) => {
   clearSchema(tree.schema[pos], tree.schema, false)
   // return the updated pos
   return { pos: updatedPos }
+}
+
+/**
+ * Updates schema.open prop of the node in the tree, to the passed in prop
+ * Updates the global tree object with the new position and schema
+ * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { string } pos - string position in the tree
+ * @param  { object } schema - data that defines the object at the current pos
+ * @return { string } - updated position based on the new key
+ */
+export const updateSchemaProp = (tree, pos, schema, settings, prop) => {
+  if(prop in schema) tree.schema[pos][prop] = schema[prop]
 }
 
 /**
