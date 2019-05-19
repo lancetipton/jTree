@@ -26,12 +26,13 @@ class PercentType extends NumberType {
   }
 
   render = props => {
-    const { schema: { id, key, value, mode, matchType, keyType, parent } } = props
+    const { schema: { id, key, value, mode, matchType, keyType, parent, error } } = props
     return Item({
       id,
       key,
       value,
       mode,
+      error,
       type: matchType,
       showLabel: true,
       cleave: true,

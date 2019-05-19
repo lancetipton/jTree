@@ -3,6 +3,8 @@ import { elements } from 'element-r'
 import { capitalize, isFunc } from 'jTUtils'
 import { Values, Schema } from 'jTConstants'
 import * as subComps from './sub'
+import { errorMessage } from './error'
+
 const { div, i } = elements
 
 /**
@@ -76,6 +78,7 @@ export const Item = (props) => {
     div(
       { className: `item-btns item-data` },
       Buttons(props),
-    )
+    ),
+    errorMessage(props.error)
   )
 }

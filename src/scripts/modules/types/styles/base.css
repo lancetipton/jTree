@@ -1,6 +1,8 @@
 
 .j-tree-editor {
   font-family: @fontThird;
+  font-size: @size14;
+  width: 100%;
 }
 
 .j-tree-editor ul {
@@ -28,9 +30,11 @@
 /* ---- Row ---- */
 .j-tree-editor ul.list > li.row {
   margin-left: @size20;
+  width: calc( 100% - @size20 );
 }
 .j-tree-editor li.row ul.list > li.row {
   margin-left: @size20;
+  width: calc( 100% - @size20 );
   color: @gray8;
 }
 
@@ -104,6 +108,7 @@
 /* ---- Display Item ---- */
 .j-tree-editor ul.list > li.row > div.item {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
   padding: 10px 10px 8px;
@@ -111,6 +116,25 @@
   border-bottom: @itemBorder;
   transition: all @speed05 ease-in-out;
 }
+
+.j-tree-editor ul.list > li.row > div.item.item-error {
+  border-bottom: @itemErrorBorder;
+}
+
+.j-tree-editor li.row > div.item.item-error .item-error-message {
+  width: 100%;
+  font-size: 12px;
+  color: @itemErrorTextColor;
+  text-align: right;
+  max-height: 0px;
+  position: relative;
+}
+
+.j-tree-editor li.row > div.item.item-error .item-error-message .item-error-text {
+  position: relative;
+  bottom: 5px;
+}
+
 
 .j-tree-editor ul.list > li.row > div.item.root {
   /* min-height: 36px; */
@@ -190,8 +214,13 @@
   border: @inputEditBorder;
   color: @gray8;
 }
+
 .j-tree-editor li.row > div.item.item-edit > div > .item-edit:focus {
   border-bottom: @inputFocusBorderBottom;
+}
+
+.j-tree-editor li.row > div.item.item-edit > div > .item-edit.item-error {
+  border-bottom: @inputErrorBorder;
 }
 
 
@@ -250,15 +279,15 @@
 .j-tree-editor div.item.item-edit > div.item-btns,
 .j-tree-editor div.item:hover > div.item-btns {
   opacity: @activeBtnOpacity;
-  top: 0px;
+  /* top: 0px; */
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper > div.btns-list {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
-  top: 2px;
+  /* position: relative;
+  top: 2px; */
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper div.type-label {

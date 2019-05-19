@@ -223,7 +223,7 @@ export const updateKey = (tree, pos) => {
   const unsetContent = _unset(tree, pos)
   if(!unsetContent)
     return logData(`Could not remove ${pos} from the tree`, tree, 'warn')
-  
+
   // Set the new value in the tree
   _set(tree, updatedPos, currentVal)
 

@@ -34,19 +34,6 @@ let DEF_COLORS = {
   shadow2: 'box-shadow: 3px 3px 4px -4px rgba(103, 100, 114, 0.5)',
 
 }
-let DEF_SIZE = buildRange({
-  type: 'size',
-  spread: 1,
-  range: 40,
-})
-let DEV_SPEED = buildRange({
-  type: 'speed',
-  units: 's',
-  spread: 0.25,
-  raw: false,
-  base: 0.5,
-  range: 5,
-})
 
 const buildUseConf = update => {
   return Object.entries(DEF_CONFIG)
@@ -101,6 +88,20 @@ const buildRange = update => {
 
   return built
 }
+
+let DEF_SIZE = buildRange({
+  type: 'size',
+  spread: 1,
+  range: 40,
+})
+let DEV_SPEED = buildRange({
+  type: 'speed',
+  units: 's',
+  spread: 0.25,
+  raw: false,
+  base: 0.5,
+  range: 5,
+})
 
 export const updateTheme = ({ theme, config, colors, size, speed }) => {
   if(colors) DEF_COLORS = { ...DEF_COLORS, ...colors }
@@ -162,6 +163,8 @@ export const getTheme = () => ({
   itemEditBorder: `2px solid ${DEF_COLORS.green}`,
   itemEmptyBorder: `2px solid ${DEF_COLORS.green}`,
   itemErrorBorder: `2px solid ${DEF_COLORS.red}`,
+  
+  itemErrorTextColor: DEF_COLORS.red,
   
   headerOpenBorder: `2px solid ${DEF_COLORS.lime}`,
 

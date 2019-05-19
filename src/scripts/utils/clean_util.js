@@ -1,3 +1,4 @@
+import { removeElement } from './dom_util'
 import { clearObj, isObj } from './object_util'
 import { clearInstanceCache, clearInstance } from './instance_util'
 import { logData } from './methods_util'

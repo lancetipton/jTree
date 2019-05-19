@@ -57,7 +57,8 @@ class BaseType {
   static eval = (value) => (typeof value === 'string')
   static defaultValue = (newType, schema, settings) => ''
   static getStyles = (settings) => buildTheme(settings)
-  
+  static error = (schema, settings) => (`Invalid input format`)
+
   constructor(config){
     if(!config) return
 

@@ -93,6 +93,7 @@ class GroupType extends BaseType {
 
   componentDidUpdate = (props, Editor) => {
     const { schema } = props
+
     this.setOriginal(schema)
     // Clear out the updated, because the component just updated
     this.updated && clearObj(this.updated)
@@ -117,7 +118,8 @@ class GroupType extends BaseType {
     // If the schema is open, update all the parent heights
     // This ensures the parent height does not cut off the children
     // when a child grows larger
-    schema.open && updateParentHeights(schema, childrenHt)
+    (schema.mode === Schema.MODES.EDIT || schema.open) &&
+      updateParentHeights(schema, childrenHt)
   }
 
 
@@ -142,7 +144,9 @@ class GroupType extends BaseType {
 
   render = props => {
     const {
-      schema: { id, key, value, mode, matchType, keyType, keyText, isRoot, open },
+      schema: {
+        id, key, value, mode, matchType, keyType, keyText, isRoot, open, error
+      },
       children,
     } = props
 
@@ -163,6 +167,7 @@ class GroupType extends BaseType {
       isRoot,
       children,
       keyText,
+      error,
       keyType: keyType || 'text',
       isOpen: open,
       styles: {

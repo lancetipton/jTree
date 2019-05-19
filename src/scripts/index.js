@@ -187,15 +187,21 @@ const createEditor = (settings, editorConfig, domContainer) => {
       _unset(this.tree, pos)
       _unset(this.tree.idMap, schema.id)
       
-      // If parent is an array, Update the parent in place, and remove the value from it
+      // If parent is an array, Update the parent in place,
+      // and remove the value from it
       Array.isArray(schema.parent.value) &&
         schema.parent.value.splice(pos.split('.').pop(), 1);
-        
       // Remove move the element from the dom
       const domNode = schema.component
       removeElement(domNode, domNode.parentNode)
+
+      // Get a ref to the parent pos for re-render
+      const parentPos = schema.parent.pos
+
       // Clear the schema from the tree schema
       clearSchema(schema, this.tree.schema)
+
+      buildFromPos.apply(this, [ parentPos, settings ])
     }
     
     add = (schema, parent, replace) => {
@@ -219,6 +225,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
     
     destroy = () => {
       ACT_SOURCE = undefined
+      const rootNode = this.tree.schema[Schema.ROOT].component
       clearObj(this.tree[Schema.ROOT])
       clearObj(this.tree.idMap)
       clearObj(this.config)
@@ -226,8 +233,14 @@ const createEditor = (settings, editorConfig, domContainer) => {
       _unset(this, 'Types')
       _unset(this, 'element')
       cleanUp(settings, this.tree)
-
       clearObj(this)
+      if(!rootNode || !rootNode.parentNode) return
+
+      // Remove the Root class from the parent
+      rootNode.parentNode.classList &&
+        rootNode.parentNode.classList.remove(Values.ROOT_CLASS)
+      // Remove the root element from the parent
+      removeElement(rootNode, rootNode.parentNode)
     }
   }
   

@@ -1,8 +1,10 @@
 import { Buttons, Icon } from '../buttons'
-import { elements } from 'element-r'
+import { elements, eR } from 'element-r'
 import { capitalize } from 'jTUtils'
 import { Values, Schema } from 'jTConstants'
 import * as subComps from '../sub'
+import { errorMessage } from '../error'
+
 const { div } = elements
 
 const buildKeyEl = ({ showLabel, El, keyAttrs, keyVal }) => {
@@ -35,11 +37,11 @@ const buildHeaderKey = (props, toggleProps) => {
 }
 
 export const ListHeader = props => {
-  const { id, key, value, type, isOpen, isRoot } = props
+  const { id, key, value, type, isOpen, isRoot, error } = props
   const iconCls = isOpen && `open` || ``
   const rootCls = isRoot ? `root` : ``
-  const classes = `${iconCls} ${rootCls} header item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
-  
+  const classes = `${iconCls} ${rootCls} header item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}${ error && ' item-error' || '' }`
+
   const wrapperProps = { className: classes }
   if(isRoot) wrapperProps.id = Values.JT_ROOT_HEADER_ID
   
@@ -65,6 +67,7 @@ export const ListHeader = props => {
       },
       `${capitalize(type)}`
     ) || null,
-    div({ className: `item-btns item-data` }, Buttons(props)) || null
+    div({ className: `item-btns item-data` }, Buttons(props)),
+    errorMessage(error)
   )
 }
