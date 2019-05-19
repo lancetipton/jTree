@@ -103,6 +103,13 @@
   color: @toggleEditColor;
 }
 
+.j-tree-editor ul.list > li.row > div.item.header.item-edit.item-error:hover .toggle-icon,
+.j-tree-editor ul.list > li.row > div.item.header.item-edit.item-error .toggle-icon,
+.j-tree-editor ul.list > li.row > div.header.item-error:hover .toggle-icon.open,
+.j-tree-editor ul.list > li.row > div.header.item-error .toggle-icon.open 
+.j-tree-editor ul.list > li.row > div.header.item-error:hover .toggle-icon {
+  color: @toggleErrorColor;
+}
 
 
 /* ---- Display Item ---- */
@@ -117,6 +124,13 @@
   transition: all @speed05 ease-in-out;
 }
 
+.j-tree-editor ul.list > li.row > div.item.item-edit.item-error.item-empty,
+.j-tree-editor ul.list > li.row > div.item.item-edit.item-error.item-empty:hover,
+.j-tree-editor ul.list > li.row > div.item.header.item-edit.item-error,
+.j-tree-editor ul.list > li.row > div.item.item-edit.item-error,
+.j-tree-editor ul.list > li.row > div.item.header.item-edit.item-error:hover,
+.j-tree-editor ul.list > li.row > div.item.item-edit.item-error:hover,
+.j-tree-editor ul.list > li.row > div.item.item-error:hover,
 .j-tree-editor ul.list > li.row > div.item.item-error {
   border-bottom: @itemErrorBorder;
 }

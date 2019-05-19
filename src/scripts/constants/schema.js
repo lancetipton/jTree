@@ -19,7 +19,8 @@ export const Schema = {
     'mode',
     'type',
     'open',
-    'matchType'
+    'matchType',
+    'error',
   ]),
   EMPTY_TYPE: 'EmptyType',
   EMPTY: 'empty',

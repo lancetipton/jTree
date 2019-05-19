@@ -74,7 +74,8 @@ class BaseType {
   onChange = (e, Editor) => {
     const input =  e.target || e.currentTarget
     // Get the key for the input
-    const key = input.getAttribute(Values.DATA_SCHEMA_KEY)
+    const key = input && input.getAttribute(Values.DATA_SCHEMA_KEY)
+    if(!key || !input) return
     // Build our update object
     const update = {
       key,
@@ -91,20 +92,16 @@ class BaseType {
     }
     
     // Ensure we have a valid key and value, and there was an update
-    if(
-      (update.value === undefined || update.key === undefined) ||
-      (this.original[update.key] && this.original[update.key] === update.value) ||
-      isNaN(update.value)
-    ) return
-    
+    if(this.original[update.key] === update.value) return
+
     // Check if the input width should be update to match the value
     update.value &&  this.config.expandOnChange !== false && this.setWidth(input)
     // Call the userEvent to check if it should be updated
     // Then update the value locally
     // When the save action is called, this value will then be saved to the tree
-    return (
-      this.userEvents.onChange(e, update, this.original.id, Editor) !== false
-      ) && ( this.updated[update.key] = update.value )
+    if(this.userEvents.onChange(e, update, this.original.id, Editor) !== false)
+      this.updated[update.key] = update.value
+    
   }
 
   onCancel = (e, Editor) => {

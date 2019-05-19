@@ -1,5 +1,5 @@
 import { isObj } from './object_util'
-import { logData, uuid, isFunc } from './methods_util'
+import { logData, uuid, isFunc, checkCall } from './methods_util'
 import { clearSchema } from './clean_util'
 import { clearInstance, buildInstance } from './instance_util'
 import { Schema } from 'jTConstants'
@@ -93,31 +93,38 @@ const checkSchemaPos = (tree, pos, checkExists) => (
       : true
 )
 
+export const updateSchemaError = (tree, schema, settings, prop, value, message) => {
+  schema.error = checkCall(
+    schema.instance.constructor.error,
+    {
+      prop,
+      value,
+      message,
+      schema,
+      tree,
+      settings,
+    }
+  )
+}
+
 /**
  * Updates the schema with the passed in update object
  * @param  { object } update - object containing updates to the schema
  * @param  { object } schema - data that defines the object at the current pos
  * @return { void }
  */
-export const updateSchema = (update, schema) => (
-  isObj(update) && isObj(schema) && Object
+export const updateSchema = (update, schema) => {
+  return isObj(update) && isObj(schema) && Object
     .entries(update)
     .reduce((updated, [ key, value ]) => {
       if(key === 'type') key = 'matchType'
       updated[key] = value
-
+      
       return updated
     }, schema)
-)
+}
 
 
-  // // Ensure the key exists and is not empty 
-  // if(!schema.key || schema.key === Schema.JS_EMPTY_TYPE)
-  //   schema.key = schema.id || uuid()
-
-  // // Check if the pos is empty, and update it to the key
-  // if(pos.indexOf(Schema.JS_EMPTY_TYPE) !== 0)
-  //   schema.pos = buildNewPos(pos, schema.key)
 
 /**
  * Updates the matchType of the tree node at the passed in pos
@@ -128,12 +135,7 @@ export const updateSchema = (update, schema) => (
  */
 export const updateType = (tree, pos, schema, settings) => {
   if(!pos || !isObj(schema))
-    return logData(
-      `The pos and schema object are required to update the schema type`,
-      pos,
-      schema,
-      'error'
-    )
+    return { error: `The pos and schema are required to update schema type` }
 
   // Ensure the passed in pos exists in the tree
   if(!checkSchemaPos(tree, pos, true)) return
@@ -145,13 +147,7 @@ export const updateType = (tree, pos, schema, settings) => {
   // Get the type to switch to
   const newType = settings.Editor.Types.get(schema.matchType)
   if(!newType)
-    return logData(
-      `Can not update type. Type ${schema.matchType} in not a configured type`,
-      pos,
-      schema,
-      settings.Editor.Types.get(),
-      'error'
-    )
+    return { error: `Type '${schema.matchType}' in not a configured type` }
 
   let hasValue = schema.value || schema.value === 0 || schema.value === ''
 
@@ -161,23 +157,25 @@ export const updateType = (tree, pos, schema, settings) => {
   // Check if it has a value
   hasValue = schema.value || schema.value === 0 || schema.value === ''
   // Check if the value is an empty type
-    const hasEmpty = checkEmptyType(newType, schema)
+  const hasEmpty = checkEmptyType(newType, schema)
+
   // If we have a value and it's not an empty type, then run an eval check on it
   // If it fails, set the error on the schema. The Types determine how to handel it
-  if(
-    hasValue &&
-    (!hasEmpty && !newType.factory.eval(schema.value)) && 
-    isFunc(newType.factory.error)
-  )
-    schema.error = newType.factory.error(schema, settings)
+  if( hasValue && (!hasEmpty && !newType.factory.eval(schema.value)) )
+    return { error: `'${schema.value} it not a valid value for ${newType.factory.name}` }
   
   // If there's a value, and no error, then set it in the tree
   if(hasValue && !schema.error)
     _set(tree, schema.pos, schema.value)
   
-  schema.pending = true
-  schema.instance = buildInstance(newType, schema, settings)
-  schema.mode = Schema.MODES.EDIT
+  tree.schema[pos] = {
+    ...schema,
+    pending: true,
+    instance: buildInstance(newType, schema, settings),
+    mode: Schema.MODES.EDIT,
+  }
+  console.log('------------------tree.schema[pos]------------------');
+  console.log(tree.schema[pos]);
 
 }
 
@@ -189,10 +187,14 @@ export const updateType = (tree, pos, schema, settings) => {
  * @return { void }
  */
 export const updateValue = (tree, pos, schema, settings) => {
-  const factory = schema.instance.constructor
-  return !schema.pending && !schema.value || !factory.eval(schema.value)
-      ? (schema.error = isFunc(factory.error) && factory.error(schema, settings))
-      : _set(tree, pos, schema.value)
+  // Get ref to the constructor from the tree, it does not exist in the 
+  // current schema copy
+  const factory = tree.schema[pos].instance.constructor
+  if(!schema.pending && !schema.value || !factory.eval(schema.value))
+    return { error: `'${schema.value} it not a valid value for ${factory.name}` }
+  
+  _set(tree, pos, schema.value)
+  _set(tree.schema[pos], 'value', schema.value)
 }
 
 /**
@@ -203,34 +205,34 @@ export const updateValue = (tree, pos, schema, settings) => {
  * @param  { object } schema - data that defines the object at the current pos
  * @return { string } - updated position based on the new key
  */
-export const updateKey = (tree, pos) => {
+export const updateKey = (tree, pos, schema, settings) => {
   // Cache the current value at that pos
   const currentVal = _get(tree, pos)
   // Get the new pos based on the update key and old pos
-  const updatedPos = buildNewPos(pos, tree.schema[pos].key)
+  const updatedPos = buildNewPos(pos, schema.key)
+  
+  
   // If the key was not actually changed, just return
   if(updatedPos === pos) return
   
   // Check if the updatedPos already exists. If it does, just return
   // Cause we don't want to overwrite it
   if(tree.schema[updatedPos])
-    return logData(
-      `Can not set position to '${updatedPos}', because it already exists!`,
-      tree, 'warn'
-    )
+    return { error: `Can not update key ${schema.key}, because it already exists!` }
 
   // Remove the old value in the tree
   const unsetContent = _unset(tree, pos)
   if(!unsetContent)
-    return logData(`Could not remove ${pos} from the tree`, tree, 'warn')
+    return { error: `Could not update key, because ${pos} could not be removed!` }
 
   // Set the new value in the tree
   _set(tree, updatedPos, currentVal)
 
   // Set the new schema data, with the new pos
   tree.schema[updatedPos] = {
-    // Add the old pos data
     ...tree.schema[pos],
+    // Add the old pos data
+    ...schema,
     // Overwrite the original pos with updated on
     value: currentVal,
     pos: updatedPos
@@ -238,7 +240,7 @@ export const updateKey = (tree, pos) => {
 
   clearSchema(tree.schema[pos], tree.schema, false)
   // return the updated pos
-  return updatedPos
+  return { pos: updatedPos }
 }
 
 /**

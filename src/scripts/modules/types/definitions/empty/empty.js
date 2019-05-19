@@ -39,7 +39,7 @@ class EmptyType extends BaseType {
 
   render = props => {
     const {
-      schema: { id, key, value, mode, matchType, keyType, parent },
+      schema: { id, key, value, mode, matchType, keyType, parent, error },
       settings: { Editor: { Types } }
     } = props
 
@@ -47,6 +47,7 @@ class EmptyType extends BaseType {
       id,
       value: '',
       Types,
+      error,
       key: Array.isArray(parent.value) ? key : '',
       type: Schema.EMPTY,
       showLabel: true,

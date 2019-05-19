@@ -1,3 +1,5 @@
+'use strict';
+
 import {
   addChildSchema,
   buildSettings,
@@ -18,10 +20,12 @@ import {
   setLogs,
   updateKey,
   updateSchema,
+  updateSchemaError,
   updateType,
   updateValue,
   upsertElement,
   validateAdd,
+  validateKey,
   validateSource,
   validateUpdate,
   loopSource,
@@ -59,29 +63,103 @@ const appendTreeHelper = function(rootComp, appendTree, tree){
   callInstanceUpdates(tree, pos)
 }
 
-const buildFromPos = function(pos, settings, force) {
-  if(
-    !isStr(pos) ||
-    !this.tree ||
-    !this.tree.schema ||
-    !this.tree.schema[pos]
-  ) return null
-
-  const updatedSchema = this.tree.schema[pos]
-  const valueInTree = _get(this.tree, pos)  
-  const updatedEl = loopSource(
-    updatedSchema,
-    this.tree,
-    settings,
-    appendTreeHelper && appendTreeHelper.bind(this)
-  )
+const buildFromPos = (jTree, pos, settings, force) => {
+  if(!isStr(pos) || !jTree.tree.schema[pos]) return
   
+  const renderSchema = jTree.tree.schema[pos]
+  const valueInTree = _get(jTree.tree, pos)  
+  const updatedEl = loopSource(
+    renderSchema,
+    jTree.tree,
+    settings,
+    appendTreeHelper && appendTreeHelper.bind(jTree)
+  )
+  // This method should not be called by the schema root element
+  // If it was, but return
   if(pos === Schema.ROOT) return
 
-  upsertElement(updatedEl, updatedSchema.component)
-  callInstanceUpdates(this.tree, updatedSchema.pos)
-
+  // Adds the dom node to the tree
+  upsertElement(updatedEl, renderSchema.component)
+  // Calls the component life cycle methods
+  callInstanceUpdates(jTree.tree, renderSchema.pos)
 }
+
+// Must be bound to the jTree editor when called
+const handelUpdateError = (jTree, pos, settings, prop, value, message) => {
+  if(!pos || !jTree.tree.schema[pos])
+    return logData(`Could not find ${pos} in the tree!`)
+
+  // Update the schema for the node with the error
+  updateSchemaError(
+    jTree.tree,
+    jTree.tree.schema[pos],
+    settings,
+    prop,
+    value,
+    message
+  )
+  // Re-render the tree from this pos, so the error is shown
+  buildFromPos(jTree, pos, settings)
+}
+
+const doKeyUpdate = (jTree, update, pos, schema, settings) => {
+  const valid = validateKey(update.key, jTree.tree, pos, schema)
+  // If the key is not valid, then update the schema error
+  if(!valid || valid.error)
+    return handelUpdateError(
+      jTree,
+      pos,
+      settings,
+      'key',
+      update.key,
+      valid.error
+    )
+
+  const updated = updateKey(jTree.tree, pos, schema, settings)
+  if(!updated || updated.error)
+    return handelUpdateError(
+      jTree,
+      pos,
+      settings,
+      'key',
+      update.key,
+      updated.error
+    )
+
+  return updated.pos
+}
+
+const doUpdateData = (jTree, update, pos, schema, settings) => {
+  let invalid
+  // Loop over the allowed props to be update
+  Schema.TREE_UPDATE_PROPS
+    .map(prop => {
+      // Only keep doing update when no error exists
+      if(invalid) return
+
+      // If the prop exists in the update actions,
+      // and the passed in update object
+      // Then call the action to update it
+      invalid = update[prop] && 
+        checkCall(UPDATE_ACTIONS[prop], jTree.tree, pos, schema, settings)
+      
+      if(!invalid) return
+        invalid.prop = prop
+        invalid.value = update[prop]
+    })
+
+  return invalid && invalid.error
+    ? handelUpdateError(
+      jTree,
+      pos,
+      settings,
+      invalid.prop,
+      invalid.value,
+      invalid.error
+    )
+    : true
+}
+
 
 const createEditor = (settings, editorConfig, domContainer) => {
 
@@ -124,65 +202,80 @@ const createEditor = (settings, editorConfig, domContainer) => {
     }
     
     forceUpdate = pos => {
-      pos && buildFromPos.apply(this, [
-        pos,
-        settings,
-        true,
-      ])
+      pos && buildFromPos(this, pos, settings, true)
     }
 
     update = (idOrPos, update) => {
+      
+      let pos = this.tree.idMap[idOrPos] || idOrPos
       // Ensure the passed in update object is valid
-      const validData = validateUpdate(idOrPos, update, this.tree)
-      // And Ensure we have a schema and pos to use
-      if(!validData || !validData.schema || !validData.pos) return 
-      // Get reference to the pos
-      let { pos } = validData
+      const validData = validateUpdate(this.tree, idOrPos, update, settings)
+      // And Ensure we have a schema, pos to use and there is no error
+      if(!validData || validData.error || !validData.schema || !validData.pos)
+        return handelUpdateError(
+          this,
+          pos,
+          settings,
+          'update',
+          update,
+          validData.error
+        )
 
+      // Get reference to the pos
+      pos = validData.pos || pos
+      // Remove the current error, if one exists
+      validData.schema.error && _unset(validData.schema, 'error')
       // Update the schema to ensure we are working with the updated data
-      this.tree.schema[pos] = updateSchema(update, { ...validData.schema })
-      const schema = this.tree.schema[pos]
+      // Creates a copy of the current schema, with updated values
+      let schema = updateSchema(update, { ...validData.schema })
+
+      // Check for an update to the key and handel it
+      if('key' in update){
+        const updatedPos = doKeyUpdate(this, update, pos, schema, settings)
+
+        if(!updatedPos) return
+        // If there was a valid update to pos
+        // Update the references to the local pos
+        // So future references use the updated one
+        pos = updatedPos
+        
+      }
 
       // If there's an update, and pending exists before the matchType check
       // Remove it, pending only gets set on matchType update
       schema.pending && !update.matchType && _unset(schema, 'pending')
-
-      // Special case for the key prop, cause we have to
-      // copy the schema, and change the pos in the tree
-      if(update.key){
-        const updatedPos = updateKey(this.tree, pos, schema, settings)
-        // If no updated pos came back
-        // There was an issue updating, so just return
-        if(updatedPos){
-          // If there was a valid update to pos
-          // Update the references to the local pos
-          // So future references use the updated one
-          pos = updatedPos
-        }
-      }
-
-      // Loop over the allowed props to be update
-      Schema.TREE_UPDATE_PROPS
-        .map(prop => {
-          // If the prop exists in the update acctions,
-          // and the passed in update object
-          // Then call the action to update it
-          update[prop] &&
-            UPDATE_ACTIONS[prop] &&
-            UPDATE_ACTIONS[prop](this.tree, pos, schema, settings)
-        })
-
+      // Update the schema data, if nothing is returned,
+      // then the update failed, so just return
+      if(!doUpdateData(this, update, pos, schema, settings))
+        return
+      
+      this.tree.schema[pos] = { ...this.tree.schema[pos], ...schema }
+      schema = undefined
+      validData.schema = undefined
       // Rebuild the tree from this position
-      buildFromPos.apply(this, [ pos, settings ])
+      buildFromPos(this, pos, settings)
     }
     
     remove = idOrPos => {
       // Ensure the passed in update object is valid
-      const validData = validateUpdate(idOrPos, { mode: Schema.MODES.REMOVE }, this.tree)
+      const validData = validateUpdate(
+        this.tree,
+        idOrPos,
+        { mode: Schema.MODES.REMOVE },
+        this.tree
+      )
       // And Ensure we have a schema and pos to use
-      if(!validData || !validData.schema || !validData.pos) return 
-      const { pos, schema } = validData
+      if(!validData || validData.error || !validData.schema || !validData.pos)
+        return handelUpdateError(
+          this,
+          this.tree.idMap[idOrPos] || idOrPos,
+          settings,
+          'remove',
+          null,
+          validData.error
+        )
 
+      const { pos, schema } = validData
       // Clear the data from the tree
       _unset(this.tree, pos)
       _unset(this.tree.idMap, schema.id)
@@ -197,26 +290,24 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       // Get a ref to the parent pos for re-render
       const parentPos = schema.parent.pos
-
       // Clear the schema from the tree schema
       clearSchema(schema, this.tree.schema)
-
-      buildFromPos.apply(this, [ parentPos, settings ])
+      // Re-render from the parentPos
+      buildFromPos(this, parentPos, settings)
     }
     
     add = (schema, parent, replace) => {
       const useParent = schema.parent || parent || this.tree.schema
       // Validate the passed in data
-      if(!validateAdd(schema, useParent)) return
+      const isValid = validateAdd(schema, useParent)
+      if(!isValid || isValid.error)
+        return logData(isValid.error, schema, parent, this.tree, 'warn')
 
       // Add the child schema to the parent / tree
       if(!addChildSchema(this.tree, schema, useParent)) return
       
       // Rebuild the tree from parent position
-      buildFromPos.apply(this, [
-        useParent.pos,
-        settings
-      ])
+      buildFromPos(this, useParent.pos, settings)
     }
     
     schema = (idOrPos) => (

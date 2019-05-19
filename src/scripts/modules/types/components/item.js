@@ -65,11 +65,11 @@ const buildItemValue = (itemProps, props) => {
  * @param  { object } props - passing in from the Types render method
  * @return { dom node }
  */
-export const Item = (props) => {
+export const Item = (props={}) => {
   let classes = `item ${props.mode === Schema.MODES.EDIT && Values.EDIT_CLS || ''}`
   
-  if(props && props.type === Schema.EMPTY)
-    classes += ` item-empty`
+  if(props.type === Schema.EMPTY) classes += ` item-empty`
+  if(props.error) classes += ` item-error`
 
   return div(
     { className: classes },

@@ -127,6 +127,7 @@ export const getTheme = () => ({
   toggleHoverColor: DEF_COLORS.blue,
   toggleOpenColor: DEF_COLORS.lime,
   toggleEditColor: DEF_COLORS.green,
+  toggleErrorColor: DEF_COLORS.red,
 
   // Item background color
   itemEditBackColor: DEF_COLORS.white,
