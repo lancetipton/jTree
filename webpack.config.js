@@ -32,12 +32,6 @@ const wpConfig = {
     umdNamedDefine: true,
     globalObject: "(typeof self !== 'undefined' ? self : this)"
   },
-  // optimization: {
-  //   splitChunks: {
-  //     name: `vendors`,
-  //     chunks: 'all',
-  //   }
-  // },
   module: {
     rules: [
       {
@@ -68,7 +62,6 @@ const wpConfig = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     }),
-    // new webpack.HashedModuleIdsPlugin()
   ],
   resolve: {
     alias: {

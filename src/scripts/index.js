@@ -170,6 +170,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
   class jTree {
     
     constructor(){
+      // TODO: Add copy and cut actions
+      
       return TypesCls(settings)
         .then(Types => {
           this.Types = Types
