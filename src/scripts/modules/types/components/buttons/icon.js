@@ -1,7 +1,6 @@
 import { er, elements } from 'element-r'
 const { div, span, a, style  } = elements
 
-
 export const Icon = (icon, text, extraProps={}) => {
   const lowerText = text && text.toLowerCase()
   const props = {

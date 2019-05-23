@@ -1,6 +1,8 @@
 export const Values = Object.freeze({
   CLEAVE_CLS: 'item-cleave',
   NUMBER_CLS: 'item-number',
+  PASTE_ACTION_CLS: 'item-paste-action',
+  HIDE_PASTE_CLS: 'hide-paste-action',
   DATA_SCHEMA_KEY: 'data-schema-key',
   DATA_TREE_ID: 'data-tree-id',
   DEFAULT_TYPES: 'definitions',

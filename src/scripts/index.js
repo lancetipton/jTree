@@ -49,7 +49,7 @@ const UPDATE_ACTIONS = {
 
 // Cache holder for active source data
 let ACT_SOURCE
-
+let TEMP
 /**
  * Checks if the settings.Editor.config.appendTree method exists, and calls it
  * If response is not false, it will add the rootComp the Dom
@@ -164,15 +164,24 @@ const doUpdateData = (jTree, update, pos, schema, settings) => {
     : true
 }
 
+const addTreeTemp = jTree => {
+  jTree && Object.defineProperty(jTree, 'temp', {
+    get: () => jTree.tempId && jTree.schema(jTree.tempId),
+    set: id => {
+      jTree.tempId = id
+    },
+    enumerable: true,
+    configurable: true,
+  })
+
+}
 
 const createEditor = (settings, editorConfig, domContainer) => {
 
   class jTree {
     
     constructor(){
-      // TODO: Add copy and cut actions
-      
-      return TypesCls(settings)
+      TypesCls(settings)
         .then(Types => {
           this.Types = Types
           this.element = domContainer
@@ -183,7 +192,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
           return source && this.setSource(source, true)
         })
     }
-
+    
     buildTypes = source => {
       if(source && source !== ACT_SOURCE)
         return this.setSource(source)
@@ -257,11 +266,49 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // then the update failed, so just return
       if(!doUpdateData(this, update, pos, schema, settings))
         return
-
+      
+      if(TEMP && TEMP.id === schema.id)
+        TEMP = undefined
+      
       schema = undefined
       validData.schema = undefined
       // Rebuild the tree from this position
       buildFromPos(this, pos, settings)
+    }
+    
+    replace = (idOrPos, replace) => {
+      // replace must be a schema
+      // TODO: add replace validation on the schema
+      // Need way to determine cut / pages for tempId
+      // Need to do full copy of object, deepClone,
+      
+      let pos = this.tree.idMap[idOrPos] || idOrPos
+      if(!pos || !this.tree.schema[pos]){
+        // Add error here
+        return
+      }
+      // Get the old schema
+      const schema = this.tree.schema[pos]
+      replace.parent = schema.parent
+      replace.id = schema.id
+
+      // remove id from the idMap
+      _unset(this.tree.idMap, schema.id)
+      // Clear out old schema
+      clearSchema(schema, this.tree.schema)
+      
+      // Do deep clone of value to ensure it's not a ref to other object
+      // Ensures it is entirely it's own
+      replace.value = cloneDeep(replace.value)
+      
+      _set(this.tree, pos, replace.value)
+      // Set new schema
+      this.tree.schema[pos] = replace
+      // add id to idMap
+      this.tree.idMap[replace.id] = pos
+      
+      // Re-render from the parentPos
+      replace.parent && buildFromPos(this, replace.parent.pos, settings)
     }
     
     remove = idOrPos => {
@@ -344,6 +391,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
   }
   
   const Tree = new jTree()
+  addTreeTemp(Tree)
   return  Tree
 }
 

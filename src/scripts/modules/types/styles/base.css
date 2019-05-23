@@ -317,12 +317,18 @@
   margin-right: @size10;
 }
 
-/* ---- Action Icons ---- */
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper {
+/* ---- Action Buttons ---- */
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper {
   margin: 0 @size5;
+  cursor: pointer;
 }
 
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > .icon {
+.j-tree-editor div.btns-wrapper > div.btns-list .hide-paste-action {
+  display: none;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper .icon {
   text-align: center;
   text-decoration: none;
   transition: color @speed05 ease;
@@ -330,34 +336,109 @@
   color: @passiveBtnColor;
 }
 
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-edit:hover {
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-edit:hover {
   color: @activeEditColor;
 }
 
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-drag:hover {
-  color: @activeDragColor;
-}
-
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-add:hover {
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-copy:hover {
   color: @activeAddColor;
 }
 
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-paste:hover {
+  color: @activeEditColor;
+}
 
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-delete:hover {
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-cut:hover {
+  color: @activeDragColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-drag:hover {
+  color: @activeDragColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-add:hover {
+  color: @activeAddColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-delete:hover {
   color: @activeDeleteColor;
 }
 
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-save:hover {
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-save:hover {
   color: @activeSaveColor;
 }
 
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon-cancel:hover {
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-cancel:hover {
   color: @activeCancelColor;
 }
 
 
-.j-tree-editor div.btns-wrapper > div.btns-list > .icon-wrapper > a.icon > .icon-text {
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon > .icon-text {
   margin-top: 3px;
   font-family: @fontPrimary;
   display: block;
+}
+
+/* ---- Buttons Drop Menu ---- */
+.j-tree-editor div.btns-wrapper > div.btns-list .bnts-drop-toggle {
+
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-menu {
+  padding: 5px;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-menu:hover {
+  background-color: @blue;
+  color: @white;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .btns-drop-wrapper {
+  position: relative;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list ul.btns-drop-list {
+  max-height: 0px;
+  width: 100px;
+  position: absolute;
+  overflow: hidden;
+  transition: max-height @speed05 ease;
+  background-color: @itemHoverBackColor;
+  left: 10px;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .btns-drop-list.open {
+  max-height: 250px;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list li.btns-drop-item {
+  padding: 5px 3px;
+  width: 100%;
+  transition: border-bottom @speed05 ease;
+  border-bottom: 1px solid @passiveBtnColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list li.btns-drop-item:hover {
+  border-bottom: 1px solid @activeEditColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list li.btns-drop-item.danger:hover {
+  border-bottom: 1px solid @activeDeleteColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list ul.btns-drop-list a.icon > .icon-text {
+  margin-top: 3px;
+  margin-left: 8px;
+  font-family: @fontPrimary;
+  display: inline-block;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list ul.btns-drop-list li.btns-drop-item:hover .icon-wrapper a.icon,
+.j-tree-editor div.btns-wrapper > div.btns-list ul.btns-drop-list li.btns-drop-item .icon-wrapper a.icon:hover {
+  color: @activeEditColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list ul.btns-drop-list li.btns-drop-item:hover .icon-wrapper a.icon-delete,
+.j-tree-editor div.btns-wrapper > div.btns-list ul.btns-drop-list li.btns-drop-item .icon-wrapper a.icon-delete:hover {
+  color: @activeDeleteColor;
 }

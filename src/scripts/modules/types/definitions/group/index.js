@@ -148,6 +148,7 @@ class GroupType extends BaseType {
   }
 
   render = props => {
+
     const {
       schema: {
         id, key, value, mode, matchType, keyType, keyText, isRoot, open, error
@@ -156,11 +157,10 @@ class GroupType extends BaseType {
     } = props
     const notEditMode = mode !== Schema.MODES.EDIT
     const classes = open && `list-open` || ''
-    let actions = {
-      onToggle: notEditMode && this.onToggle,
-      onAdd: open && notEditMode && this.onAdd
-    }
-
+    let actions = {}
+    if(notEditMode) actions.onToggle = this.onToggle
+    if(open && notEditMode) actions.onAdd = this.onAdd
+    
     return List({
       id,
       key,
@@ -171,6 +171,7 @@ class GroupType extends BaseType {
       children,
       keyText,
       error,
+      showPaste: Boolean(props.settings.Editor.tempId),
       keyType: keyType || 'text',
       isOpen: open,
       styles: {

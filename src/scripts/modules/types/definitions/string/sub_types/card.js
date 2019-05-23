@@ -72,6 +72,7 @@ class CardType extends StringType {
       type: matchType,
       showLabel: true,
       cleave: true,
+      showPaste: Boolean(props.settings.Editor.tempId),
       keyEdit: !parent || !Array.isArray(parent.value),
       keyType: keyType || 'text',
       ...this.getActions(mode)

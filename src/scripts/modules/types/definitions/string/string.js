@@ -28,6 +28,7 @@ class StringType extends CleaveType {
       mode,
       error,
       type: matchType,
+      showPaste: Boolean(props.settings.Editor.tempId),
       showLabel: true,
       keyEdit: !parent || !Array.isArray(parent.value),
       keyType: keyType || 'text',

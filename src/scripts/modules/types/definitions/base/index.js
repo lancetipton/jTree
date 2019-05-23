@@ -11,6 +11,9 @@ const customEvents = {
   onDelete: Values.NO_OP,
   onDrag: Values.NO_OP,
   onSave: Values.NO_OP,
+  onCopy: Values.NO_OP,
+  onPaste: Values.NO_OP,
+  onCut: Values.NO_OP,
 }
 
 const noId = e =>
@@ -170,14 +173,67 @@ class BaseType {
     )
   }
   
+  onCopy = (e, Editor) => {
+    e && e.stopPropagation()
+    Editor.temp = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+    Array
+      .from(document.querySelectorAll(`.${Values.PASTE_ACTION_CLS}`))
+      .map(node => {
+        if(!node) return
+        node.classList.remove(Values.HIDE_PASTE_CLS)
+      })
+    
+  }
+
+  onCut = (e, Editor) => {
+    e && e.stopPropagation()
+
+    Editor.temp = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
+    Array
+      .from(document.querySelectorAll(`.${Values.PASTE_ACTION_CLS}`))
+      .map(node => {
+        if(!node) return
+        node.classList.remove(Values.HIDE_PASTE_CLS)
+      })
+  }
+
+  onPaste = (e, Editor) => {
+    e && e.stopPropagation()
+    
+    const schema = Editor.schema(e.currentTarget.getAttribute(Values.DATA_TREE_ID))
+    Editor.replace(schema.id, { ...Editor.temp })
+    Editor.temp = undefined
+
+    Array
+      .from(document.querySelectorAll(`.${Values.PASTE_ACTION_CLS}`))
+      .map(node => {
+        if(!node) return
+        node.classList.add(Values.HIDE_PASTE_CLS)
+      })
+  }
+  
+  toggleActions = (e, Edtior) => {
+    e && e.stopPropagation()
+
+    const dropList = e.currentTarget.parentNode.parentNode.nextSibling
+    if(!dropList) return
+    
+    dropList.classList.toggle('open')
+    
+  }
+  
   shouldDoDefault = (...args) => shouldDoDefault(...args)
   
   getActions = (mode, extra) => (
     mode !== Schema.MODES.EDIT
       ? {
         onEdit: this.onEdit,
+        onCopy: this.onCopy,
+        onCut: this.onCut,
+        onPaste: this.onPaste,
         onDrag: this.onDrag,
         onDelete: this.onDelete,
+        toggleActions: this.toggleActions,
         ...extra
       }
       : {
@@ -242,6 +298,7 @@ class BaseType {
       mode: schema.mode,
       showLabel: true,
       type: schema.matchType,
+      showPaste: Boolean(props.settings.Editor.tempId),
       keyEdit: !schema.parent || !Array.isArray(schema.parent.value),
       keyType: schema.keyType || 'text',
       ...getActions(schema.mode)

@@ -3,14 +3,18 @@ import { Icon } from './icon'
 import { capitalize } from 'jTUtils'
 import { Values, Schema } from 'jTConstants'
 import { selectWrapper, inputWrapper } from '../sub'
-const { div, style, span, option } = elements
+const { div, style, span, option, ul, li } = elements
 const btnTypes = {
   onEdit: { icon: 'pen', key: 'Edit' },
+  onCopy: { icon: 'copy', key: 'Copy' },
+  onCut: { icon: 'cut', key: 'Cut' },
+  onPaste: { icon: 'paste', key: 'Paste' },
   onDrag: { icon: 'hand-point-up', key: 'Drag' },
   onAdd: { icon: 'plus-circle', key: 'Add' },
   onDelete: { icon: 'trash-alt', key: 'Delete' },
   onSave: { icon: 'check', key: 'Save' },
   onCancel: { icon: 'times', key: 'Cancel' },
+  toggleActions: { icon: 'bars', key: 'Menu' },
 }
 
 const typeLabel = type => (
@@ -51,14 +55,13 @@ const showTypeValue = (props, type) => {
   )
 }
 
-const buildIcon = (action, type, id) => {
+const buildIcon = (action, type, id, wrapperProps={}) => {
   const btn = btnTypes[type] || {}
-  
   return action
     ? Icon(
         btn.icon,
         btn.key,
-        { icon: { [Values.DATA_TREE_ID]: id, onclick: action } },
+        { icon: { [Values.DATA_TREE_ID]: id, onclick: action, }, wrapper: wrapperProps },
         type
       )
     : ''
@@ -68,23 +71,41 @@ const buildBtns = (id, props) => (
   Object
     .keys(btnTypes)
     .reduce((actions, key) => {
+      if(key === 'toggleActions') return actions
+      let attrs = {}
+      if(key === 'onPaste'){
+        attrs = props.showPaste
+          ? { className: `icon-wrapper ${Values.PASTE_ACTION_CLS}` }
+          : { className: `icon-wrapper ${Values.HIDE_PASTE_CLS} ${Values.PASTE_ACTION_CLS}` }
+      }
+
       if(props.isRoot){
-        key === 'onAdd'
-          ? actions.push(buildIcon( props[key], key, id ))
+        key === 'onAdd' || key === 'onPaste'
+          ? actions.push(buildIcon( props[key], key, id, attrs ))
           : null
 
         return actions
       }
 
-      props[key] && actions.push(buildIcon( props[key], key, id ))
+      props[key] && actions.push(buildIcon( props[key], key, id, attrs ))
       return actions
     }, [])
 )
 
 export const Buttons = (props) => {
   if(!props.id) return []
+  
+  // showPaste
+  const buttons = Object
+    .entries(props)
+    .reduce((buttons, [ key, value ]) => {
+      key.indexOf('on') === 0 && typeof value === 'function' && (buttons[key] = value)
 
-  const { id, type, ...buttons } = props
+      return buttons
+    }, {})
+  
+  const { id, type, isRoot } = props
+  buttons.isRoot = isRoot
   return div({ className: `btns-wrapper` }, [
     div({ className: `btns-list` }, [
     showTypeValue(props, type),
