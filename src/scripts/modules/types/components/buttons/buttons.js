@@ -67,16 +67,16 @@ const buildIcon = (action, type, id, wrapperProps={}) => {
     : ''
 }
 
-const buildBtns = (id, props) => (
-  Object
+const buildBtns = (id, props) => {
+  return Object
     .keys(btnTypes)
     .reduce((actions, key) => {
       if(key === 'toggleActions') return actions
       let attrs = {}
       if(key === 'onPaste'){
         attrs = props.showPaste
-          ? { className: `icon-wrapper ${Values.PASTE_ACTION_CLS}` }
-          : { className: `icon-wrapper ${Values.HIDE_PASTE_CLS} ${Values.PASTE_ACTION_CLS}` }
+          ? { className: `icon-wrapper ${Values.SHOW_PASTE_CLS} ${Values.PASTE_ACTION_CLS}` }
+          : { className: `icon-wrapper ${Values.PASTE_ACTION_CLS}` }
       }
 
       if(props.isRoot){
@@ -90,12 +90,10 @@ const buildBtns = (id, props) => (
       props[key] && actions.push(buildIcon( props[key], key, id, attrs ))
       return actions
     }, [])
-)
+}
 
 export const Buttons = (props) => {
   if(!props.id) return []
-  
-  // showPaste
   const buttons = Object
     .entries(props)
     .reduce((buttons, [ key, value ]) => {
@@ -103,9 +101,9 @@ export const Buttons = (props) => {
 
       return buttons
     }, {})
-  
-  const { id, type, isRoot } = props
-  buttons.isRoot = isRoot
+  const { id, type } = props
+  buttons.showPaste = props.showPaste
+  buttons.isRoot = props.isRoot
   return div({ className: `btns-wrapper` }, [
     div({ className: `btns-list` }, [
     showTypeValue(props, type),

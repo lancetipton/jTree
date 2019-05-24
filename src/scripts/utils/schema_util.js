@@ -58,25 +58,35 @@ export const buildSchema = (curSchema, type, settings) => {
 }
 
 export const loopSource = (curSchema, tree, settings, elementCb) => {
-  const { value, key, parent, pos, pending } = curSchema
+  const { value, key, parent, pos, pending, mode } = curSchema
   const Types = settings.Editor.Types
-  
+  const isRoot = key === Schema.ROOT
+  const cutMode = mode === Schema.MODES.CUT
+
   // Get the matchTypes for the value
   // pending gets set when empty value is added, and the type was updated
   // This will switch it to edit mode, but the key and value will be empty
   // It also set the type when it was switched
   // So skip check the types here, so we don't override it
-  const matchTypes = !pending && Types.getValueTypes(value, settings)
+  const matchTypes = !cutMode && !pending && Types.getValueTypes(value, settings)
 
   // Get the type based on the found types, or the current type
   // If pending is set, but use the current type on the schema
   const type = pending
-    ? Types.get(curSchema.matchType)
-    : checkMultiMatches(matchTypes, curSchema, tree, settings)
+    ? !cutMode && Types.get(curSchema.matchType)
+    : !cutMode && checkMultiMatches(matchTypes, curSchema, tree, settings)
 
   // Check if the type has a factory to call, if not just return
-  if(!type || !type.factory || !isConstructor(type.factory))
-    return tree
+  if(cutMode || !type || !type.factory || !isConstructor(type.factory)){
+    if(cutMode){
+      curSchema.component = undefined
+      curSchema.parent = undefined
+      curSchema.id = undefined
+    } 
+
+    return isRoot ? tree : null
+  }
+
   // Build an updated schema based on the new settings
   const schema = buildSchema(
     curSchema,
@@ -85,7 +95,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   )
 
   // If not the root element, set the parent to the schema
-  key !== Schema.ROOT
+  !isRoot
     ? (schema.parent = parent)
     : (schema.isRoot = true)
   
@@ -110,7 +120,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
     return ''
   }
 
-  if(schema.key === Schema.ROOT && !curSchema.id){
+  if(isRoot && !curSchema.id){
     props.schema.open = _get(settings, 'Editor.config.root.start') === 'open'
     props.schema.keyText = _get(settings, 'Editor.config.root.title', schema.key)
   }
@@ -134,7 +144,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
 
   // If we are not on the root element of the tree, 
   // Ensure the props get cleared out and return the rendered component
-  if(key !== Schema.ROOT)
+  if(!isRoot)
     return (props = undefined) || component
   
   // Only the root component should get to this point

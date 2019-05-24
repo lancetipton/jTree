@@ -160,7 +160,7 @@ class GroupType extends BaseType {
     let actions = {}
     if(notEditMode) actions.onToggle = this.onToggle
     if(open && notEditMode) actions.onAdd = this.onAdd
-    
+
     return List({
       id,
       key,

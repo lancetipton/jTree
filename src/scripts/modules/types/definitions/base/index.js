@@ -71,6 +71,14 @@ const updateValue = (update, input, value) => {
 
 }
 
+const togglePastAction = type => (
+  Array
+    .from(document.querySelectorAll(`.${Values.PASTE_ACTION_CLS}`))
+    .map(node => {
+      node && node.classList && node.classList[type](Values.SHOW_PASTE_CLS)
+    })
+)
+
 class BaseType {
 
   static priority = 0
@@ -175,51 +183,50 @@ class BaseType {
   
   onCopy = (e, Editor) => {
     e && e.stopPropagation()
-    Editor.temp = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
-    Array
-      .from(document.querySelectorAll(`.${Values.PASTE_ACTION_CLS}`))
-      .map(node => {
-        if(!node) return
-        node.classList.remove(Values.HIDE_PASTE_CLS)
-      })
-    
+    const id = shouldDoDefault(
+      e,
+      { mode: Schema.MODES.REMOVE },
+      Editor,
+      this.userEvents.onCopy,
+    )
+
+    if(!id) return
+
+    Editor.temp = id
+    togglePastAction('add')
   }
 
   onCut = (e, Editor) => {
     e && e.stopPropagation()
+    const update = { mode: Schema.MODES.CUT }
+    const id = shouldDoDefault(
+      e,
+      update,
+      Editor,
+      this.userEvents.onCut,
+    )
 
-    Editor.temp = e.currentTarget.getAttribute(Values.DATA_TREE_ID)
-    Array
-      .from(document.querySelectorAll(`.${Values.PASTE_ACTION_CLS}`))
-      .map(node => {
-        if(!node) return
-        node.classList.remove(Values.HIDE_PASTE_CLS)
-      })
+    if(!id) return
+    
+    Editor.temp = id
+    togglePastAction('add')
+    Editor.remove && Editor.update(id, update)
   }
 
   onPaste = (e, Editor) => {
     e && e.stopPropagation()
-    
     const schema = Editor.schema(e.currentTarget.getAttribute(Values.DATA_TREE_ID))
     Editor.replace(schema.id, { ...Editor.temp })
     Editor.temp = undefined
-
-    Array
-      .from(document.querySelectorAll(`.${Values.PASTE_ACTION_CLS}`))
-      .map(node => {
-        if(!node) return
-        node.classList.add(Values.HIDE_PASTE_CLS)
-      })
+    togglePastAction('remove')
   }
   
   toggleActions = (e, Edtior) => {
     e && e.stopPropagation()
-
     const dropList = e.currentTarget.parentNode.parentNode.nextSibling
     if(!dropList) return
-    
+
     dropList.classList.toggle('open')
-    
   }
   
   shouldDoDefault = (...args) => shouldDoDefault(...args)

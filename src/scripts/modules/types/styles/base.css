@@ -324,9 +324,14 @@
   cursor: pointer;
 }
 
-.j-tree-editor div.btns-wrapper > div.btns-list .hide-paste-action {
+.j-tree-editor div.btns-wrapper > div.btns-list .item-paste-action {
   display: none;
 }
+
+.j-tree-editor div.btns-wrapper > div.btns-list .item-paste-action.show-paste-action {
+  display: initial;
+}
+
 
 .j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper .icon {
   text-align: center;

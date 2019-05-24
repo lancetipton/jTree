@@ -78,6 +78,10 @@ const buildFromPos = (jTree, pos, settings, force) => {
     settings,
     appendTreeHelper && appendTreeHelper.bind(jTree)
   )
+  if(updatedEl === null){
+    const domNode = renderSchema.component
+    return domNode && removeElement(domNode, domNode.parentNode)
+  }
   // This method should not be called by the schema root element
   // If it was, but return
   if(pos === Schema.ROOT) return
@@ -164,17 +168,21 @@ const doUpdateData = (jTree, update, pos, schema, settings) => {
     : true
 }
 
-const addTreeTemp = jTree => {
-  jTree && Object.defineProperty(jTree, 'temp', {
-    get: () => jTree.tempId && jTree.schema(jTree.tempId),
+const addTreeTemp = jTree => (
+  Object.defineProperty(jTree, 'temp', {
+    get: () => {
+      return {
+        ...(jTree.tempId && jTree.schema(jTree.tempId) || {}),
+        mode: Schema.MODES.TEMP
+      }
+    },
     set: id => {
       jTree.tempId = id
     },
     enumerable: true,
     configurable: true,
   })
-
-}
+)
 
 const createEditor = (settings, editorConfig, domContainer) => {
 
@@ -277,22 +285,34 @@ const createEditor = (settings, editorConfig, domContainer) => {
     }
     
     replace = (idOrPos, replace) => {
-      // replace must be a schema
-      // TODO: add replace validation on the schema
       // Need way to determine cut / pages for tempId
-      // Need to do full copy of object, deepClone,
-      
-      let pos = this.tree.idMap[idOrPos] || idOrPos
-      if(!pos || !this.tree.schema[pos]){
-        // Add error here
-        return
-      }
-      // Get the old schema
-      const schema = this.tree.schema[pos]
-      replace.parent = schema.parent
-      replace.id = schema.id
+      // Ensure the passed in update object is valid
+      const validData = validateUpdate(
+        this.tree,
+        idOrPos,
+        { mode: Schema.MODES.REPLACE },
+        settings
+      )
 
-      // remove id from the idMap
+      // And Ensure we have a schema and pos to use
+      if(!validData || validData.error || !validData.schema || !validData.pos)
+        return handelUpdateError(
+          this,
+          this.tree.idMap[idOrPos] || idOrPos,
+          settings,
+          'replace',
+          null,
+          validData.error
+        )
+        
+      // Get the old schema
+      const { pos, schema } = validData
+      replace.parent = schema.parent
+      replace.component = schema.component
+      replace.id = schema.id
+      _unset(replace, 'mode')
+
+      // Remove id from the idMap
       _unset(this.tree.idMap, schema.id)
       // Clear out old schema
       clearSchema(schema, this.tree.schema)
@@ -300,15 +320,22 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // Do deep clone of value to ensure it's not a ref to other object
       // Ensures it is entirely it's own
       replace.value = cloneDeep(replace.value)
-      
+
+      // Update the value at the pos
       _set(this.tree, pos, replace.value)
       // Set new schema
       this.tree.schema[pos] = replace
       // add id to idMap
       this.tree.idMap[replace.id] = pos
-      
+
       // Re-render from the parentPos
-      replace.parent && buildFromPos(this, replace.parent.pos, settings)
+      replace.parent &&
+        replace.parent.pos &&
+        buildFromPos(
+          this,
+          replace.parent && replace.parent.pos,
+          settings
+        )
     }
     
     remove = idOrPos => {
@@ -317,7 +344,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
         this.tree,
         idOrPos,
         { mode: Schema.MODES.REMOVE },
-        this.tree
+        settings
       )
       // And Ensure we have a schema and pos to use
       if(!validData || validData.error || !validData.schema || !validData.pos)
@@ -347,6 +374,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       const parentPos = schema.parent.pos
       // Clear the schema from the tree schema
       clearSchema(schema, this.tree.schema)
+
       // Re-render from the parentPos
       buildFromPos(this, parentPos, settings)
     }

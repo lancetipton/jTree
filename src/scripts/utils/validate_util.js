@@ -116,7 +116,7 @@ export const validateUpdate = (tree, idOrPos, update, settings) => {
   if(!isObj(update))
     { error: `Update method third argument must be an object!`}
   
-  if(update.mode === Schema.MODES.REMOVE)
+  if(update.mode === Schema.MODES.REMOVE || update.mode === Schema.MODES.REPLACE)
     return { schema, pos }
   
   // Check if in add more, but no match type exists

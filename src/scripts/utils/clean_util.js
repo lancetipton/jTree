@@ -1,4 +1,3 @@
-import { removeElement } from './dom_util'
 import { clearObj, isObj } from './object_util'
 import { clearInstanceCache, clearInstance } from './instance_util'
 import { logData } from './methods_util'
@@ -52,7 +51,7 @@ export const clearSchema = (schema, treeSchema, removeInstance=true) => {
   removeInstance && clearInstance(schema.id)
   // Remove all references to clear out potential memory leaks
   // We don't un-mount the component on the instance, because
-  // We're not removing the instance, just changing the object the references it
+  // We're not removing the instance, just changing the object that references it
   _unset(schema, 'component')
   _unset(schema, 'parent')
   _unset(schema, 'instance')
