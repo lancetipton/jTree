@@ -9,12 +9,11 @@ const btnTypes = {
   onCopy: { icon: 'copy', key: 'Copy' },
   onCut: { icon: 'cut', key: 'Cut' },
   onPaste: { icon: 'paste', key: 'Paste' },
-  onDrag: { icon: 'hand-point-up', key: 'Drag' },
-  onAdd: { icon: 'plus-circle', key: 'Add' },
+  // onDrag: { icon: 'hand-point-up', key: 'Drag' },
+  onAdd: { icon: 'plus-square', key: 'Add' },
   onDelete: { icon: 'trash-alt', key: 'Delete' },
-  onSave: { icon: 'check', key: 'Save' },
-  onCancel: { icon: 'times', key: 'Cancel' },
-  toggleActions: { icon: 'bars', key: 'Menu' },
+  onSave: { icon: 'check-square', key: 'Save' },
+  onCancel: { icon: 'window-close', key: 'Cancel' },
 }
 
 const typeLabel = type => (
@@ -73,14 +72,14 @@ const buildBtns = (id, props) => {
     .reduce((actions, key) => {
       if(key === 'toggleActions') return actions
       let attrs = {}
-      if(key === 'onPaste'){
+      if(key === 'onPaste' && !props.isRoot){
         attrs = props.showPaste
-          ? { className: `icon-wrapper ${Values.SHOW_PASTE_CLS} ${Values.PASTE_ACTION_CLS}` }
-          : { className: `icon-wrapper ${Values.PASTE_ACTION_CLS}` }
+          ? { className: `${Values.SHOW_PASTE_CLS} ${Values.PASTE_ACTION_CLS}` }
+          : { className: `${Values.PASTE_ACTION_CLS}` }
       }
 
       if(props.isRoot){
-        key === 'onAdd' || key === 'onPaste'
+        key === 'onAdd'
           ? actions.push(buildIcon( props[key], key, id, attrs ))
           : null
 
@@ -105,8 +104,8 @@ export const Buttons = (props) => {
   buttons.showPaste = props.showPaste
   buttons.isRoot = props.isRoot
   return div({ className: `btns-wrapper` }, [
-    div({ className: `btns-list` }, [
     showTypeValue(props, type),
+    div({ className: `btns-list` }, [
       ...buildBtns(id, buttons)
     ])
   ])

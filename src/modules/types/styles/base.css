@@ -49,8 +49,6 @@
 
 .j-tree-editor ul.list > li.row.list-empty .list-empty-text {
   margin: 8px 5px 8px;
-  display: inline-block;
-  padding: 0px 10%;
   font-size: 12px;
 }
 
@@ -127,7 +125,13 @@
   margin-bottom: 4px;
   border-bottom: @itemBorder;
   transition: all @speed05 ease-in-out;
+  min-height: 24px;
 }
+
+.j-tree-editor ul.list > li.row > div.item.item-edit {
+  flex-wrap: nowrap;
+}
+
 
 .j-tree-editor ul.list > li.row > div.item.item-edit.item-error.item-empty,
 .j-tree-editor ul.list > li.row > div.item.item-edit.item-error.item-empty:hover,
@@ -247,8 +251,9 @@
   position: relative;
 }
 .j-tree-editor li.row > div.item .item-data-wrapper.item-empty-wrapper {
-  top: -2px;
   margin-right: 15px;
+  display: inline-block;
+  float: left;
 }
 
 .j-tree-editor li.row > div.item .item-data-wrapper.item-type-wrapper {
@@ -290,31 +295,49 @@
   margin-left: @size20;
   opacity: @passiveBtnOpacity;
   transition: opacity @speed05 ease;
-  position: relative;
-  top: 2px;
+  /* position: relative;
+  top: 2px; */
+  flex-grow: 1;
 }
 
 .j-tree-editor div.item.open > div.item-btns,
 .j-tree-editor div.item.item-edit > div.item-btns,
 .j-tree-editor div.item:hover > div.item-btns {
   opacity: @activeBtnOpacity;
-  /* top: 0px; */
+}
+
+.j-tree-editor div.item.item-edit > div.item-btns {
+  min-height: 53px;
+}
+
+.j-tree-editor div.item > div.item-btns > div.btns-wrapper {
+  position: relative;
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper > div.btns-list {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  /* position: relative;
-  top: 2px; */
+  display: inline;
+  top: 2px;
+  position: relative;
+  float: right;
+}
+
+.j-tree-editor div.item.item-edit > div.item-btns > div.btns-wrapper > div.btns-list {
+  top: 17px;
+  position: relative;
+  float: right;
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper div.type-label {
   font-size: @size10;
   color: @typeLabelColor;
   position: relative;
-  top: -3px;
+  top: 3px;
   margin-right: @size10;
+  display: inline-block;
+}
+
+.j-tree-editor div.item.item-edit > div.item-btns > div.btns-wrapper div.type-label {
+  top: 19px;
 }
 
 /* ---- Action Buttons ---- */
@@ -346,7 +369,7 @@
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-copy:hover {
-  color: @activeAddColor;
+  color: @activeCopyColor;
 }
 
 .j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-paste:hover {
@@ -365,9 +388,30 @@
   color: @activeAddColor;
 }
 
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper.wrap-icon-cancel > a,
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper.wrap-icon-delete > a {
+  border-left: 2px solid #3D3D3E;
+  padding-left: 10px;
+}
+
 .j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-delete:hover {
   color: @activeDeleteColor;
 }
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-save,
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-cancel {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  color: @passiveBtnColor;
+}
+
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon.icon-save > .icon-text,
+.j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon.icon-cancel > .icon-text {
+  /* display: inline-block; */
+  /* margin: 0px; */
+  /* margin-left: 5px; */
+}
+
 
 .j-tree-editor div.btns-wrapper > div.btns-list .icon-wrapper a.icon-save:hover {
   color: @activeSaveColor;

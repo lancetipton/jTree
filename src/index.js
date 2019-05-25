@@ -2,7 +2,10 @@
 
 import {
   addChildSchema,
-  buildSettings,
+  addProp,
+  appendTreeHelper,
+  buildFromPos,
+  buildInstance,
   callInstanceUpdates,
   checkCall,
   cleanUp,
@@ -11,7 +14,6 @@ import {
   cloneDeep,
   deepMerge,
   getElement,
-  isFunc,
   isObj,
   isStr,
   logData,
@@ -50,49 +52,19 @@ const UPDATE_ACTIONS = {
 // Cache holder for active source data
 let ACT_SOURCE
 let TEMP
+
 /**
- * Checks if the settings.Editor.config.appendTree method exists, and calls it
- * If response is not false, it will add the rootComp the Dom
- * @param  { dom element } rootComp of the source data passed to the Editor
- * @param  { function } appendTree - from settings.Editor.config.appendTree ( from user )
- *                                 - should always be bound to the Editor Class
+ * Updates the schema where the error occurred
+ * Rebuilds the tree from the position the error occurred
+ * @param  { object } jTree - jTree editor object
+ * @param  { string } pos - location of the error
+ * @param  { object } settings - config to for the tree data
+ * @param  { string } prop - property where the error occurred
+ * @param  { any } value - value that the error occurred on
+ * @param  { string } message - error message
  *
  * @return { void }
  */
-const appendTreeHelper = function(rootComp, appendTree, tree){
-  const res = checkCall(appendTree, rootComp, this, tree)
-  if(res === false || !this.element) return null
-  upsertElement(rootComp, this.element)
-  const pos = tree.idMap[rootComp.id]
-  callInstanceUpdates(tree, pos)
-}
-
-const buildFromPos = (jTree, pos, settings, force) => {
-  if(!isStr(pos) || !jTree.tree.schema[pos]) return
-  
-  const renderSchema = jTree.tree.schema[pos]
-  const valueInTree = _get(jTree.tree, pos)  
-  const updatedEl = loopSource(
-    renderSchema,
-    jTree.tree,
-    settings,
-    appendTreeHelper && appendTreeHelper.bind(jTree)
-  )
-  if(updatedEl === null){
-    const domNode = renderSchema.component
-    return domNode && removeElement(domNode, domNode.parentNode)
-  }
-  // This method should not be called by the schema root element
-  // If it was, but return
-  if(pos === Schema.ROOT) return
-
-  // Adds the dom node to the tree
-  upsertElement(updatedEl, renderSchema.component)
-  // Calls the component life cycle methods
-  callInstanceUpdates(jTree.tree, renderSchema.pos)
-}
-
-// Must be bound to the jTree editor when called
 const handelUpdateError = (jTree, pos, settings, prop, value, message) => {
   if(!pos || !jTree.tree.schema[pos])
     return logData(`Could not find ${pos} in the tree!`)
@@ -168,23 +140,8 @@ const doUpdateData = (jTree, update, pos, schema, settings) => {
     : true
 }
 
-const addTreeTemp = jTree => (
-  Object.defineProperty(jTree, 'temp', {
-    get: () => {
-      return {
-        ...(jTree.tempId && jTree.schema(jTree.tempId) || {}),
-        mode: Schema.MODES.TEMP
-      }
-    },
-    set: id => {
-      jTree.tempId = id
-    },
-    enumerable: true,
-    configurable: true,
-  })
-)
-
 const createEditor = (settings, editorConfig, domContainer) => {
+  let TEMP_ID = false
 
   class jTree {
     
@@ -209,7 +166,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
         return logData(`Could build types, source data is invalid!`, ACT_SOURCE, 'warn')
       
       if(isObj(ACT_SOURCE))
-        this.tree = buildTypes(ACT_SOURCE, settings, appendTreeHelper.bind(this))
+        this.tree = buildTypes(ACT_SOURCE, settings, appendTreeHelper)
 
         return this
     }
@@ -284,9 +241,10 @@ const createEditor = (settings, editorConfig, domContainer) => {
       buildFromPos(this, pos, settings)
     }
     
+    hasTemp = () => (Boolean(TEMP_ID))
+
     replace = (idOrPos, replace) => {
-      // Need way to determine cut / pages for tempId
-      // Ensure the passed in update object is valid
+      // Ensure the passed in replace object is valid
       const validData = validateUpdate(
         this.tree,
         idOrPos,
@@ -314,9 +272,14 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       // Remove id from the idMap
       _unset(this.tree.idMap, schema.id)
-      // Clear out old schema
-      clearSchema(schema, this.tree.schema)
       
+      const notSameInstance = schema.instance !== replace.instance
+      // Clear out old schema
+      clearSchema(schema, this.tree.schema, notSameInstance)
+      // If it's not the same instance, remove the old one
+      // New one will be re-built on next render
+      notSameInstance && _unset(replace, 'instance')
+
       // Do deep clone of value to ensure it's not a ref to other object
       // Ensures it is entirely it's own
       replace.value = cloneDeep(replace.value)
@@ -418,9 +381,24 @@ const createEditor = (settings, editorConfig, domContainer) => {
     }
   }
   
-  const Tree = new jTree()
-  addTreeTemp(Tree)
-  return  Tree
+  const jTEditor = new jTree()
+  // Add temp prop this way so we can set with string id
+  // And when get it called, it returns with temp object
+  addProp(jTEditor, 'temp', {
+    get: () => {
+      return {
+        ...(TEMP_ID && jTEditor.schema(TEMP_ID) || {}),
+        mode: Schema.MODES.TEMP
+      }
+    },
+    set: id => {
+      TEMP_ID = id
+    },
+    enumerable: true,
+    configurable: true,
+  })
+
+  return  jTEditor
 }
 
 

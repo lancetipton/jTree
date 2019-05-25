@@ -171,7 +171,7 @@ class GroupType extends BaseType {
       children,
       keyText,
       error,
-      showPaste: Boolean(props.settings.Editor.tempId),
+      showPaste: props.settings.Editor.hasTemp(),
       keyType: keyType || 'text',
       isOpen: open,
       styles: {

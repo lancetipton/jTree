@@ -140,6 +140,7 @@ export const getTheme = () => ({
   activeBtnOpacity: '1',
   passiveBtnColor: DEF_COLORS.gray6,
   activeEditColor: DEF_COLORS.lime,
+  activeCopyColor: DEF_COLORS.blue,
   activeDragColor: DEF_COLORS.orange,
   activeAddColor: DEF_COLORS.green,
   activeSaveColor: DEF_COLORS.green,

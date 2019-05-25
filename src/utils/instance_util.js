@@ -1,4 +1,4 @@
-import { clearObj, isObj } from './object_util'
+import { clearObj, isObj, addProp } from './object_util'
 import { typesOverride } from './types_util'
 import { isFunc, checkCall } from './methods_util'
 import { clearSchema } from './clean_util'
@@ -13,16 +13,6 @@ const getChildSchema = (key, value, { tree, schema }) => ({
   value,
   parent: schema,
 })
-
-const newInstance = schema => {
-  let newInstance = true
-  schema && Object.defineProperty(schema, 'newInstance', {
-    get: () => newInstance,
-    set: update => (newInstance = undefined),
-    enumerable: true,
-    configurable: true,
-  })
-}
 
 const buildChild = (childKey, child, props, loopChildren) => {
 
@@ -57,19 +47,6 @@ export const getInstanceCache = id => (
   id && INSTANCE_CACHE[id] || INSTANCE_CACHE
 )
 
-export const addSchemaInstance = (schema, id) => {
-  schema && Object.defineProperty(schema, 'instance', {
-    get: () => (INSTANCE_CACHE[id]),
-    set: instance => {
-      !instance
-        ? clearInstance(id)
-        : (INSTANCE_CACHE[id] = instance)
-    },
-    enumerable: true,
-    configurable: true,
-  })
-}
-
 /**
  * Removes an instance from the instance cache
  * @param  {any} id - id of the instance to be removed
@@ -86,7 +63,9 @@ export const clearInstance = (id, instance) => {
   instance.setState = undefined
   clearObj(instance)
   
-  id = id || Object.keys(INSTANCE_CACHE)[ Object.values(INSTANCE_CACHE).indexOf(instance) ]
+  id = id || Object.keys(INSTANCE_CACHE)[
+    Object.values(INSTANCE_CACHE).indexOf(instance)
+  ]
   
   id && (INSTANCE_CACHE[id] = undefined)
   id && _unset(INSTANCE_CACHE, id)
@@ -99,12 +78,13 @@ export const buildInstance = (type, schema, settings) => {
   const { id, matchType } = schema
   
   INSTANCE_CACHE = INSTANCE_CACHE || {}
+
   // Check for cached instance
   if(!INSTANCE_CACHE[id]){
     // Get the config from the passed in settings
     const config = settings.types && settings.types[matchType]
     // If no cached instance, built new one from factory
-    const instance = new type.factory(config)
+    const instance = new type.factory(config, settings.Editor)
     // Check for config overrides from the passed in settings
     config && typesOverride(instance, settings.types[matchType])
 
@@ -125,8 +105,33 @@ export const buildInstance = (type, schema, settings) => {
     INSTANCE_CACHE[id] = instance
   }
   
-  newInstance(schema)
-  return addSchemaInstance(schema, id)
+  // Add the new instance prop
+  let NEW_INSTANCE = true
+  addProp(schema, 'newInstance', {
+    get: () => NEW_INSTANCE,
+    set: update => {
+      NEW_INSTANCE = undefined
+      _unset(schema, 'newInstance')
+    },
+    enumerable: true,
+    configurable: true,
+  })
+
+  // Add instance look up to the schema
+  addProp(schema, 'instance', {
+    get: () => (INSTANCE_CACHE[id]),
+    set: instance => {
+      if(!instance){
+        clearInstance(id)
+        _unset(schema, 'instance')
+      }
+      else INSTANCE_CACHE[id] = instance
+    },
+    enumerable: true,
+    configurable: true,
+  })
+  
+  return INSTANCE_CACHE[id]
 }
 
 export const renderInstance = (key, value, props, loopChildren) => {

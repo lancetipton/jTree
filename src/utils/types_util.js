@@ -1,4 +1,4 @@
-import { isObj, mapCb } from './object_util'
+import { isObj, mapObj } from './object_util'
 import { validateMatchType } from './validate_util'
 import { Values } from '../constants'
 
@@ -61,7 +61,7 @@ export const buildTypeCache = (settings, allTypes) => {
     }, {})
 
   Object.defineProperty(BaseTypeMeta.children, Values.MAP_TYPES, {
-    value: (cb, parent) => mapCb(parent, cb),
+    value: (cb, parent) => mapObj(parent, cb),
     enumerable: false,
   })
 

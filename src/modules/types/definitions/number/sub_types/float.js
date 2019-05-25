@@ -36,7 +36,7 @@ class FloatType extends NumberType {
       showLabel: true,
       cleave: true,
       isNumber: true,
-      showPaste: Boolean(props.settings.Editor.tempId),
+      showPaste: props.settings.Editor.hasTemp(),
       keyEdit: !parent || !Array.isArray(parent.value),
       keyType: keyType || 'text',
       ...this.getActions(mode)

@@ -16,8 +16,9 @@ const customEvents = {
   onCut: Values.NO_OP,
 }
 
-const noId = e =>
+const noId = e => (
   logData(`Element id not found from event`, e, 'error') || false
+)
 
 const updateParentConstruct = (config, parent) => {
   Object.entries(Values.PARENT_OVERWRITE).map(([ key, type ]) => {
@@ -83,12 +84,12 @@ class BaseType {
 
   static priority = 0
   static matchHelper = () => {}
-  static eval = (value) => (typeof value === 'string')
+  static eval = (value) => true
   static defaultValue = (newType, schema, settings) => ''
   static getStyles = (settings) => buildTheme(settings)
   static error = ({ message }) => (message || `Invalid input format`)
 
-  constructor(config){
+  constructor(config, Editor){
     if(!config) return
 
     updateParentConstruct(config, this.constructor)
@@ -216,6 +217,7 @@ class BaseType {
   onPaste = (e, Editor) => {
     e && e.stopPropagation()
     const schema = Editor.schema(e.currentTarget.getAttribute(Values.DATA_TREE_ID))
+
     Editor.replace(schema.id, { ...Editor.temp })
     Editor.temp = undefined
     togglePastAction('remove')
@@ -295,21 +297,7 @@ class BaseType {
   }
 
   render = props => {
-
-    const { schema } = props
-
-    return Item({
-      id: schema.id,
-      key: schema.key,
-      value: schema.value,
-      mode: schema.mode,
-      showLabel: true,
-      type: schema.matchType,
-      showPaste: Boolean(props.settings.Editor.tempId),
-      keyEdit: !schema.parent || !Array.isArray(schema.parent.value),
-      keyType: schema.keyType || 'text',
-      ...getActions(schema.mode)
-    })
+    return ''
   }
   
 }

@@ -4,6 +4,7 @@ import {
   initTypeCache,
   isObj,
   loopSource,
+  mapObj,
   validateBuildTypes,
   validateMatchType,
 } from 'jTUtils'
@@ -14,7 +15,7 @@ import StyleLoader from 'styleloader'
 
 const styleLoader = new StyleLoader()
 let TYPE_CACHE
-let LOADED_TYPES
+let FLAT_TYPES
 
 export const buildTypes = (source, settings, elementCb) => {
   if(!validateBuildTypes(source, settings.Editor)) return null
@@ -31,9 +32,10 @@ export function TypesCls(settings){
     get = name => (!name && TYPE_CACHE || (this.getFlat() || {})[name])
     
     getFlat = (startType, opts={}) => {
+      if(FLAT_TYPES) return FLAT_TYPES
+
       const filter = Array.isArray(opts.filter) && opts.filter || []
-      
-      return Object
+      FLAT_TYPES = Object
         .entries((startType || TYPE_CACHE).children)
         .reduce((flatList, [ key, obj ]) => {
           if(filter.indexOf(key) !== -1) return flatList
@@ -47,16 +49,16 @@ export function TypesCls(settings){
 
           return flatList
         }, {})
+
+        return FLAT_TYPES
     }
     
     clear = (includeClass=true) => {
       clearTypeData(this, TYPE_CACHE, includeClass)
       TYPE_CACHE = undefined
-      Object
-        .keys(LOADED_TYPES)
-        .map(key => _unset(LOADED_TYPES[key]))
 
-      LOADED_TYPES = undefined
+      mapObj(FLAT_TYPES, key => _unset(FLAT_TYPES[key]))
+      FLAT_TYPES = undefined
     }
     
     register = newType => {
@@ -65,14 +67,7 @@ export function TypesCls(settings){
     }
 
     load = typesPath => {
-      if(LOADED_TYPES)
-        return Promise.resolve(LOADED_TYPES)
-
       return TypeDefs.load(typesPath || Values.DEFAULT_TYPES)
-        .then(loadedTypes => {
-          LOADED_TYPES = loadedTypes
-          return LOADED_TYPES
-        })
     }
 
     rebuild = () => {

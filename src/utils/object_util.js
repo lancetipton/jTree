@@ -61,8 +61,11 @@ export const deepMerge = (...sources) => (
   )
 )
 
+export const addProp = (obj, name, def) => (
+  isObj(obj) && Object.defineProperty(obj, name, def)
+)
 
-export const mapCb = (obj, cb) => (
+export const mapObj = (obj, cb) => (
   isObj(obj) && typeof cb === 'function' &&
   Object
     .entries(obj)
