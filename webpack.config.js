@@ -21,7 +21,7 @@ const wpConfig = {
   mode: NODE_ENV || 'development',
   devtool: isDev ? 'inline-source-map' : 'source-map',
   entry: {
-    [libraryName]: './src/scripts/index.js',
+    [libraryName]: './src/index.js',
     markdown: './src/example/markdown.js'
   },
   output: {
@@ -65,9 +65,9 @@ const wpConfig = {
   ],
   resolve: {
     alias: {
-      jTConstants: path.resolve(__dirname, './src/scripts/constants'),
-      jTUtils: path.resolve(__dirname, './src/scripts/utils'),
-      jTRoot: path.resolve(__dirname, './src/scripts/'),
+      jTConstants: path.resolve(__dirname, './src/constants'),
+      jTUtils: path.resolve(__dirname, './src/utils'),
+      jTRoot: path.resolve(__dirname, './src/'),
     },
   }
 }

@@ -4,7 +4,7 @@
   "description": "Json and Javascript object editor",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
   "main": "build/jTree.min.js",
-  "module": "src/scripts/index.js",
+  "module": "src/index.js",
   "license": "ISC",
   "repository": {
     "type": "git",
