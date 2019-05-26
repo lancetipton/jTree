@@ -44,7 +44,7 @@ class GroupType extends BaseType {
       // If true, close the object before the update is called
       this.store.isOpen = false
       
-      const refNode = schema.component
+      const refNode = schema.domNode
       // First update the maxHeight, to `close the object`
       refNode.style.maxHeight = this.store.closedMaxHt
       // Use a timeout to wait until the object is closed
@@ -60,7 +60,7 @@ class GroupType extends BaseType {
   }
   
   getTransSpeed = refNode => {
-    refNode = refNode || props.schema.component
+    refNode = refNode || props.schema.domNode
 
     if(!refNode) return
 
@@ -74,7 +74,7 @@ class GroupType extends BaseType {
   }
   
   componentDidMount = (props, Editor) => {
-    const refNode = props.schema.component
+    const refNode = props.schema.domNode
     if(!refNode || refNode.style.maxHeight) return
 
     // Set the currentMax height
@@ -100,12 +100,12 @@ class GroupType extends BaseType {
 
     this.setOriginal(schema)
 
-    // Clear out the updated, because the component just updated
+    // Clear out the updated, because the instance just updated
     this.updated && clearObj(this.updated)
     
     // ----- height update ----- //
     // If no comp || not open, just return
-    const refNode = schema.component
+    const refNode = schema.domNode
     if(!refNode) return
     
     const childrenHt = getChildrenHt(refNode)

@@ -9,7 +9,7 @@ import { diffUpdate } from './diff_util'
  * @return { void }
  */
 export const updateParentHeights = (schema, updateHeight, offset=0) => {
-  const domNode = schema && schema.component
+  const domNode = schema && schema.domNode
   if(!domNode || !updateHeight)
     return
   

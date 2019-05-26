@@ -375,7 +375,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       Array.isArray(schema.parent.value) &&
         schema.parent.value.splice(pos.split('.').pop(), 1);
       // Remove move the element from the dom
-      const domNode = schema.component
+      const domNode = schema.domNode
       removeElement(domNode, domNode.parentNode)
 
       // Get a ref to the parent pos for re-render
@@ -407,7 +407,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
     
     destroy = () => {
       ACT_SOURCE = undefined
-      const rootNode = this.tree.schema[Schema.ROOT].component
+      const rootNode = this.tree.schema[Schema.ROOT].domNode
       clearObj(this.tree[Schema.ROOT])
       clearObj(this.tree.idMap)
       clearObj(this.config)

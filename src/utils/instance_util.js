@@ -25,7 +25,7 @@ const buildChild = (childKey, child, props, loopChildren) => {
   
   const childPos = buildInstancePos(childKey, props.schema)  
   const schema = props.tree.schema[childPos]
-  if(!schema || !schema.instance || !schema.component) return
+  if(!schema || !schema.instance || !schema.domNode) return
 
   clearSchema(schema, props.tree)
 
@@ -152,7 +152,7 @@ export const buildInstance = (type, schema, settings) => {
 
 export const renderInstance = (key, value, props, loopChildren) => {
   const { schema, tree, settings } = props
-  let component = isObj(value)
+  let domNode = isObj(value)
     ? checkCall(schema.instance.render, {
       ...props,
       children: Object
@@ -167,11 +167,11 @@ export const renderInstance = (key, value, props, loopChildren) => {
           })
         : checkCall(schema.instance.render, props)
 
-  // If a component was created, add it to it's schema by id
-  // Ensure the component has an Id
-  component && !component.id && (component.id = schema.id)
+  // If a domNode was created, add it to it's schema by id
+  // Ensure the domNode has an Id
+  domNode && !domNode.id && (domNode.id = schema.id)
 
-  return component
+  return domNode
 }
 
 export const callInstanceUpdates = (tree, orgPos) => (

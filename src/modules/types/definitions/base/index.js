@@ -258,8 +258,8 @@ class BaseType {
   )
 
   setOriginal = schema => {
-    this.buildEvents(schema, schema.component)
-    const { parent, instance, component, ...original } = schema
+    this.buildEvents(schema, schema.domNode)
+    const { parent, instance, domNode, ...original } = schema
     this.original = original
   }
 

@@ -6,8 +6,8 @@ import { Values, Schema } from 'jTConstants'
 const getCleaveEl = (Editor, id) => {
   const schema = Editor.schema(id)
   return schema &&
-    schema.component &&
-    schema.component.getElementsByClassName(Values.CLEAVE_CLS)[0]
+    schema.domNode &&
+    schema.domNode.getElementsByClassName(Values.CLEAVE_CLS)[0]
 }
 
 class CleaveType extends BaseType {
@@ -95,12 +95,12 @@ class CleaveType extends BaseType {
     const { schema } = props
     // If not in edit mode, clear out cleave
     if(schema.mode !== Schema.MODES.EDIT) this.clearCleave(false)
-    // If in edit mode, and no cleave, add the cleave to the component
-    else if(!this.cleave) this.buildEvents(schema, schema.component)
+    // If in edit mode, and no cleave, add the cleave to the domNode
+    else if(!this.cleave) this.buildEvents(schema, schema.domNode)
     // Else update the cleave to the current raw value
     else this.cleave.setRawValue(schema.value)
     
-    const { parent, instance, component, ...original } = schema
+    const { parent, instance, domNode, ...original } = schema
     // Update original with current schema
     this.original = original
     // Clear out the updated, because we just updated

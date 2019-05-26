@@ -27,7 +27,7 @@ import { Schema } from 'jTConstants'
 const checkPropsChange = (props, check) => (
   props && Object.keys(props).map(key => {
     if(props[key] !== check[key])
-      throw new Error(`Props should not be changed when rendering a component!`)
+      throw new Error(`Props should not be changed when rendering a domNode!`)
     
     if(typeof props[key] === 'object' && Schema.PROPS_CHECK.indexOf(key) === -1)
       checkPropsChange(props[key], check[key])
@@ -35,7 +35,7 @@ const checkPropsChange = (props, check) => (
 )
 
 /**
- * Adds the component prop to the schema, as a getter / setter
+ * Adds the domNode prop to the schema, as a getter / setter
  * Allows getting the dom node when called instead of caching it
  * Helps to prevent memory leaks 
  * @param  { object } schema - schema to start the loop process
@@ -44,7 +44,7 @@ const checkPropsChange = (props, check) => (
  * @return { void }
  */
 export const addSchemaComponent = (schema, id) => (
-  addProp(schema, 'component', {
+  addProp(schema, 'domNode', {
     get: () => (document.getElementById(id)),
     set: _id => {
       if(_id && _id !== id) id = _id
@@ -117,7 +117,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   // Check if the type has a factory to call, if not just return
   if(cutMode || !type || !type.factory || !isConstructor(type.factory)){
     if(cutMode){
-      curSchema.component = undefined
+      curSchema.domNode = undefined
       curSchema.parent = undefined
       curSchema.id = undefined
     } 
@@ -149,8 +149,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   )
 
   if(shouldUpdate === false){
-    // checkCall(schema.instance.componentWillUnmount, props, schema.component)
-    // Should make instance a defined prop like component
+    // Should make instance a defined prop like domNode
     // Then in the getters and setters, have it update the instance cache
     schema.instance = undefined
     tree.idMap[schema.id] = schema.pos
@@ -163,40 +162,40 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
     props.schema.keyText = _get(settings, 'Editor.config.root.title', schema.key)
   }
 
-  // Render the component and it's children
-  let component = renderInstance(
+  // Render the domNode and it's children
+  let domNode = renderInstance(
     key,
     value,
     props,
     loopSource
   )
 
-  // Use the id to set the component prop on the schema
-  component &&
-    component.id &&
-    addSchemaComponent(schema, component.id)
+  // Use the id to set the domNode prop on the schema
+  domNode &&
+    domNode.id &&
+    addSchemaComponent(schema, domNode.id)
   
-  // Add the dom components Id to the idMap
+  // Add the dom domNodes Id to the idMap
   // This will help with looking up the schema later
-  tree.idMap[component && component.id || schema.id] = schema.pos
+  tree.idMap[domNode && domNode.id || schema.id] = schema.pos
 
   // If we are not on the root element of the tree, 
-  // Ensure the props get cleared out and return the rendered component
+  // Ensure the props get cleared out and return the rendered domNode
   if(!isRoot)
-    return (props = undefined) || component
+    return (props = undefined) || domNode
   
-  // Only the root component should get to this point
-  // Call the appendTree method to add the component tree to the dom
+  // Only the root domNode should get to this point
+  // Call the appendTree method to add the domNode tree to the dom
   elementCb && checkCall(
     elementCb,
     settings.Editor,
-    component,
+    domNode,
     settings.Editor.config.appendTree,
     tree
   )
-  // Set component and props to undefined, to ensure it get's cleaned up
+  // Set domNode and props to undefined, to ensure it get's cleaned up
   // as it's longer being used
-  component = undefined
+  domNode = undefined
   props = undefined
 
   // Then return the build tree
@@ -207,7 +206,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
  * Checks if the settings.Editor.config.appendTree method exists, and calls it
  * If response is not false, it will add the rootComp the Dom
  * @param  { dom element } rootComp of the source data passed to the Editor
- * @param  { function } appendTree - from settings.Editor.config.appendTree (from user)
+ * @param  { function } appendTree - from Editor.config.appendTree (from user)
  *                                 - should always be bound to the Editor Class
  *
  * @return { void }
@@ -250,7 +249,7 @@ export const buildFromPos = (jTree, pos, settings) => {
   // If updated element was not returned,
   // remove the current element from the dom
   if(updatedEl === null){
-    const domNode = renderSchema.component
+    const domNode = renderSchema.domNode
     return domNode && removeElement(domNode, domNode.parentNode)
   }
   // This method should not be called with the root schema
@@ -259,7 +258,7 @@ export const buildFromPos = (jTree, pos, settings) => {
     return
 
   // Adds the dom node to the tree
-  upsertElement(updatedEl, renderSchema.component)
-  // Calls the component life cycle methods
+  upsertElement(updatedEl, renderSchema.domNode)
+  // Calls the domNode life cycle methods
   callInstanceUpdates(jTree.tree, renderSchema.pos)
 }

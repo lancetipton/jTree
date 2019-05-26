@@ -54,7 +54,7 @@ export const clearSchema = (schema, tree, removeInstance=true) => {
   _unset(tree.idMap, schema.id)
   
   // Remove all references to clear out potential memory leaks
-  _unset(schema, 'component')
+  _unset(schema, 'domNode')
   _unset(schema, 'parent')
   _unset(schema, 'instance')
   _unset(schema, 'value')
