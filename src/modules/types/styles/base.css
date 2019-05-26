@@ -18,6 +18,7 @@
 .j-tree-editor div.list-wrapper {
   transition: max-height @speed05 ease-in-out;
   overflow: hidden;
+  min-height: 44px;
   /* border: 1px solid #aaa; */
 }
 
@@ -312,6 +313,7 @@
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper {
   position: relative;
+  min-height: 25px;
 }
 
 .j-tree-editor div.item > div.item-btns > div.btns-wrapper > div.btns-list {

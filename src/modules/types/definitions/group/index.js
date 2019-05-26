@@ -9,6 +9,7 @@ import {
 import { Schema, Values } from 'jTConstants'
 import { List } from '../../components'
 
+const heightOffset = 2
 const getChildrenHt = refNode => {
   return Array
     .from(refNode.firstChild.children)
@@ -63,7 +64,8 @@ class GroupType extends BaseType {
 
     if(!refNode) return
 
-    const transRule = window.getComputedStyle(refNode).transition
+    const domStyle = window.getComputedStyle(refNode)
+    const transRule = domStyle.transition
     if(!transRule) return
     // Convert the transition rule speed into milliseconds
     const speed = parseFloat(transRule.split(' ')[1]) * 1000
@@ -76,17 +78,17 @@ class GroupType extends BaseType {
     if(!refNode || refNode.style.maxHeight) return
 
     // Set the currentMax height
-    this.store.currentMaxHt = `${refNode.scrollHeight}px`
+    this.store.currentMaxHt = `${refNode.scrollHeight + heightOffset}px`
     this.store.closedMaxHt = this.store.currentMaxHt
     refNode.style.maxHeight = this.store.currentMaxHt
 
     // If it's the root node, it defaults to open
     if(props.schema.isRoot && props.schema.open){
       this.store.isOpen = true
-    // So use the header child height to set the default closed height
+      // So use the header child height to set the default closed height
       const rootHeader = document.getElementById(Values.JT_ROOT_HEADER_ID)
       if(!rootHeader) return
-      this.store.closedMaxHt = `${rootHeader.scrollHeight}px`
+      this.store.closedMaxHt = `${rootHeader.scrollHeight + heightOffset}px`
 
     }
 
@@ -102,7 +104,7 @@ class GroupType extends BaseType {
     this.updated && clearObj(this.updated)
     
     // ----- height update ----- //
-    // If no comp || not open just return
+    // If no comp || not open, just return
     const refNode = schema.component
     if(!refNode) return
     
@@ -122,7 +124,7 @@ class GroupType extends BaseType {
     // This ensures the parent height does not cut off the children
     // when a child grows larger
     (schema.mode === Schema.MODES.EDIT || schema.open) &&
-      updateParentHeights(schema, childrenHt)
+      updateParentHeights(schema, childrenHt, heightOffset)
   }
 
 

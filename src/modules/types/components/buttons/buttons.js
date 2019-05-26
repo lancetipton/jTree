@@ -9,7 +9,6 @@ const btnTypes = {
   onCopy: { icon: 'copy', key: 'Copy' },
   onCut: { icon: 'cut', key: 'Cut' },
   onPaste: { icon: 'paste', key: 'Paste' },
-  // onDrag: { icon: 'hand-point-up', key: 'Drag' },
   onAdd: { icon: 'plus-square', key: 'Add' },
   onDelete: { icon: 'trash-alt', key: 'Delete' },
   onSave: { icon: 'check-square', key: 'Save' },

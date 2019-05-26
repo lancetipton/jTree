@@ -17,6 +17,7 @@ import {
   isObj,
   isStr,
   logData,
+  mapObj,
   parseJSONString,
   removeElement,
   setLogs,
@@ -35,6 +36,7 @@ import {
 } from 'jTUtils'
 import { Values, Schema, EditorConfig } from 'jTConstants'
 import { buildTypes, TypesCls } from './types'
+import UndoManager from './undo'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
 import _unset from 'lodash.unset'
@@ -52,7 +54,7 @@ const UPDATE_ACTIONS = {
 // Cache holder for active source data
 let ACT_SOURCE
 let TEMP
-
+let UNDO_MANAGER
 /**
  * Updates the schema where the error occurred
  * Rebuilds the tree from the position the error occurred
@@ -109,7 +111,7 @@ const doKeyUpdate = (jTree, update, pos, schema, settings) => {
   return updated.pos
 }
 
-const doUpdateData = (jTree, update, pos, schema, settings) => {
+const doUpdateData = (jTree, update, pos, schema, settings, change) => {
   let invalid
   // Loop over the allowed props to be update
   Schema.TREE_UPDATE_PROPS
@@ -127,9 +129,9 @@ const doUpdateData = (jTree, update, pos, schema, settings) => {
         invalid.prop = prop
         invalid.value = update[prop]
     })
-  
-  return invalid && invalid.error
-    ? handelUpdateError(
+
+  if(invalid && invalid.error) {
+    handelUpdateError(
       jTree,
       pos,
       settings,
@@ -137,11 +139,30 @@ const doUpdateData = (jTree, update, pos, schema, settings) => {
       invalid.value,
       invalid.error
     )
-    : true
+    change && (change.from = undefined)
+
+    return false
+  }
+
+  if(change)
+    change.to = {
+      pos,
+      id: schema.id,
+      value: schema.value,
+      key: schema.key,
+      mode: schema.mode,
+      keyType: schema.keyType,
+      matchType: schema.matchType,
+      ...update
+    }
+
+  return true
 }
 
 const createEditor = (settings, editorConfig, domContainer) => {
   let TEMP_ID = false
+  console.log(`TODO:`);
+  console.log(`Need to clear out child data from schema and idMap after and updat or change. Need to move undo switch logic to helper and join it with replace.`);
 
   class jTree {
     
@@ -156,6 +177,54 @@ const createEditor = (settings, editorConfig, domContainer) => {
           settings.Editor = this
           return source && this.setSource(source, true)
         })
+        .then(() => {
+          // if(!this.config || !this.config.undo) return this
+          UNDO_MANAGER = new UndoManager(this.config.undo || {})
+          this.setDoLimit = UNDO_MANAGER.setLimit.bind(this)
+          this.hasDo = UNDO_MANAGER.has.bind(this)
+
+          return this
+        })
+    }
+    
+    undo = () => {
+      const undo = UNDO_MANAGER.undo()
+      if(!undo) return logData(`No undos to use!`)
+
+      const schema = this.schema(undo.to.id || undo.from.id)
+      if(!schema)
+        return logData(`No schema found!`, `error`)
+        
+      const update = { ...schema }
+      const updateKeys = Object.keys(UPDATE_ACTIONS).concat(
+        [ 'pending', 'key', 'pos', ]
+      )
+
+      if(!undo || !undo.from || !update) return
+      updateKeys.map(key => {
+        undo.from[key] !== update[key] &&
+          (update[key] = undo.from[key])
+      })
+
+      _unset(this.tree, schema.pos)
+      _unset(this.tree.idMap, schema.id)
+      _unset(this.tree.schema, schema.pos)
+      
+      this.tree.schema[update.pos] = update
+      this.tree.idMap[update.id] = update.pos
+      _set(this.tree, update.pos, update.value)
+      const parent = update.parent || schema.parent
+      parent &&
+        parent.pos &&
+        buildFromPos(
+          this,
+          parent.pos,
+          settings
+        )
+    }
+    
+    redo = () => {
+      const item = UNDO_MANAGER.redo()
     }
     
     buildTypes = source => {
@@ -168,7 +237,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       if(isObj(ACT_SOURCE))
         this.tree = buildTypes(ACT_SOURCE, settings, appendTreeHelper)
 
-        return this
+      return this
     }
 
     setSource = (source, update) => {
@@ -186,7 +255,6 @@ const createEditor = (settings, editorConfig, domContainer) => {
     }
 
     update = (idOrPos, update) => {
-      
       let pos = this.tree.idMap[idOrPos] || idOrPos
       // Ensure the passed in update object is valid
       const validData = validateUpdate(this.tree, idOrPos, update, settings)
@@ -205,10 +273,21 @@ const createEditor = (settings, editorConfig, domContainer) => {
       pos = validData.pos || pos
       // Remove the current error, if one exists
       validData.schema.error && _unset(validData.schema, 'error')
+      const change = {}
+      if(UNDO_MANAGER)
+        change.from = {
+          pos,
+          id: validData.schema.id,
+          value: validData.schema.value,
+          key: validData.schema.key,
+          mode: validData.schema.mode,
+          keyType: validData.schema.keyType,
+          matchType: validData.schema.matchType
+        }
+
       // Update the schema to ensure we are working with the updated data
       // Creates a copy of the current schema, with updated values
       let schema = updateSchema(update, { ...validData.schema })
-
       // Check for an update to the key and handel it
       if('key' in update){
         const updatedPos = doKeyUpdate(this, update, pos, schema, settings)
@@ -229,7 +308,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       // Update the schema data, if nothing is returned,
       // then the update failed, so just return
-      if(!doUpdateData(this, update, pos, schema, settings))
+      if(!doUpdateData(this, update, pos, schema, settings, change))
         return
       
       if(TEMP && TEMP.id === schema.id)
@@ -239,6 +318,10 @@ const createEditor = (settings, editorConfig, domContainer) => {
       validData.schema = undefined
       // Rebuild the tree from this position
       buildFromPos(this, pos, settings)
+      
+      if(!UNDO_MANAGER) return
+
+      UNDO_MANAGER.add(change)
     }
     
     hasTemp = () => (Boolean(TEMP_ID))

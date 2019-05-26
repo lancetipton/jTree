@@ -12,22 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const jTree = window.jTree
   let Editor
   let editorNode = document.getElementById('editor')
-  let saveBtn = document.getElementById('save-btn')
-  saveBtn.addEventListener('click', () => {
-    Editor.destroy()
-    console.log('------------------Editor------------------');
-    console.log(Editor);
+  let undoBtn = document.getElementById('undo-btn')
+  let redoBtn = document.getElementById('redo-btn')
+  undoBtn.addEventListener('click', () => {
+    Editor && Editor.undo()
   })
-  
+
+  redoBtn.addEventListener('click', () => {
+    Editor && Editor.redo()
+  })
+
   const onChange = (event, update, id, Editor) => {
     console.log('on change')
-    console.log(obj)
   }
 
   // Calls composer.destroy() after this method CB
   const onSave = (event, update, id, Editor) => {
-    console.log('on save')
-    console.log(html)
+
+    if(Editor && Editor.hasDo('undo'))
+      undoBtn.classList.add('show')
   }
 
   // Calls composer.destroy() after this method CB
@@ -64,6 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Called for all type events
             // Can override all types events
             // onChange: onChange,
+            onSave: onSave,
+            // Can override all events with 'all' ( default )
+            // instance will override the event for all instances
+            // After the 
+            eventOverride: 'instance',
             // onSave: onSave,
             // onCancel: onCancel,
             source: testData,

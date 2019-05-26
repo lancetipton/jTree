@@ -21,7 +21,29 @@
     h4 {
       font-family: "Raleway", sans-serif;
     }
-    
+
+    .container-wrapper button.do-button {
+      opacity: 0;
+      transition: all 0.5s ease;
+      background-color: #F5F5FA;
+      color: #3D3D3E;
+      cursor: pointer;
+    }
+
+    .container-wrapper button.do-button.show {
+      opacity: 1;
+      transition: all 0.5s ease;
+    }
+    .container-wrapper button.undo-button.show {
+      background-color: #03A9F4;
+      color: #FFFFFF;
+      
+    }
+    .container-wrapper button.redo-button.show {
+      background-color: #0FCED1;
+      color: #FFFFFF;
+    }
+
   </style>
 </head>
 <body>
@@ -32,9 +54,12 @@
       <h4>
         Object Tree Editor
       </h4>
-      <div id='save-btn-wrapper' >
-        <button id="save-btn" >
-          Remove
+      <div id='do-btn-wrapper' >
+        <button class="undo-button do-button" id="undo-btn" >
+          Undo
+        </button>
+        <button class="redo-button do-button"  id="redo-btn" >
+          Redo
         </button>
       </div>
     </div>

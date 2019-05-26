@@ -1,3 +1,5 @@
+const NO_OP = () => {}
+
 export const Values = Object.freeze({
   CLEAVE_CLS: 'item-cleave',
   NUMBER_CLS: 'item-number',
@@ -15,7 +17,7 @@ export const Values = Object.freeze({
     'warn'
   ]),
   MAP_TYPES: 'MAP_TYPES',
-  NO_OP: () => {},
+  NO_OP: NO_OP,
   PARENT_OVERWRITE: Object.freeze({
     eval: 'function',
     matchHelper: 'function',
@@ -32,5 +34,16 @@ export const Values = Object.freeze({
   ]),
   TYPE_OVERWRITE: Object.freeze({
     build: 'function'
+  }),
+  CUSTOM_EVENTS: Object.freeze({
+    onCancel: NO_OP,
+    onChange: NO_OP,
+    onEdit: NO_OP,
+    onDelete: NO_OP,
+    onDrag: NO_OP,
+    onSave: NO_OP,
+    onCopy: NO_OP,
+    onPaste: NO_OP,
+    onCut: NO_OP,
   })
 })

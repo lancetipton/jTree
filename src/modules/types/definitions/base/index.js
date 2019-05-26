@@ -4,18 +4,6 @@ import { Item } from '../../components'
 import Cleave from 'cleave.js'
 import { isFunc, logData, clearObj } from 'jTUtils'
 
-const customEvents = {
-  onCancel: Values.NO_OP,
-  onChange: Values.NO_OP,
-  onEdit: Values.NO_OP,
-  onDelete: Values.NO_OP,
-  onDrag: Values.NO_OP,
-  onSave: Values.NO_OP,
-  onCopy: Values.NO_OP,
-  onPaste: Values.NO_OP,
-  onCut: Values.NO_OP,
-}
-
 const noId = e => (
   logData(`Element id not found from event`, e, 'error') || false
 )
@@ -29,9 +17,9 @@ const updateParentConstruct = (config, parent) => {
 
 const addCustomEvents = (config, userEvents) => (
   Object
-    .keys(customEvents)
+    .keys(Values.CUSTOM_EVENTS)
     .map(key => (
-      userEvents[key] = isFunc(config[key]) && config[key] || customEvents[key]
+      userEvents[key] = isFunc(config[key]) && config[key] || Values.CUSTOM_EVENTS[key]
     ))
 )
 
@@ -124,7 +112,6 @@ class BaseType {
     // When the save action is called, this value will then be saved to the tree
     if(this.userEvents.onChange(e, update, this.original.id, Editor) !== false)
       this.updated[update.key] = update.value
-
   }
 
   onCancel = (e, Editor) => {

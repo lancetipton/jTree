@@ -8,13 +8,13 @@ import { diffUpdate } from './diff_util'
  * @param  { number } updateHeight - hight that should be added to the schemas maxHeight
  * @return { void }
  */
-export const updateParentHeights = (schema, updateHeight) => {
+export const updateParentHeights = (schema, updateHeight, offset=0) => {
   const domNode = schema && schema.component
   if(!domNode || !updateHeight)
     return
   
   const newHeight = domNode.scrollHeight + updateHeight
-  domNode.style.maxHeight = `${newHeight}px`
+  domNode.style.maxHeight = `${newHeight + offset}px`
   schema.parent && updateParentHeights(schema.parent, newHeight)
 }
 

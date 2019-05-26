@@ -1,8 +1,8 @@
-import { clearObj, isObj, addProp } from './object_util'
+import { clearObj, isObj, addProp, mapObj } from './object_util'
 import { typesOverride } from './types_util'
 import { isFunc, checkCall } from './methods_util'
 import { clearSchema } from './clean_util'
-import { Schema } from 'jTConstants'
+import { Schema, Values } from 'jTConstants'
 import _unset from 'lodash.unset'
 
 let INSTANCE_CACHE
@@ -82,22 +82,38 @@ export const buildInstance = (type, schema, settings) => {
   // Check for cached instance
   if(!INSTANCE_CACHE[id]){
     // Get the config from the passed in settings
-    const config = settings.types && settings.types[matchType]
+    const config = settings.types && settings.types[matchType] || {}
+    const editorConfig = settings.Editor.config || {}
+    // Add editor methods to the instance if none defined
+    mapObj(Values.CUSTOM_EVENTS, (key, value) => (
+      !config[key] && editorConfig[key] && (config[key] = editorConfig[key])
+    ))
+
     // If no cached instance, built new one from factory
     const instance = new type.factory(config, settings.Editor)
     // Check for config overrides from the passed in settings
     config && typesOverride(instance, settings.types[matchType])
 
-    const editorConfig = settings.Editor.config || {}
     // Wrap the methods on the instance, so we can pass the Editor into them when called
     Object.keys(instance).map(key => {
       if(!isFunc(instance[key])) return
-      const oldMethod = instance[key]
-      
+
+      const orgMethod = instance[key]
       instance[key] = (...args) => {
-        const hasOverride = isFunc(editorConfig[key])
-        if( !hasOverride || settings.Editor.config[key](...args) !== false )
-          return oldMethod(...args, settings.Editor)
+        if(!Values.CUSTOM_EVENTS[key])
+          return orgMethod(...args, settings.Editor)
+
+        let callOrg = false
+        let hasOverride = isFunc(editorConfig[key])
+        if(hasOverride){
+          if(editorConfig.eventOverride === 'instance')
+            callOrg = true
+          else if(settings.Editor.config[key](...args, settings.Editor) !== false)
+            callOrg = true
+        }
+
+        if(!hasOverride || callOrg)
+          return orgMethod(...args, settings.Editor)
       }
     })
 
