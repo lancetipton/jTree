@@ -3,6 +3,7 @@ import { isStr } from './string_util'
 import { uuid, checkCall, isConstructor } from './methods_util'
 import { checkMultiMatches } from './match_util'
 import { upsertElement, removeElement } from './dom_util'
+import { addProp } from './object_util'
 import {
   buildInstance,
   buildInstancePos,
@@ -42,8 +43,8 @@ const checkPropsChange = (props, check) => (
  *
  * @return { void }
  */
-const addCompProp = (schema, id) => {
-  schema && Object.defineProperty(schema, 'component', {
+export const addSchemaComponent = (schema, id) => (
+  addProp(schema, 'component', {
     get: () => (document.getElementById(id)),
     set: _id => {
       if(_id && _id !== id) id = _id
@@ -51,8 +52,7 @@ const addCompProp = (schema, id) => {
     enumerable: true,
     configurable: true,
   })
-
-}
+)
 
 /**
  * Rebuilds the schema for a value in the tree
@@ -174,7 +174,7 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   // Use the id to set the component prop on the schema
   component &&
     component.id &&
-    addCompProp(schema, component.id)
+    addSchemaComponent(schema, component.id)
   
   // Add the dom components Id to the idMap
   // This will help with looking up the schema later
@@ -231,24 +231,30 @@ export const appendTreeHelper = (jTree, rootComp, appendTree, tree) => {
  * @return { object || dom element } - tree if root element otherwise dom element
  */
 export const buildFromPos = (jTree, pos, settings) => {
-  if(!isStr(pos) || !jTree.tree.schema[pos]) return
+  if(!isStr(pos) || !jTree.tree.schema[pos])
+    return logData(
+      `Rebuild was called, but ${pos} does not exist it the tree`,
+      jTree.tree,
+      pos,
+      'warn'
+    )
   
   const renderSchema = jTree.tree.schema[pos]
-  const valueInTree = _get(jTree.tree, pos)  
   const updatedEl = loopSource(
     renderSchema,
     jTree.tree,
     settings,
     appendTreeHelper
   )
-
   
+  // If updated element was not returned,
+  // remove the current element from the dom
   if(updatedEl === null){
     const domNode = renderSchema.component
     return domNode && removeElement(domNode, domNode.parentNode)
   }
-  // This method should not be called by the schema root element
-  // If it was, but return
+  // This method should not be called with the root schema
+  // If it was, just return
   if(pos === Schema.ROOT || Boolean(updatedEl instanceof HTMLElement) === false)
     return
 

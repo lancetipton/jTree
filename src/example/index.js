@@ -12,15 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const jTree = window.jTree
   let Editor
   let editorNode = document.getElementById('editor')
-  let undoBtn = document.getElementById('undo-btn')
-  let redoBtn = document.getElementById('redo-btn')
-  undoBtn.addEventListener('click', () => {
-    Editor && Editor.undo()
-  })
-
-  redoBtn.addEventListener('click', () => {
-    Editor && Editor.redo()
-  })
+  // let undoBtn = document.getElementById('undo-btn')
+  // undoBtn.addEventListener('click', () => {
+  //   Editor && Editor.undo()
+  // })
 
   const onChange = (event, update, id, Editor) => {
     console.log('on change')
@@ -29,8 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Calls composer.destroy() after this method CB
   const onSave = (event, update, id, Editor) => {
 
-    if(Editor && Editor.hasDo('undo'))
-      undoBtn.classList.add('show')
   }
 
   // Calls composer.destroy() after this method CB

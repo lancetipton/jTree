@@ -151,17 +151,21 @@
   color: @itemErrorTextColor;
   text-align: right;
   max-height: 0px;
-  position: relative;
+  position: absolute;
+  right: 0px;
+  top: -15px;
 }
 
 .j-tree-editor li.row > div.item.item-error .item-error-message .item-error-text {
   position: relative;
-  bottom: 10px;
 }
 
 
 .j-tree-editor ul.list > li.row > div.item.root {
   /* min-height: 36px; */
+}
+.j-tree-editor ul.list > li.row > div.item {
+  position: relative;
 }
 
 .j-tree-editor ul.list > li.row > div.item.item-edit.item-empty {

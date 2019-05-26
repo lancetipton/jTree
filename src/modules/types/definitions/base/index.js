@@ -205,7 +205,7 @@ class BaseType {
     e && e.stopPropagation()
     const schema = Editor.schema(e.currentTarget.getAttribute(Values.DATA_TREE_ID))
 
-    Editor.replace(schema.id, { ...Editor.temp })
+    Editor.replaceAtPos(schema.id, { ...Editor.temp })
     Editor.temp = undefined
     togglePastAction('remove')
   }

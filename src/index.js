@@ -1,8 +1,10 @@
 'use strict';
 
 import {
+  addRemoveSchema,
   addChildSchema,
   addProp,
+  addSchemaComponent,
   appendTreeHelper,
   buildFromPos,
   buildInstance,
@@ -36,7 +38,6 @@ import {
 } from 'jTUtils'
 import { Values, Schema, EditorConfig } from 'jTConstants'
 import { buildTypes, TypesCls } from './types'
-import UndoManager from './undo'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
 import _unset from 'lodash.unset'
@@ -54,7 +55,7 @@ const UPDATE_ACTIONS = {
 // Cache holder for active source data
 let ACT_SOURCE
 let TEMP
-let UNDO_MANAGER
+
 /**
  * Updates the schema where the error occurred
  * Rebuilds the tree from the position the error occurred
@@ -111,7 +112,7 @@ const doKeyUpdate = (jTree, update, pos, schema, settings) => {
   return updated.pos
 }
 
-const doUpdateData = (jTree, update, pos, schema, settings, change) => {
+const doUpdateData = (jTree, update, pos, schema, settings) => {
   let invalid
   // Loop over the allowed props to be update
   Schema.TREE_UPDATE_PROPS
@@ -130,8 +131,8 @@ const doUpdateData = (jTree, update, pos, schema, settings, change) => {
         invalid.value = update[prop]
     })
 
-  if(invalid && invalid.error) {
-    handelUpdateError(
+  if(invalid && invalid.error)
+    return handelUpdateError(
       jTree,
       pos,
       settings,
@@ -139,30 +140,12 @@ const doUpdateData = (jTree, update, pos, schema, settings, change) => {
       invalid.value,
       invalid.error
     )
-    change && (change.from = undefined)
-
-    return false
-  }
-
-  if(change)
-    change.to = {
-      pos,
-      id: schema.id,
-      value: schema.value,
-      key: schema.key,
-      mode: schema.mode,
-      keyType: schema.keyType,
-      matchType: schema.matchType,
-      ...update
-    }
 
   return true
 }
 
 const createEditor = (settings, editorConfig, domContainer) => {
   let TEMP_ID = false
-  console.log(`TODO:`);
-  console.log(`Need to clear out child data from schema and idMap after and updat or change. Need to move undo switch logic to helper and join it with replace.`);
 
   class jTree {
     
@@ -176,14 +159,6 @@ const createEditor = (settings, editorConfig, domContainer) => {
           this.config = config
           settings.Editor = this
           return source && this.setSource(source, true)
-        })
-        .then(() => {
-          // if(!this.config || !this.config.undo) return this
-          UNDO_MANAGER = new UndoManager(this.config.undo || {})
-          this.setDoLimit = UNDO_MANAGER.setLimit.bind(this)
-          this.hasDo = UNDO_MANAGER.has.bind(this)
-
-          return this
         })
     }
     
@@ -222,10 +197,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
           settings
         )
     }
-    
-    redo = () => {
-      const item = UNDO_MANAGER.redo()
-    }
+
     
     buildTypes = source => {
       if(source && source !== ACT_SOURCE)
@@ -250,8 +222,10 @@ const createEditor = (settings, editorConfig, domContainer) => {
       return update && this.buildTypes()
     }
     
+    hasTemp = () => (Boolean(TEMP_ID))
+    
     forceUpdate = pos => {
-      pos && buildFromPos(this, pos, settings, true)
+      pos && buildFromPos(this, pos, settings)
     }
 
     update = (idOrPos, update) => {
@@ -273,17 +247,6 @@ const createEditor = (settings, editorConfig, domContainer) => {
       pos = validData.pos || pos
       // Remove the current error, if one exists
       validData.schema.error && _unset(validData.schema, 'error')
-      const change = {}
-      if(UNDO_MANAGER)
-        change.from = {
-          pos,
-          id: validData.schema.id,
-          value: validData.schema.value,
-          key: validData.schema.key,
-          mode: validData.schema.mode,
-          keyType: validData.schema.keyType,
-          matchType: validData.schema.matchType
-        }
 
       // Update the schema to ensure we are working with the updated data
       // Creates a copy of the current schema, with updated values
@@ -297,7 +260,6 @@ const createEditor = (settings, editorConfig, domContainer) => {
         // Update the references to the local pos
         // So future references use the updated one
         pos = updatedPos
-        
       }
     
       // If there's an update, and pending exists before the matchType check
@@ -308,25 +270,20 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       // Update the schema data, if nothing is returned,
       // then the update failed, so just return
-      if(!doUpdateData(this, update, pos, schema, settings, change))
+      if(!doUpdateData(this, update, pos, schema, settings))
         return
-      
+
       if(TEMP && TEMP.id === schema.id)
         TEMP = undefined
       
       schema = undefined
       validData.schema = undefined
+
       // Rebuild the tree from this position
       buildFromPos(this, pos, settings)
-      
-      if(!UNDO_MANAGER) return
-
-      UNDO_MANAGER.add(change)
     }
-    
-    hasTemp = () => (Boolean(TEMP_ID))
 
-    replace = (idOrPos, replace) => {
+    replaceAtPos = (idOrPos, replace) => {
       // Ensure the passed in replace object is valid
       const validData = validateUpdate(
         this.tree,
@@ -348,32 +305,37 @@ const createEditor = (settings, editorConfig, domContainer) => {
         
       // Get the old schema
       const { pos, schema } = validData
-      replace.parent = schema.parent
-      replace.component = schema.component
-      replace.id = schema.id
-      _unset(replace, 'mode')
 
-      // Remove id from the idMap
-      _unset(this.tree.idMap, schema.id)
+      // Update the replace object to include the original schemas location data
+      replace.pos = schema.pos
+      replace.key = schema.key
+      replace.parent = schema.parent
+      replace.id = schema.id
+      addSchemaComponent(replace, replace.id)
       
-      const notSameInstance = schema.instance !== replace.instance
-      // Clear out old schema
-      clearSchema(schema, this.tree.schema, notSameInstance)
+      if(replace.mode === Schema.MODES.REPLACE || replace.mode === Schema.MODES.TEMP)
+        _unset(replace, 'mode')
+
       // If it's not the same instance, remove the old one
       // New one will be re-built on next render
-      notSameInstance && _unset(replace, 'instance')
-
+      schema.instance !== replace.instance && _unset(replace, 'instance')
+      
       // Do deep clone of value to ensure it's not a ref to other object
-      // Ensures it is entirely it's own
+      // Ensures it's not a ref pointer
       replace.value = cloneDeep(replace.value)
-
-      // Update the value at the pos
-      _set(this.tree, pos, replace.value)
-      // Set new schema
-      this.tree.schema[pos] = replace
-      // add id to idMap
-      this.tree.idMap[replace.id] = pos
-
+      
+      // Add / Remove schemas from tree
+      const invalid = addRemoveSchema(replace, schema, this.tree)
+      if(invalid && invalid.error)
+        return handelUpdateError(
+          jTree,
+          pos,
+          settings,
+          invalid.key,
+          replace[invalid.key],
+          invalid.error
+        )
+      
       // Re-render from the parentPos
       replace.parent &&
         replace.parent.pos &&
@@ -419,7 +381,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // Get a ref to the parent pos for re-render
       const parentPos = schema.parent.pos
       // Clear the schema from the tree schema
-      clearSchema(schema, this.tree.schema)
+      clearSchema(schema, this.tree)
 
       // Re-render from the parentPos
       buildFromPos(this, parentPos, settings)

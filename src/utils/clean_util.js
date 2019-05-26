@@ -1,4 +1,4 @@
-import { clearObj, isObj } from './object_util'
+import { clearObj, isObj, mapObj } from './object_util'
 import { clearInstanceCache, clearInstance } from './instance_util'
 import { logData } from './methods_util'
 import _unset from 'lodash.unset'
@@ -28,44 +28,46 @@ const clearTypeCache = (typeCache) => (
     }).length || (typeCache = undefined)
 )
 
-const cleanTreeSchema = treeSchema => (
+const cleanTreeSchema = tree => (
   Object
-    .keys(treeSchema)
+    .keys(tree.schema)
     .map(key => (
-      treeSchema[key] &&
-      (clearSchema(treeSchema[key], treeSchema) || (treeSchema[key] = undefined))
+      tree.schema[key] &&
+      (clearSchema(tree.schema[key], tree) || (tree.schema[key] = undefined))
     ))
 )
 
-export const clearSchema = (schema, treeSchema, removeInstance=true) => {
+export const clearSchema = (schema, tree, removeInstance=true) => {
+  if(!schema || !schema.pos || !tree.schema || !tree.schema[schema.pos]) return
 
-  if(!schema || !schema.pos || !treeSchema || !treeSchema[schema.pos]) return
-
-  if(treeSchema && treeSchema[schema.pos] !== schema){
+  if(tree.schema && tree.schema[schema.pos] !== schema){
     return logData(
       `Can not clear schema from tree. tree.schema and schema do not match`, 'warn'
     )
   }
   
   const schemaPos = schema.pos
+  // Remove built instance
+  // Sometimes the instance is re-used, so check before removing. I.E. replace
   removeInstance && clearInstance(schema.id)
+  // Remove ref in the tree idMap
+  _unset(tree.idMap, schema.id)
+  
   // Remove all references to clear out potential memory leaks
-  // We don't un-mount the component on the instance, because
-  // We're not removing the instance, just changing the object that references it
   _unset(schema, 'component')
   _unset(schema, 'parent')
   _unset(schema, 'instance')
   _unset(schema, 'value')
+
   // Remove the schema from the tree of schemas
-  _unset(treeSchema, schema.pos)
+  _unset(tree.schema, schema.pos)
   clearObj(schema)
 
   // Loop over the tree schema and clear out any child schemas to the current schema
-  Object
-    .entries(treeSchema)
-    .map(([pos, schemaItem]) => {
-      pos.indexOf(schemaPos) === 0 && clearSchema(schemaItem, treeSchema)
-    })
+  // tree.idMap will also be cleared out for each cleared schema
+  mapObj(tree.schema, (pos, schemaItem) => {
+    pos.indexOf(schemaPos) === 0 && clearSchema(schemaItem, tree)
+  })
 
 }
 
@@ -76,7 +78,7 @@ export const clearTypeData = (TypeCls, typeCache, includeClass=true) => {
 }
 
 export const cleanUp = (settings, tree) => {
-  tree.schema && cleanTreeSchema(tree.schema)
+  tree.schema && cleanTreeSchema(tree)
   clearInstanceCache()
   cleanSettingsObj(settings)
 }

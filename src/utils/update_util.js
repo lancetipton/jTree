@@ -124,8 +124,6 @@ export const updateSchema = (update, schema) => {
     }, schema)
 }
 
-
-
 /**
  * Updates the matchType of the tree node at the passed in pos
  * @param  { object } tree - object containing the entire jTree object structure 
@@ -238,7 +236,7 @@ export const updateKey = (tree, pos, schema, settings) => {
     pos: updatedPos
   }
 
-  clearSchema(tree.schema[pos], tree.schema, false)
+  clearSchema(tree.schema[pos], tree, false)
   // return the updated pos
   return { pos: updatedPos }
 }
@@ -295,4 +293,33 @@ export const addChildSchema = (tree, schema, parent) => {
   tree.schema[schema.pos] = schema
 
   return true
+}
+
+/**
+ * Adds a child schema to parent schema or tree
+ * @param  {any} tree - full source and schema of entire data
+ * @param  {any} schema - new schema to add
+ * @param  {any} parent - parent schema to add child schema to
+ * @return  { boolean } - true if schema is added to the parent
+ */
+export const addRemoveSchema = (add, remove, tree) => {
+  if(!tree) return null
+
+  if(remove && remove.pos)
+    clearSchema(remove, tree, add && remove.instance !== add.instance)
+
+  if(add){
+    if(!add.pos)
+      return { error: `Can not add to schema, position is required!`, key: 'pos' }
+    else if(!add.id)
+      return { error: `Can not add to schema, id is required!`, key: 'id' }
+      
+    // Set in tree
+    add.value && _set(tree, add.pos, add.value)
+    // Set in idMap
+    add.id && (tree.idMap[add.id] = add.pos)
+    // Set in schema
+    tree.schema[add.pos] = add
+  }
+
 }

@@ -27,7 +27,7 @@ const buildChild = (childKey, child, props, loopChildren) => {
   const schema = props.tree.schema[childPos]
   if(!schema || !schema.instance || !schema.component) return
 
-  clearSchema(schema, props.tree.schema)
+  clearSchema(schema, props.tree)
 
   return undefined
 }
