@@ -4292,9 +4292,9 @@ jss@^9.5.1:
     symbol-observable "^1.1.0"
     warning "^3.0.0"
 
-"jt-js-defs@git+https://github.com/lancetipton/jt-js-defs.git":
+"jtree-definitions@git+https://github.com/lancetipton/jtree-definitions.git":
   version "1.0.0"
-  resolved "git+https://github.com/lancetipton/jt-js-defs.git#108c6522e71358e24972fd2175d342508889bda4"
+  resolved "git+https://github.com/lancetipton/jtree-definitions.git#86ced32ac3ad26d22d7ffc67a46084193f02f0e7"
   dependencies:
     "@fortawesome/fontawesome-free" "^5.8.1"
     cleave.js "^1.4.10"

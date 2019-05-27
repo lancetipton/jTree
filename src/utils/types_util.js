@@ -13,7 +13,6 @@ const getTypeStyles = (settings, Type) => (
 export const loadDynamicTypes = (typesPath) => {
   return import(
     /* webpackInclude: /\.js$/ */
-    /* webpackChunkName: "type-[request]" */
     /* webpackMode: "lazy" */
     `../../node_modules/jtree-definitions/build/${typesPath}`
     )

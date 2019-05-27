@@ -47,7 +47,7 @@ const wpConfig = {
           loader: 'raw-loader',
         }
       },
-      { enforce: 'pre', test: /\.(js|css)$/, loader: 'remove-comments-loader' }
+      // { enforce: 'pre', test: /\.(js|css)$/, loader: 'remove-comments-loader' }
     ]
   },
   plugins: [

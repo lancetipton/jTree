@@ -10,7 +10,6 @@ import {
 import { logData, isObj, mapObj } from 'jsUtils'
 import _unset from 'lodash.unset'
 import { Values, Schema } from 'jTConstants'
-import TypeDefs from './type_defs'
 import StyleLoader from 'styleloader'
 
 const styleLoader = new StyleLoader()

@@ -1,5 +1,5 @@
 export const DEF_SETTINGS =  Object.freeze({
-  typesPath: 'jt-js-defs.js',
+  typesPath: 'jtree-definitions.js',
   types: {
     base: {},
     empty: {},
