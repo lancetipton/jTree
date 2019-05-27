@@ -1,10 +1,8 @@
-import { logData } from 'jTUtils'
-
 const load = (typesPath) => import(
   /* webpackInclude: /\.js$/ */
   /* webpackChunkName: "type-[request]" */
   /* webpackMode: "lazy" */
-  `./${typesPath || 'definitions'}`
+  `${'../node_modules/jt-js-defs/build/jt-js-defs.js'}`
   )
   .then(type => {
     if(!type || !type.default)
@@ -12,6 +10,5 @@ const load = (typesPath) => import(
 
       return type && type.default || {}
   })
-
 
 export default { load }

@@ -1,6 +1,5 @@
-import { clearObj, isObj, mapObj } from './object_util'
+import { clearObj, isObj, mapObj, logData } from 'jsUtils'
 import { clearInstanceCache, clearInstance } from './instance_util'
-import { logData } from './methods_util'
 import _unset from 'lodash.unset'
 
 const cleanSettingsObj = settings => {

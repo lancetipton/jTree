@@ -1,7 +1,13 @@
-import { clearObj, isObj, addProp, mapObj } from './object_util'
+import {
+  clearObj,
+  isObj,
+  mapObj,
+  isFunc,
+  checkCall
+} from 'jsUtils'
 import { typesOverride } from './types_util'
-import { isFunc, checkCall } from './methods_util'
 import { clearSchema } from './clean_util'
+import { addProp } from './object_util'
 import { Schema, Values } from 'jTConstants'
 import _unset from 'lodash.unset'
 

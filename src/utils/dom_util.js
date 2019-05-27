@@ -1,4 +1,4 @@
-import { logData } from './methods_util'
+import { logData } from 'jsUtils'
 import { diffUpdate } from './diff_util'
 
 /**

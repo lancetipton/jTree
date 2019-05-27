@@ -2,15 +2,15 @@ import {
   clearTypeData,
   getMatchTypes,
   initTypeCache,
-  isObj,
   loopSource,
-  mapObj,
+  loadDynamicTypes,
   validateBuildTypes,
   validateMatchType,
 } from 'jTUtils'
+import { logData, isObj, mapObj } from 'jsUtils'
 import _unset from 'lodash.unset'
 import { Values, Schema } from 'jTConstants'
-import TypeDefs from './modules/types'
+import TypeDefs from './type_defs'
 import StyleLoader from 'styleloader'
 
 const styleLoader = new StyleLoader()
@@ -67,7 +67,9 @@ export function TypesCls(settings){
     }
 
     load = typesPath => {
-      return TypeDefs.load(typesPath || Values.DEFAULT_TYPES)
+      return typesPath
+        ? loadDynamicTypes(typesPath)
+        : Promise.resolve()
     }
 
     rebuild = () => {
@@ -102,8 +104,15 @@ export function TypesCls(settings){
   }
 
   const typesCls = new Types()
+  
   return typesCls.load(settings.typesPath)
     .then(loadedTypes => {
+      if(!loadedTypes)
+        return logData(
+          `Types could not be loaded from ${settings.typesPath}`,
+          'error'
+        )
+
       settings.styleLoader = styleLoader
       TYPE_CACHE = initTypeCache(
         typesCls,

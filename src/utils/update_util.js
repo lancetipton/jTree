@@ -1,5 +1,11 @@
-import { isObj } from './object_util'
-import { logData, uuid, isFunc, checkCall } from './methods_util'
+import {
+  isObj,
+  logData,
+  uuid,
+  isFunc,
+  checkCall
+} from 'jsUtils'
+
 import { clearSchema } from './clean_util'
 import { clearInstance, buildInstance } from './instance_util'
 import { Schema } from 'jTConstants'

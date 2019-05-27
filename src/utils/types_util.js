@@ -1,4 +1,4 @@
-import { isObj, mapObj } from './object_util'
+import { isObj, mapObj } from 'jsUtils'
 import { validateMatchType } from './validate_util'
 import { Values } from '../constants'
 
@@ -9,6 +9,21 @@ const getTypeStyles = (settings, Type) => (
       settings.styleLoader.add &&
       settings.styleLoader.add(Type.name, Type.getStyles(settings))
 )
+
+export const loadDynamicTypes = (typesPath) => {
+  return import(
+    /* webpackInclude: /\.js$/ */
+    /* webpackChunkName: "type-[request]" */
+    /* webpackMode: "lazy" */
+    `../../node_modules/jtree-definitions/build/${typesPath}`
+    )
+    .then(type => {
+      if(!type || !type.default)
+        logData('Could not load types, please ensure they are properly installed!')
+
+        return type && type.default || {}
+    })
+}
 
 export const initTypeCache = (TypesCls, settings, loadedTypes) => {
   const { BaseType, subTypes, types } = loadedTypes

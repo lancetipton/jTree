@@ -9,20 +9,11 @@ import {
   buildFromPos,
   buildInstance,
   callInstanceUpdates,
-  checkCall,
   cleanUp,
-  clearObj,
-  clearSchema,
   cloneDeep,
-  deepMerge,
+  clearSchema,
   getElement,
-  isObj,
-  isStr,
-  logData,
-  mapObj,
-  parseJSONString,
   removeElement,
-  setLogs,
   upsertElement,
   updateKey,
   updateSchema,
@@ -36,6 +27,20 @@ import {
   validateUpdate,
   loopSource,
 } from 'jTUtils'
+
+import {
+  checkCall,
+  clearObj,
+  deepMerge,
+  parseJSON,
+  setLogs,
+  isObj,
+  isStr,
+  logData,
+  mapObj,
+} from 'jsUtils'
+
+import * as jsUtils from 'jsUtils'
 import { Values, Schema, EditorConfig } from 'jTConstants'
 import { buildTypes, TypesCls } from './types'
 import _get from 'lodash.get'
@@ -152,6 +157,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
     constructor(){
       TypesCls(settings)
         .then(Types => {
+          if(!Types) return null
+
           this.Types = Types
           this.element = domContainer
           this.element.classList.add(Values.ROOT_CLASS)
@@ -214,7 +221,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
     setSource = (source, update) => {
       if(typeof source === 'string')
-        source = parseJSONString(source)
+        source = parseJSON(source)
 
       if(!validateSource(source)) return undefined
 
@@ -427,6 +434,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
   }
   
   const jTEditor = new jTree()
+  if(!jTEditor.Types) return null
+
   // Add temp prop this way so we can set with string id
   // And when get it called, it returns with temp object
   addProp(jTEditor, 'temp', {

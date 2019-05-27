@@ -1,7 +1,11 @@
 import { buildTypeName } from './types_util'
-import { isStr } from './string_util'
-import { uuid, checkCall, isConstructor } from './methods_util'
+import {
+  isStr,
+  uuid,
+  checkCall,
+} from 'jsUtils'
 import { checkMultiMatches } from './match_util'
+import { isConstructor } from './methods_util'
 import { upsertElement, removeElement } from './dom_util'
 import { addProp } from './object_util'
 import {

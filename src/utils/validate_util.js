@@ -1,5 +1,5 @@
-import { isObj } from './object_util'
-import { isConstructor, logData } from './methods_util'
+import { isObj, logData } from 'jsUtils'
+import { isConstructor } from './methods_util'
 import { Values, Schema } from '../constants'
 import _get from 'lodash.get'
 import _unset from 'lodash.unset'

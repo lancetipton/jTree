@@ -1,5 +1,4 @@
-import { checkCall } from './methods_util'
-import { isObj } from './object_util'
+import { checkCall, isObj } from 'jsUtils'
 import { Values } from '../constants'
 
 /**

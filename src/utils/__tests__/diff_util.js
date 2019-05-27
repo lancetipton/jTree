@@ -1,4 +1,4 @@
-import { eR, elements } from 'element-r'
+import { eR, elements } from 'elementR'
 const differ = require('../diff_util.js')
 const diffUtil = differ.diffUpdate
 
