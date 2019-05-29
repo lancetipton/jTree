@@ -16,7 +16,6 @@ const indexPage = isDev
   ? { from: './src/example/dev_index.html', to: './index.html' } 
   : { from: './src/example/index.html' }  
   
-
 const wpConfig = {
   mode: NODE_ENV || 'development',
   devtool: isDev ? 'inline-source-map' : 'source-map',
@@ -69,6 +68,9 @@ const wpConfig = {
       jTUtils: path.resolve(__dirname, './src/utils'),
       jTRoot: path.resolve(__dirname, './src/'),
     },
+  },
+  optimization: {
+    nodeEnv: NODE_ENV
   }
 }
 

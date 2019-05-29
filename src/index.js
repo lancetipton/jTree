@@ -7,14 +7,11 @@ import {
   addSchemaComponent,
   appendTreeHelper,
   buildFromPos,
-  buildInstance,
-  callInstanceUpdates,
   cleanUp,
   cloneDeep,
   clearSchema,
   getElement,
   removeElement,
-  upsertElement,
   updateKey,
   updateSchema,
   updateSchemaError,
@@ -25,7 +22,6 @@ import {
   validateKey,
   validateSource,
   validateUpdate,
-  loopSource,
 } from 'jTUtils'
 
 import {
@@ -35,9 +31,7 @@ import {
   parseJSON,
   setLogs,
   isObj,
-  isStr,
   logData,
-  mapObj,
 } from 'jsUtils'
 
 import * as jsUtils from 'jsUtils'
@@ -60,7 +54,7 @@ const UPDATE_ACTIONS = {
 // Cache holder for active source data
 let ACT_SOURCE
 let TEMP
-
+let CONFIRM_ACTION
 /**
  * Updates the schema where the error occurred
  * Rebuilds the tree from the position the error occurred
@@ -149,13 +143,39 @@ const doUpdateData = (jTree, update, pos, schema, settings) => {
   return true
 }
 
-const createEditor = (settings, editorConfig, domContainer) => {
+const addTempProp = jTree => {
   let TEMP_ID = false
+  // Add temp prop this way so we can set with string id
+  // And when get it called, it returns with temp object
+  addProp(jTree, 'temp', {
+    get: () => {
+      return {
+        ...(TEMP_ID && jTree.schema(TEMP_ID) || {}),
+        mode: Schema.MODES.TEMP
+      }
+    },
+    set: id => {
+      TEMP_ID = id
+    },
+    enumerable: true,
+    configurable: true,
+  })
+  
+  jTree.hasTemp = () => (Boolean(TEMP_ID))
+}
+
+const confirmAction = (message) => (
+  !CONFIRM_ACTION
+      ? true
+      : window.confirm(message)
+)
+
+const createEditor = (settings, editorConfig, domContainer) => {
 
   class jTree {
     
     constructor(){
-      TypesCls(settings)
+      return TypesCls(settings)
         .then(Types => {
           if(!Types) return null
 
@@ -165,6 +185,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
           const { source, ...config } = editorConfig
           this.config = config
           settings.Editor = this
+          !config.noTemp && addTempProp(this)
+
           return source && this.setSource(source, true)
         })
     }
@@ -228,14 +250,13 @@ const createEditor = (settings, editorConfig, domContainer) => {
       ACT_SOURCE = cloneDeep(source)
       return update && this.buildTypes()
     }
-    
-    hasTemp = () => (Boolean(TEMP_ID))
-    
+
     forceUpdate = pos => {
       pos && buildFromPos(this, pos, settings)
     }
 
     update = (idOrPos, update) => {
+
       let pos = this.tree.idMap[idOrPos] || idOrPos
       // Ensure the passed in update object is valid
       const validData = validateUpdate(this.tree, idOrPos, update, settings)
@@ -252,6 +273,13 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       // Get reference to the pos
       pos = validData.pos || pos
+
+      // Don't show confirm for only an update that is only an open
+      const updateKeys = Object.keys(update)
+      if(updateKeys.length !== 1 || updateKeys[0] !== 'open')
+        if(!confirmAction(`Update node at ${pos}?`)) return
+      
+
       // Remove the current error, if one exists
       validData.schema.error && _unset(validData.schema, 'error')
 
@@ -312,6 +340,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
         
       // Get the old schema
       const { pos, schema } = validData
+      
+      if(!confirmAction(`Replace ${schema.pos}?`)) return
 
       // Update the replace object to include the original schemas location data
       replace.pos = schema.pos
@@ -373,6 +403,9 @@ const createEditor = (settings, editorConfig, domContainer) => {
         )
 
       const { pos, schema } = validData
+
+      if(!confirmAction(`Remove ${pos}?`)) return
+      
       // Clear the data from the tree
       _unset(this.tree, pos)
       _unset(this.tree.idMap, schema.id)
@@ -394,12 +427,20 @@ const createEditor = (settings, editorConfig, domContainer) => {
       buildFromPos(this, parentPos, settings)
     }
     
-    add = (schema, parent, replace) => {
+    add = (schema, parent) => {
+        
       const useParent = schema.parent || parent || this.tree.schema
+        
       // Validate the passed in data
       const isValid = validateAdd(schema, useParent)
       if(!isValid || isValid.error)
         return logData(isValid.error, schema, parent, this.tree, 'warn')
+
+      
+
+      if(schema.matchType !== Schema.EMPTY && !confirmAction(`Add to parent ${useParent.pos}?`))
+        return
+        
 
       // Add the child schema to the parent / tree
       if(!addChildSchema(this.tree, schema, useParent)) return
@@ -433,26 +474,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
     }
   }
   
-  const jTEditor = new jTree()
-  if(!jTEditor.Types) return null
-
-  // Add temp prop this way so we can set with string id
-  // And when get it called, it returns with temp object
-  addProp(jTEditor, 'temp', {
-    get: () => {
-      return {
-        ...(TEMP_ID && jTEditor.schema(TEMP_ID) || {}),
-        mode: Schema.MODES.TEMP
-      }
-    },
-    set: id => {
-      TEMP_ID = id
-    },
-    enumerable: true,
-    configurable: true,
-  })
-
-  return  jTEditor
+  return new jTree()
 }
 
 
@@ -472,9 +494,10 @@ const init = (opts) => {
   // Build the settings by joining with the default settings
   const settings = deepMerge(DEF_SETTINGS, options)
   const editorConfig = deepMerge(EditorConfig, editor)
+
+  CONFIRM_ACTION = editorConfig.confirmActions
   // Create the jTree Editor
-  const Editor = createEditor(settings, editorConfig, domContainer)
-  return Editor
+  return createEditor(settings, editorConfig, domContainer)
 }
 
 

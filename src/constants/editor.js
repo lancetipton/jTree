@@ -5,6 +5,7 @@ export const EditorConfig = Object.freeze({
   onSave: Values.NO_OP,
   onCancel: Values.NO_OP,
   source: undefined,
+  confirmActions: true,
   iconType: 'far',
   styles: {},
   root: {
