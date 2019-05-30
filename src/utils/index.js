@@ -1,4 +1,5 @@
 export * from './clean_util'
+export * from './confirm_util'
 export * from './dom_util'
 export * from './instance_util'
 export * from './methods_util'

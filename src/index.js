@@ -7,11 +7,13 @@ import {
   addSchemaComponent,
   appendTreeHelper,
   buildFromPos,
+  checkConfirm,
   cleanUp,
   cloneDeep,
   clearSchema,
   getElement,
   removeElement,
+  setConfirm,
   updateKey,
   updateSchema,
   updateSchemaError,
@@ -34,7 +36,6 @@ import {
   logData,
 } from 'jsUtils'
 
-import * as jsUtils from 'jsUtils'
 import { Values, Schema, EditorConfig } from 'jTConstants'
 import { buildTypes, TypesCls } from './types'
 import _get from 'lodash.get'
@@ -54,7 +55,7 @@ const UPDATE_ACTIONS = {
 // Cache holder for active source data
 let ACT_SOURCE
 let TEMP
-let CONFIRM_ACTION
+
 /**
  * Updates the schema where the error occurred
  * Rebuilds the tree from the position the error occurred
@@ -164,12 +165,6 @@ const addTempProp = jTree => {
   jTree.hasTemp = () => (Boolean(TEMP_ID))
 }
 
-const confirmAction = (message) => (
-  !CONFIRM_ACTION
-      ? true
-      : window.confirm(message)
-)
-
 const createEditor = (settings, editorConfig, domContainer) => {
 
   class jTree {
@@ -277,7 +272,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // Don't show confirm for only an update that is only an open
       const updateKeys = Object.keys(update)
       if(updateKeys.length !== 1 || updateKeys[0] !== 'open')
-        if(!confirmAction(`Update node at ${pos}?`)) return
+        if(!checkConfirm(validData.schema, pos, update, `Update node at ${pos}?`))
+          return
       
 
       // Remove the current error, if one exists
@@ -341,7 +337,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // Get the old schema
       const { pos, schema } = validData
       
-      if(!confirmAction(`Replace ${schema.pos}?`)) return
+      if(!checkConfirm(schema, pos, replace, `Replace ${schema.pos}?`)) return
 
       // Update the replace object to include the original schemas location data
       replace.pos = schema.pos
@@ -404,7 +400,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       const { pos, schema } = validData
 
-      if(!confirmAction(`Remove ${pos}?`)) return
+      if(!checkConfirm(schema, pos, `Remove ${pos}?`)) return
       
       // Clear the data from the tree
       _unset(this.tree, pos)
@@ -438,7 +434,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       
 
-      if(schema.matchType !== Schema.EMPTY && !confirmAction(`Add to parent ${useParent.pos}?`))
+      if(schema.matchType !== Schema.EMPTY && !checkConfirm(schema, useParent.pos, `Add to parent ${useParent.pos}?`))
         return
         
 
@@ -494,8 +490,10 @@ const init = (opts) => {
   // Build the settings by joining with the default settings
   const settings = deepMerge(DEF_SETTINGS, options)
   const editorConfig = deepMerge(EditorConfig, editor)
+  
+  // Enable confirm actions
+  setConfirm(editorConfig.confirmActions)
 
-  CONFIRM_ACTION = editorConfig.confirmActions
   // Create the jTree Editor
   return createEditor(settings, editorConfig, domContainer)
 }
