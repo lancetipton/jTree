@@ -9,23 +9,43 @@ const jsonApiCall = () => {
 document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
 
   const jTree = window.jTree
+  let emptyObject = false
   let Editor
   let editorNode = document.getElementById('editor')
-  // let undoBtn = document.getElementById('undo-btn')
-  // undoBtn.addEventListener('click', () => {
-  //   Editor && Editor.undo()
-  // })
+
+  let saveBtn = document.getElementById('save')
+  saveBtn.addEventListener('click', () => {
+    window.alert(JSON.stringify(Editor.tree.source, null, 2))
+  })
+
+  let resetBtn = document.getElementById('reset')
+  resetBtn.addEventListener('click', () => {
+    Editor && Editor.destroy && Editor.destroy()
+    init()
+  })
+
+  let clearBtn = document.getElementById('clear')
+  clearBtn.addEventListener('click', () => {
+    Editor && Editor.destroy && Editor.destroy()
+    emptyObject = true
+    init()
+  })
+
+  let deleteBtn = document.getElementById('delete')
+  deleteBtn.addEventListener('click', () => {
+    Editor && Editor.destroy()
+  })
 
   const onChange = (event, update, id, Editor) => {
     console.log('on change')
   }
 
-  // Calls composer.destroy() after this method CB
+  
   const onSave = (event, update, id, Editor) => {
 
   }
 
-  // Calls composer.destroy() after this method CB
+  
   const onCancel = (event, update, id, Editor) => {
     console.log('on cancel')
   }
@@ -46,6 +66,8 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
   const init = async () => {
     jsonApiCall()
       .then(testData => {
+        const useData = emptyObject && {} || testData
+        emptyObject = false
         
         return jTree.init({
           // ----------- General Settings ---------- //
@@ -56,7 +78,8 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
           renderPath: false,
           // ----------- Editor Config ---------- //
           editor: {
-            // Show window.confirm dialog for all actions
+            // Pass a custom method, or true to confirm all jTree changes
+            // Defaults to showing window.confirm dialog for actions
             confirmActions: true,
             // Called for all type events
             // Can override all types events
@@ -68,12 +91,12 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
             eventOverride: 'instance',
             // onSave: onSave,
             // onCancel: onCancel,
-            source: testData,
+            source: useData,
             // Source object to be edited
             root: {
               start: 'open',
                 // Defaults to closed
-              title: 'j-Tree',
+              title: 'My Object',
                 // Header title of the object
                 // Defaults to Object Tree
             },
@@ -117,11 +140,6 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
                   * Must return a Boolean
               */
             },
-          //   undefined: {
-          //     /* Undefined / Null - Default Type */
-          //     matchHelper: matchHelper,
-          //     /* Will be called when a value is undefined or null */
-          //   },
           //   boolean: {},
           //     /* Boolean - Default Type */
 
@@ -189,18 +207,6 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
       .then(_editor => {
         if(!_editor) return
         Editor = _editor
-        // Object.entries(Editor.tree.idMap).map(([ id, pos ]) => {
-        //   const element = document.getElementById(id)
-        //   if(!element) return
-        //   element.addEventListener('click', e => {
-        //     Editor.updateAtPos(pos, {
-        //       test: 'data',
-        //       food: 'bar'
-        //     })
-        //     e.preventDefault()
-        //     e.stopPropagation()
-        //   })
-        // })
       })
   }
 
