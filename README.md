@@ -20,7 +20,7 @@ jTree is a UI for manipulating javascript and JSON objects. See example [here](h
         import jTree from 'jTree'
 
       // * Require code
-        const elementR = require('elementR')
+        const jTree = require('jTree')
       
       // * Add as html script
         <script src='/path/to/jTree/build/jTree.min.js'></script>
