@@ -58,6 +58,7 @@ const checkEmptyType = (newType, schema) => {
   // If it's an object, but not array
   return allowIsObj && typeof valIsEmptyObj  
 }
+
 /**
  * Builds a new pos, by switching the pos for the key
  * Only works at a single level
@@ -99,6 +100,17 @@ const checkSchemaPos = (tree, pos, checkExists) => (
       : true
 )
 
+/**
+ * Updates the error field on a schema
+ * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { object } schema - current schema being updated
+ * @param { object } settings - current settings of the Editor
+ * @param { string } prop - prop on the schema where the error occured
+ * @param { any } value - current value of the schema
+ * @param { string } message - Error message
+ * 
+ * @return { void }
+ */
 export const updateSchemaError = (tree, schema, settings, prop, value, message) => {
   schema.error = checkCall(
     schema.instance.constructor.error,

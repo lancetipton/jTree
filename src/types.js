@@ -9,7 +9,7 @@ import {
 } from 'jTUtils'
 import { logData, isObj, mapObj } from 'jsUtils'
 import _unset from 'lodash.unset'
-import { Values, Schema } from 'jTConstants'
+import { Schema } from 'jTConstants'
 import StyleLoader from 'styleloader'
 
 const styleLoader = new StyleLoader()

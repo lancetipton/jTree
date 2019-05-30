@@ -1,5 +1,5 @@
 import _unset from 'lodash.unset'
-import { isObj} from 'jsUtils'
+import { isObj } from 'jsUtils'
 export { default as cloneDeep } from 'lodash.clonedeep'
 
 
@@ -30,4 +30,8 @@ export const deepClone = (obj, hash = new WeakMap()) => {
       ...Object.keys(obj)
         .map(key => ({ [key]: deepClone(obj[key], hash) }))
     )
+}
+
+export const isConstructor = obj => {
+  return !!obj.prototype && !!obj.prototype.constructor.name;
 }

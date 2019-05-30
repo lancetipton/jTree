@@ -5,9 +5,8 @@ import {
   checkCall,
 } from 'jsUtils'
 import { checkMultiMatches } from './match_util'
-import { isConstructor } from './methods_util'
 import { upsertElement, removeElement } from './dom_util'
-import { addProp } from './object_util'
+import { addProp, isConstructor } from './object_util'
 import {
   buildInstance,
   buildInstancePos,
