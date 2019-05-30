@@ -1,5 +1,7 @@
 # jTree ( JS / JSON Object Editor )
 
+jTree is a UI for manipulating javascript and JSON objects. See example [here](https://lancetipton.github.io/jTree/)
+
 ## Install
 
   * Download the repo
