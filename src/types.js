@@ -12,7 +12,7 @@ import _unset from 'lodash.unset'
 import { Schema } from 'jTConstants'
 import StyleLoader from 'styleloader'
 
-const styleLoader = new StyleLoader()
+let STYLE_LOADER
 let TYPE_CACHE
 let FLAT_TYPES
 
@@ -97,7 +97,7 @@ export function TypesCls(settings){
     
     destroy = (Editor) => {
       this.clear()
-      styleLoader.destroy()
+      STYLE_LOADER.destroy()
     }
 
   }
@@ -112,7 +112,9 @@ export function TypesCls(settings){
           'error'
         )
 
-      settings.styleLoader = styleLoader
+      STYLE_LOADER = new StyleLoader()
+
+      settings.styleLoader = STYLE_LOADER
       TYPE_CACHE = initTypeCache(
         typesCls,
         settings,

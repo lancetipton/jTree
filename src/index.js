@@ -27,6 +27,7 @@ import {
 } from 'jTUtils'
 
 import {
+  capitalize,
   checkCall,
   clearObj,
   deepMerge,
@@ -165,6 +166,26 @@ const addTempProp = jTree => {
   jTree.hasTemp = () => (Boolean(TEMP_ID))
 }
 
+const NO_CONFIRM_KEYS = [
+  'open',
+  'matchType'
+]
+const NO_CONFIRM_MODES = [
+  'edit',
+]
+
+const shouldShowConfirm = (update) => {
+  // Don't show confirm for only an update that is only an open
+  const updateKeys = Object.keys(update)
+  if(updateKeys.length !== 1) return true
+  
+  if(update.mode && NO_CONFIRM_MODES.indexOf(update.mode.toLowerCase()) !== -1)
+    return false
+  
+  if(NO_CONFIRM_KEYS.indexOf(updateKeys[0]) !== -1)
+    return false
+}
+
 const createEditor = (settings, editorConfig, domContainer) => {
 
   class jTree {
@@ -269,11 +290,15 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // Get reference to the pos
       pos = validData.pos || pos
 
-      // Don't show confirm for only an update that is only an open
-      const updateKeys = Object.keys(update)
-      if(updateKeys.length !== 1 || updateKeys[0] !== 'open')
-        if(!checkConfirm(validData.schema, pos, update, `Update node at ${pos}?`))
-          return
+      if(
+        shouldShowConfirm(update) && 
+        !checkConfirm(
+          validData.schema,
+          pos,
+          update,
+          `${ update.mode && capitalize(update.mode) || 'Update' } node at ${pos}?`
+        )
+      ) return
       
 
       // Remove the current error, if one exists

@@ -1,5 +1,64 @@
+/* jTree Css Reset */
+/* http://meyerweb.com/eric/tools/css/reset/  */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a:not(.fa, .far, .fas), abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i:not(.fa, .far, .fas), center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+ul, ol, ul > li, ol > li {
+  margin: 0px;
+  padding: 0px;
+}
+
+*,
+*:focus {
+  outline: none;
+}
+
+html, body {
+  color: #3D3D3E;
+}
+
 html, html *, *:focus {
-  outline: 0;
+  outline: none;
 }
 
 .git-hub-fork {
@@ -55,6 +114,8 @@ nav.tipdig-nav > ul > li.tipdig-link-wrapper a.tipdig-link:hover {
 }
 .container-wrapper > .container {
   width: 80vw;
+  max-width: 720px;
+  margin: auto;
 }
 
 .container-wrapper.header {
@@ -99,6 +160,66 @@ nav.tipdig-nav > ul > li.tipdig-link-wrapper a.tipdig-link:hover {
   font-size: 12px;
 }
 
+h4 {
+  font-family: "Raleway", sans-serif;
+}
+
+
+/* Editor Controls */
+.container-wrapper ul.controls {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  text-align: right;
+}
+
+.container-wrapper ul.controls li {
+  display: inline-block;
+}
+
+.container-wrapper ul.controls li button {
+  transition: border-bottom 0.5s ease;
+  cursor: pointer;
+  height: 30px;
+  min-width: 70px;
+  background-color: #F5F5FA;
+  font-weight: bold;
+  border: none;
+  border-bottom: 2px solid #3D3D3E;
+}
+.container-wrapper ul.controls li button * {
+  transition: all 0.5s ease;
+}
+
+.container-wrapper ul.controls li button.save:hover {
+  border-bottom: 2px solid #4CAF50;
+}
+.container-wrapper ul.controls li button.save:hover * {
+  color: #4CAF50;
+}
+
+.container-wrapper ul.controls li button.reset:hover {
+  border-bottom: 2px solid #03A9F4;
+}
+.container-wrapper ul.controls li button.reset:hover * {
+  color: #03A9F4;
+}
+
+.container-wrapper ul.controls li button.clear:hover {
+  border-bottom: 2px solid #0FCED1;
+}
+.container-wrapper ul.controls li button.clear:hover * {
+  color: #0FCED1;
+}
+
+
+.container-wrapper ul.controls li button.delete:hover {
+  border-bottom: 2px solid #FA0719;
+}
+.container-wrapper ul.controls li button.delete:hover * {
+  color: #FA0719;
+}
 
 .container-wrapper > .container > .editor {
   margin-top: 10px;
