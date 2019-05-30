@@ -52,3 +52,5 @@ jTree is a UI for manipulating javascript and JSON objects. See example [here](h
         * If `Parent Type Class` does not have a `matchHelper` method
           * The `Base Parent Type Class` `matchHelper` method will be called
   
+
+### More docs coming soon
