@@ -1,4 +1,4 @@
-import { isObj, mapObj } from 'jsUtils'
+import { mapObj, uuid } from 'jsUtils'
 import { validateMatchType } from './validate_util'
 import { Values } from '../constants'
 
@@ -7,13 +7,38 @@ const getTypeStyles = (settings, Type) => (
       Type.hasOwnProperty('getStyles') &&
       settings.styleLoader &&
       settings.styleLoader.add &&
-      settings.styleLoader.add(Type.name, Type.getStyles(settings))
+      settings.styleLoader.add(buildStyleId(Type), Type.getStyles(settings))
+)
+
+const buildStyleId = Type => {
+  Type.styleId = `${Type.name.toLowerCase()}-${uuid().split('-').pop()}`
+  return Type.styleId
+}
+
+const buildSubTypes = (subTypes, parentMeta, settings) => (
+  Object
+  .values(subTypes)
+  .reduce((built, subType) => {
+    if(!validateMatchType(subType)) return built
+
+    const typeName = buildTypeName(subType.name)
+    built[typeName] = {
+      name: typeName,
+      factory: subType,
+      extends: parentMeta
+    }
+    // Ensure the styles get loaded for each sub type factory
+    getTypeStyles(settings, subType)
+
+    return built
+  }, parentMeta.subTypes || {})
 )
 
 export const loadDynamicTypes = (typesPath) => {
   return import(
     /* webpackInclude: /\.js$/ */
     /* webpackMode: "lazy" */
+    /* webpackChunkName: "jtree-definitions" */
     `../../node_modules/jtree-definitions/build/${typesPath}`
     )
     .then(type => {
@@ -44,6 +69,7 @@ export const buildTypeCache = (settings, allTypes) => {
     base: BaseType,
     factory: BaseType.constructor
   }
+  
   // Ensure the styles get loaded for the base
   getTypeStyles(settings, BaseType.constructor)
 
@@ -58,6 +84,7 @@ export const buildTypeCache = (settings, allTypes) => {
         factory,
         extends: BaseTypeMeta
       }
+
       // Ensure the styles get loaded for each type factory
       getTypeStyles(settings, factory)
 
@@ -80,6 +107,7 @@ export const buildTypeCache = (settings, allTypes) => {
   })
 
   BaseTypeMeta.children = Object.freeze(BaseTypeMeta.children)
+
   return BaseTypeMeta
 }
 
@@ -87,24 +115,27 @@ export const buildTypeName = typeClsName => (
   typeClsName.split('Type').join('').toLowerCase()
 )
 
-const buildSubTypes = (subTypes, parentMeta, settings) => (
-  Object
-  .values(subTypes)
-  .reduce((built, subType) => {
-    if(!validateMatchType(subType)) return built
+export const buildFlatTypes = (startType, opts={}, flatTypes={}) => {
+  if(!startType)
+    return flatTypes || {}
 
-    const typeName = buildTypeName(subType.name)
-    built[typeName] = {
-      name: typeName,
-      factory: subType,
-      extends: parentMeta
-    }
-    // Ensure the styles get loaded for each sub type factory
-    getTypeStyles(settings, subType)
+  const filter = Array.isArray(opts.filter) && opts.filter || []
+  return Object
+    .entries((startType).children)
+    .reduce((flatList, [ key, obj ]) => {
+      if(filter.indexOf(key) !== -1) return flatList
+        
+      flatList[key] = obj
+      if(obj.children)
+        flatList = {
+          ...flatList,
+          ...buildFlatTypes(obj, {}, flatList)
+        }
 
-    return built
-  }, parentMeta.subTypes || {})
-)
+      return flatList
+    }, flatTypes)
+
+}
 
 export const typesOverride = (typeInstance, config) => {
   if(!config) return null

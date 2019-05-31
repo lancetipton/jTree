@@ -1,6 +1,5 @@
 const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpack = require('webpack')
 const libraryName = 'jTree'
@@ -8,7 +7,6 @@ const NODE_ENV = process.env.NODE_ENV
 const isDev = NODE_ENV === 'development'
 const buildPath = isDev && 'develop' || 'build'
 const outputFile = '.min.js'
-const outputNames = isDev && '[contenthash].[name]' || '[name]'
 const outputPath = path.resolve(__dirname, buildPath)
 const paths = [ buildPath ]
 
@@ -46,8 +44,12 @@ const wpConfig = {
           loader: 'raw-loader',
         }
       },
-      // { enforce: 'pre', test: /\.(js|css)$/, loader: 'remove-comments-loader' }
-    ]
+      { 
+        enforce: 'post',
+        test: /\.(js|css)$/,
+        loader: 'remove-comments-loader'
+      }
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(paths, {}),
@@ -70,7 +72,8 @@ const wpConfig = {
     },
   },
   optimization: {
-    nodeEnv: NODE_ENV
+    nodeEnv: NODE_ENV,
+    chunkIds: 'named',
   }
 }
 

@@ -134,16 +134,37 @@ nav.tipdig-nav > ul > li.tipdig-link-wrapper a.tipdig-link:hover {
 }
 
 .container-wrapper.header > .container > h2 {
-  width: 80vw;
   text-align: center;
   border: none;
   margin: 0px;
+  color: #FFF;
+  margin-bottom: 8px;
+}
+
+.container-wrapper.header > .container .fas.fa-tree {
+  position: relative;
+  font-size: 26px;
+  padding: 0px 2px;
+  transform: scale(2.2,1.8);
+  top: 2px;
+  left: -17px;
+  color: #121212;
+  z-index: -1;
+}
+
+.container-wrapper.header > .container > p.sub-header {
+    font-size: 12px;
+    font-weight: bold;
 }
 
 .container-wrapper.header > .container > p {
   margin: 0px;
   padding: 0px;
+  font-size: 12px;
+  font-weight: bold;
 }
+
+
 
 .container-wrapper > .container > h2 {
   margin: 0px;

@@ -1,4 +1,5 @@
 import {
+  buildFlatTypes,
   clearTypeData,
   getMatchTypes,
   initTypeCache,
@@ -30,26 +31,11 @@ export function TypesCls(settings){
 
     get = name => (!name && TYPE_CACHE || (this.getFlat() || {})[name])
     
-    getFlat = (startType, opts={}) => {
-      if(FLAT_TYPES) return FLAT_TYPES
+    getFlat = (startType, opts={}) => {      
+      if(!FLAT_TYPES) 
+        FLAT_TYPES = buildFlatTypes(startType || TYPE_CACHE, opts)
 
-      const filter = Array.isArray(opts.filter) && opts.filter || []
-      FLAT_TYPES = Object
-        .entries((startType || TYPE_CACHE).children)
-        .reduce((flatList, [ key, obj ]) => {
-          if(filter.indexOf(key) !== -1) return flatList
-            
-          flatList[key] = obj
-          if(obj.children)
-            flatList = {
-              ...flatList,
-              ...this.getFlat(obj)
-            }
-
-          return flatList
-        }, {})
-
-        return FLAT_TYPES
+      return FLAT_TYPES
     }
     
     clear = (includeClass=true) => {
