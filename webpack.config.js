@@ -1,6 +1,7 @@
 const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack')
 const libraryName = 'jTree'
 const NODE_ENV = process.env.NODE_ENV
@@ -74,6 +75,14 @@ const wpConfig = {
   optimization: {
     nodeEnv: NODE_ENV,
     chunkIds: 'named',
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          keep_classnames: true,
+          keep_fnames: true,
+        }
+      })
+    ]
   }
 }
 
