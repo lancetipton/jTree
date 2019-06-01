@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
           editor: {
             // Pass a custom method, or true to confirm all jTree changes
             // Defaults to showing window.confirm dialog for actions
-            confirmActions: true,
+            confirmActions: false,
             // Called for all type events
             // Can override all types events
             // onChange: onChange,
