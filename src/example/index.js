@@ -1,14 +1,11 @@
+setTimeout(() => {
 
+  const jsonApiCall = () => {
+    return new Promise((res, rej) => {
+      res(window.TEST_DOM_DATA)
+    })
+  }
 
-const jsonApiCall = () => {
-  return new Promise((res, rej) => {
-    res(window.TEST_DOM_DATA)
-  })
-}
-
-document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
-
-  const jTree = window.jTree
   let emptyObject = false
   let Editor
   let editorNode = document.getElementById('editor')
@@ -40,16 +37,16 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
     console.log('on change')
   }
 
-  
+
   const onSave = (event, update, id, Editor) => {
 
   }
 
-  
+
   const onCancel = (event, update, id, Editor) => {
     console.log('on cancel')
   }
-  
+
   const matchHelper = ({ value, key, matchTypes, tree, parent, Editor }) => {
     // Only here as a test for now.... remove later
     const TypeTree = Editor.Types.get()
@@ -61,9 +58,9 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
   const numOnChange = (event, update, id, Editor) => {
     // console.log('------------------ Num onChange ------------------');
   }
-  
 
-  const init = async () => {
+
+  const init = () => {
     jsonApiCall()
       .then(testData => {
         const useData = emptyObject && {} || testData
@@ -211,5 +208,8 @@ document.addEventListener('DOMContentLoaded', () => { setTimeout(() => {
   }
 
   init()
+  
+})
 
-}, 100)})
+
+

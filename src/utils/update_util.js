@@ -178,7 +178,9 @@ export const updateType = (tree, pos, schema, settings) => {
   // If we have a value and it's not an empty type, then run an eval check on it
   // If it fails, set the error on the schema. The Types determine how to handel it
   if( hasValue && (!hasEmpty && !newType.factory.eval(schema.value)) )
-    return { error: `'${schema.value} it not a valid value for ${newType.factory.name}` }
+    return {
+      error: `'Not a valid value for ${(newType.factory.name || '').replace('Type', '')}`
+    }
   
   // If there's a value, and no error, then set it in the tree
   if(hasValue && !schema.error)
@@ -204,7 +206,7 @@ export const updateValue = (tree, pos, schema, settings) => {
   // current schema copy
   const factory = tree.schema[pos].instance.constructor
   if('value' in schema && !factory.eval(schema.value))
-    return { error: `'${schema.value} it not a valid value for ${factory.name}` }
+    return { error: `Not a valid value for ${(factory.name || '').replace('Type', '')}` }
 
   _set(tree, pos, schema.value)
   _set(tree.schema[pos], 'value', schema.value)

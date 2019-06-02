@@ -43,31 +43,31 @@ const addNavItem = (navList, element) => {
 document.addEventListener('DOMContentLoaded', () => {
 
 
-  // const compHW = document.getElementById('markdown-content')
+  const compHW = document.getElementById('markdown-content')
 
-  // const markDown = window.markdownit({
-  //   html: false,
-  //   xhtmlOut: false,
-  //   breaks: false,
-  //   langPrefix: 'language-',
-  //   linkify: false,
-  //   typographer: false,
-  //   quotes: '“”‘’',
-  //   highlight: () => ('')
-  // })
+  const markDown = window.markdownit({
+    html: false,
+    xhtmlOut: false,
+    breaks: false,
+    langPrefix: 'language-',
+    linkify: false,
+    typographer: false,
+    quotes: '“”‘’',
+    highlight: () => ('')
+  })
 
-  // compHW.innerHTML = markDown.render(ReadMe)
+  compHW.innerHTML = markDown.render(ReadMe)
 
-  // Array.from(document.getElementsByTagName('a'))
-  //   .map(link => {
-  //     link.setAttribute('target', '_blank')
-  //   })
+  Array.from(document.getElementsByTagName('a'))
+    .map(link => {
+      link.setAttribute('target', '_blank')
+    })
 
-  // const navList = document.getElementById('nav-list')
-  // navList && Array.from(compHW.getElementsByTagName('h2'))
-  //   .map(element => {
-  //     if (!element.id) addNavItem(navList, element)
-  //   })
+  const navList = document.getElementById('nav-list')
+  navList && Array.from(compHW.getElementsByTagName('h2'))
+    .map(element => {
+      if (!element.id) addNavItem(navList, element)
+    })
 
 
 })

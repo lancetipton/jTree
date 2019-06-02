@@ -3,8 +3,8 @@
   "version": "1.1.1",
   "description": "Json and Javascript object editor",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
-  "main": "build/jTree.min.js",
-  "module": "src/index.js",
+  "main": "cjs/",
+  "module": "esm/",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -20,14 +20,26 @@
     "ui",
     "object editor"
   ],
+  "browserslist": [
+    ">1%",
+    "last 1 version",
+    "Firefox ESR",
+    "not dead"
+  ],
   "scripts": {
-    "build": "NODE_ENV=production webpack --mode production",
+    "build": "yarn build:clean && yarn build:esm && yarn build:cjs && yarn build:webpack",
+    "build:clean": "rm -rf ./esm && rm -rf ./cjs && rm -rf ./build",
+    "build:esm": "babel --delete-dir-on-start -d esm/ src/",
+    "build:cjs": "babel --delete-dir-on-start --env-name cjs -d cjs/ src/",
+    "build:webpack": "rm -rf ./build && ENV=production webpack --mode production",
     "clean": "rm -rf yarn.lock && rm -rf node_modules && yarn install --force",
     "deploy": "gh-pages -d build",
     "dev": "NODE_ENV=development webpack --watch --progress",
+    "postinstall": "postinstall-build build",
     "test": "NODE_ENV=test jest --verbose"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.3",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.3",
@@ -41,26 +53,27 @@
     "clean-webpack-plugin": "^1.0.0",
     "copy-webpack-plugin": "^4.6.0",
     "core-js": "3",
-    "elementR": "git+https://github.com/lancetipton/Element-R.git",
     "gh-pages": "^2.0.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.7.1",
     "jest-cli": "^24.7.1",
+    "jsUtils": "git+https://github.com/lancetipton/jsUtils.git",
+    "jtree-definitions": "git+https://github.com/lancetipton/jtree-definitions.git",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.set": "^4.3.2",
     "lodash.unset": "^4.5.2",
     "raw-loader": "^2.0.0",
     "remove-comments-loader": "^0.1.2",
+    "rimraf": "^2.6.3",
+    "styleloader": "git+https://github.com/lancetipton/StyleLoader.git",
     "terser-webpack-plugin": "^1.3.0",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "jsUtils": "git+https://github.com/lancetipton/jsUtils.git",
-    "jtree-definitions": "git+https://github.com/lancetipton/jtree-definitions.git",
-    "styleloader": "git+https://github.com/lancetipton/StyleLoader.git"
+    "postinstall-build": "^5.0.3"
   },
   "peerDependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1"

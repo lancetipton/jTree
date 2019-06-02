@@ -11,5 +11,19 @@
     "@babel/plugin-syntax-dynamic-import",
     "babel-plugin-import-css-to-jss",
     [ "@babel/plugin-proposal-class-properties" ]
-  ]
+  ],
+  "env": {
+    "cjs": {
+      "presets": [
+        [
+          "@babel/env",
+          {
+            "targets": { "node": 6 },
+            "useBuiltIns": "usage",
+            "corejs": 3
+          }
+        ]
+      ]
+    }
+  }
 }
