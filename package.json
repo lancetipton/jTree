@@ -31,12 +31,15 @@
     "build:clean": "rm -rf ./esm && rm -rf ./cjs && rm -rf ./build",
     "build:esm": "babel --delete-dir-on-start -d esm/ src/",
     "build:cjs": "babel --delete-dir-on-start --env-name cjs -d cjs/ src/",
+    "build:modules": "yarn build:esm && yarn build:cjs",
     "build:webpack": "rm -rf ./build && ENV=production webpack --mode production",
-    "clean": "rm -rf yarn.lock && rm -rf node_modules && yarn install --force",
+    "link:defs": "yarn link jtree-definitions",
+    "clean": "yarn cache clean && rm -rf yarn.lock && rm -rf node_modules",
     "deploy": "gh-pages -d build",
     "dev": "NODE_ENV=development webpack --watch --progress",
-    "postinstall": "postinstall-build build",
-    "test": "NODE_ENV=test jest --verbose"
+    "postinstall": "yarn build:clean && yarn build",
+    "test": "NODE_ENV=test jest --verbose",
+    "web": "http-server ./build -p 8888 --cors"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -65,16 +68,12 @@
     "lodash.unset": "^4.5.2",
     "raw-loader": "^2.0.0",
     "remove-comments-loader": "^0.1.2",
-    "rimraf": "^2.6.3",
     "styleloader": "git+https://github.com/lancetipton/StyleLoader.git",
     "terser-webpack-plugin": "^1.3.0",
     "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "webpack-cli": "^3.1.2"
   },
-  "dependencies": {
-    "postinstall-build": "^5.0.3"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "@fortawesome/fontawesome-free": "^5.8.1"
   },

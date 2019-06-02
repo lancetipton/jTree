@@ -270,10 +270,11 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // Update the schema to ensure we are working with the updated data
       // Creates a copy of the current schema, with updated values
       let schema = updateSchema(update, { ...validData.schema })
+
       // Check for an update to the key and handel it
       if('key' in update){
         const updatedPos = doKeyUpdate(this, update, pos, schema, settings)
-
+        
         if(!updatedPos) return
         // If there was a valid update to pos
         // Update the references to the local pos

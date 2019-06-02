@@ -62,6 +62,9 @@ const wpConfig = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     }),
   ],
+  watchOptions: {
+    aggregateTimeout: 1000,
+  },
   resolve: {
     alias: {
       jTConstants: path.resolve(__dirname, './src/constants'),
@@ -71,32 +74,6 @@ const wpConfig = {
   },  
   optimization: {
     nodeEnv: NODE_ENV,
-    // splitChunks: {
-    //   chunks: 'all',
-    //   maxInitialRequests: Infinity,
-    //   minSize: 0,
-    //   cacheGroups: {
-    //     jsUtils: {
-    //       test: /[\\/]node_modules[\\/](jsUtils)[\\/]/,
-    //       name: "jsUtils"
-    //     },
-    //     jtreeDefinitions: {
-    //       test: /[\\/]node_modules[\\/](jsUtils)[\\/]/,
-    //       name: "jtree-definitions"
-    //     },
-    //     vendor: {
-    //         test: /[\\/]node_modules[\\/](!jtree-definitions)(!jsUtils)[\\/]/,
-    //       name: "vendor"
-    //     },
-    //     vendorAll: {
-    //       test: /[\\/]node_modules[\\/](!jtree-definitions)(!jsUtils)[\\/]/,
-    //       name(module) {
-    //         const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1]
-    //         return `${packageName.replace('@', '')}`
-    //       },
-    //     },
-    //   },
-    // },
     minimizer: [
       new TerserPlugin({
         terserOptions: {

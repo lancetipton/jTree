@@ -245,7 +245,7 @@ export const updateKey = (tree, pos, schema, settings) => {
 
   // Set the new value in the tree
   _set(tree, updatedPos, currentVal)
-
+  
   // Set the new schema data, with the new pos
   tree.schema[updatedPos] = {
     ...tree.schema[pos],
@@ -256,6 +256,7 @@ export const updateKey = (tree, pos, schema, settings) => {
     pos: updatedPos
   }
 
+  schema.pos = updatedPos
   clearSchema(tree.schema[pos], tree, false)
   // return the updated pos
   return { pos: updatedPos }
