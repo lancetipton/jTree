@@ -191,59 +191,21 @@ const createEditor = (settings, editorConfig, domContainer) => {
   class jTree {
     
     constructor(){
-      return TypesCls(settings)
-        .then(Types => {
-          if(!Types) return null
+      this.Types = TypesCls(settings)
+      if(!this.Types)
+        return logData(`Could not load types for editor!`, 'error')
 
-          this.Types = Types
-          this.element = domContainer
-          this.element.classList.add(Values.ROOT_CLASS)
-          const { source, ...config } = editorConfig
-          this.config = config
-          settings.Editor = this
-          !config.noTemp && addTempProp(this)
+      this.element = domContainer
+      this.element.classList.add(Values.ROOT_CLASS)
+      const { source, ...config } = editorConfig
 
-          return source && this.setSource(source, true)
-        })
-    }
-    
-    undo = () => {
-      const undo = UNDO_MANAGER.undo()
-      if(!undo) return logData(`No undos to use!`)
-
-      const schema = this.schema(undo.to.id || undo.from.id)
-      if(!schema)
-        return logData(`No schema found!`, `error`)
-        
-      const update = { ...schema }
-      const updateKeys = Object.keys(UPDATE_ACTIONS).concat(
-        [ 'pending', 'key', 'pos', ]
-      )
-
-      if(!undo || !undo.from || !update) return
-      updateKeys.map(key => {
-        undo.from[key] !== update[key] &&
-          (update[key] = undo.from[key])
-      })
-
-      _unset(this.tree, schema.pos)
-      _unset(this.tree.idMap, schema.id)
-      _unset(this.tree.schema, schema.pos)
+      this.config = config
+      settings.Editor = this
+      !config.noTemp && addTempProp(this)
       
-      this.tree.schema[update.pos] = update
-      this.tree.idMap[update.id] = update.pos
-      _set(this.tree, update.pos, update.value)
-      const parent = update.parent || schema.parent
-      parent &&
-        parent.pos &&
-        buildFromPos(
-          this,
-          parent.pos,
-          settings
-        )
+      return source && this.setSource(source, true)
     }
 
-    
     buildTypes = source => {
       if(source && source !== ACT_SOURCE)
         return this.setSource(source)
@@ -513,7 +475,7 @@ const init = (opts) => {
   // Clean up the opts.element so we don't have a memory leak
   opts.element = undefined
   // Build the settings by joining with the default settings
-  const settings = deepMerge(DEF_SETTINGS, options)
+  const settings = deepMerge(DEF_SETTINGS, options)  
   const editorConfig = deepMerge(EditorConfig, editor)
   
   // Enable confirm actions

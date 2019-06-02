@@ -1,4 +1,4 @@
-import { mapObj, uuid, logData } from 'jsUtils'
+import { mapObj, uuid, get, logData } from 'jsUtils'
 import { validateMatchType } from './validate_util'
 import { Values } from '../constants'
 
@@ -34,28 +34,14 @@ const buildSubTypes = (subTypes, parentMeta, settings) => (
   }, parentMeta.subTypes || {})
 )
 
-export const loadDynamicTypes = (typesPath) => {
-  return import(
-    /* webpackInclude: /\.js$/ */
-    /* webpackMode: "lazy" */
-    /* webpackChunkName: "jtree-definitions" */
-    `../../node_modules/jtree-definitions/build/${typesPath}`
-    )
-    .then(type => {
-      if(!type || !type.default)
-        logData('Could not load types, please ensure they are properly installed!')
-
-        return type && type.default || {}
-    })
-}
-
-export const initTypeCache = (TypesCls, settings, loadedTypes) => {
-  const { BaseType, subTypes, types } = loadedTypes
+export const initTypeCache = (TypesCls, settings) => {
+  const { BaseType, subTypes, types } = get(settings.types, 'definitions') || {}
   if(!validateMatchType(BaseType)) return
 
   const rootTypes = { ...types }
-  const joinedSubTypes = { ...subTypes, ...settings.customTypes }
-  TypesCls.BaseType = new BaseType(settings.types.base)
+  const joinedSubTypes = { ...subTypes }
+
+  TypesCls.BaseType = new BaseType(get(settings.types, 'config.base') || {})
   return buildTypeCache(
     settings,
     { rootTypes, subTypes: joinedSubTypes, BaseType: TypesCls.BaseType }

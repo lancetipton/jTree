@@ -1,5 +1,6 @@
 import {
   clearObj,
+  get,
   isObj,
   mapObj,
   isFunc,
@@ -135,7 +136,7 @@ export const buildInstance = (type, schema, settings) => {
   // Check for cached instance
   if(!INSTANCE_CACHE[id]){
     // Get the config from the passed in settings
-    const config = settings.types && settings.types[matchType] || {}
+    const config = get(settings.types, `config.${matchType}`) || {}
     const editorConfig = settings.Editor.config || {}
     // Add editor methods to the instance if none defined
     mapObj(Values.CUSTOM_EVENTS, (key, value) => (
@@ -145,7 +146,7 @@ export const buildInstance = (type, schema, settings) => {
     // If no cached instance, built new one from factory
     const instance = new type.factory(config, settings.Editor)
     // Check for config overrides from the passed in settings
-    config && typesOverride(instance, settings.types[matchType])
+    config && typesOverride(instance, config)
 
     // Wrap the methods on the instance, so we can pass the Editor into them when called
     Object.keys(instance).map(key => {

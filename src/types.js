@@ -4,7 +4,6 @@ import {
   getMatchTypes,
   initTypeCache,
   loopSource,
-  loadDynamicTypes,
   validateBuildTypes,
   validateMatchType,
 } from 'jTUtils'
@@ -29,9 +28,19 @@ export function TypesCls(settings){
   
   class Types {
 
+    constructor(){
+      if(!settings.types || !settings.types.definitions)
+        return logData(`No types found as 'settings.types.definitions'`, 'error')
+
+      STYLE_LOADER = new StyleLoader()
+
+      settings.styleLoader = STYLE_LOADER
+      TYPE_CACHE = initTypeCache(this, settings)
+    }
+
     get = name => (!name && TYPE_CACHE || (this.getFlat() || {})[name])
     
-    getFlat = (startType, opts={}) => {      
+    getFlat = (startType, opts={}) => {
       if(!FLAT_TYPES) 
         FLAT_TYPES = buildFlatTypes(startType || TYPE_CACHE, opts)
 
@@ -49,12 +58,6 @@ export function TypesCls(settings){
     register = newType => {
       if(!validateMatchType(newType, TYPE_CACHE))
         return null
-    }
-
-    load = typesPath => {
-      return typesPath
-        ? loadDynamicTypes(typesPath)
-        : Promise.resolve()
     }
 
     rebuild = () => {
@@ -88,25 +91,6 @@ export function TypesCls(settings){
 
   }
 
-  const typesCls = new Types()
-  
-  return typesCls.load(settings.typesPath)
-    .then(loadedTypes => {
-      if(!loadedTypes)
-        return logData(
-          `Types could not be loaded from ${settings.typesPath}`,
-          'error'
-        )
 
-      STYLE_LOADER = new StyleLoader()
-
-      settings.styleLoader = STYLE_LOADER
-      TYPE_CACHE = initTypeCache(
-        typesCls,
-        settings,
-        loadedTypes
-      )
-
-      return typesCls
-    })
+  return new Types()
 }

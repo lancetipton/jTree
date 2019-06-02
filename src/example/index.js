@@ -1,3 +1,6 @@
+import jtDefs from 'jtree-definitions'
+
+
 setTimeout(() => {
 
   const jsonApiCall = () => {
@@ -70,9 +73,6 @@ setTimeout(() => {
           // ----------- General Settings ---------- //
           element: editorNode,
           showLogs: true,
-          // Dynamically load renders from path
-          // Set true to use default js renders
-          renderPath: false,
           // ----------- Editor Config ---------- //
           editor: {
             // Pass a custom method, or true to confirm all jTree changes
@@ -101,102 +101,82 @@ setTimeout(() => {
             styles: {},
             appendTree: () => {}
           },
-
           // ----------- Types Config ---------- //
           types: {
-            /*
-              * Define how a value will be managed / displayed
-            */
-            base: {
+            definitions: jtDefs,
+            config: {
               /*
-                Base - Default Type
-                  * All other default types extend Base Type
-                  * Used when no matching type is found
-                  * Is NOT used for null || undefined values
-                  * Value is treated as a string
+                * Define how a value will be managed / displayed
               */
-              priority: 0,
-              /*
-                * Override default Base priority
-                * Used when a new Base Type Instance is created
-                * Can be overwritten the the `BaseTypeInstance.setPriority` method
-              */
-              matchHelper: matchHelper,
-              /*
-                * Will be called when
-                  * When more then one type is found
-                    * They all have the same priority
-                    * They all extend the different Parent Types
-                  * If more then one type is found
-                    * They all extend the same Parent Type
-                    * The Parent Type does not have a matchHelper defined
-              */
-              /*
-                * Used to determine if the type matches the value
-                * Set to override the default static Type Class method
-                  * Must return a Boolean
-              */
-            },
-          //   boolean: {},
-          //     /* Boolean - Default Type */
-
-            map: {
+              base: {
                 /*
-                  * Override the build method of the map type
-                    * Allows customizing the shouldComponentUpdate method on map type
+                  Base - Default Type
+                    * All other default types extend Base Type
+                    * Used when no matching type is found
+                    * Is NOT used for null || undefined values
+                    * Value is treated as a string
                 */
-            },
-          //     /*  Map (Object) - Default Type */
+                priority: 0,
+                /*
+                  * Override default Base priority
+                  * Used when a new Base Type Instance is created
+                  * Can be overwritten the the `BaseTypeInstance.setPriority` method
+                */
+                matchHelper: matchHelper,
+                /*
+                  * Will be called when
+                    * When more then one type is found
+                      * They all have the same priority
+                      * They all extend the different Parent Types
+                    * If more then one type is found
+                      * They all extend the same Parent Type
+                      * The Parent Type does not have a matchHelper defined
+                */
+                /*
+                  * Used to determine if the type matches the value
+                  * Set to override the default static Type Class method
+                    * Must return a Boolean
+                */
+              },
+              boolean: {},
+                /* Boolean - Default Type */
 
-          //   collection: {},
-          //     /*  Collection (Array) - Default Type */
+              map: {
+                  /*
+                    * Override the build method of the map type
+                      * Allows customizing the shouldComponentUpdate method on map type
+                  */
+              },
+                /*  Map (Object) - Default Type */
 
-            string: {},
-          //     /*  String - Default Type */
+              collection: {},
+                /*  Collection (Array) - Default Type */
 
-          //     /* ----- Extra default types that extend String type ----- */
-          //     card: {},
-          //     color: {},
-          //     date: {},
-          //     email: {},
-          //     phone: {},
-          //     url: {},
-          //     uuid: {},
+              string: {},
+                /*  String - Default Type */
 
-            number: {
-              onChange: numOnChange,
-              expandOnChange: true,
-            },
-          //     /* Default Type ( number ) */
+              /* ----- Extra default types that extend String type ----- */
+              card: {},
+              color: {},
+              date: {},
+              email: {},
+              phone: {},
+              url: {},
+              uuid: {},
 
-          //     /* ----- Extra default types that extend Number type ----- */
-          //     float: {},
-          //     money: {},
-          //     percent: {},
+              number: {
+                onChange: numOnChange,
+                expandOnChange: true,
+              },
+              /* Default Type ( number ) */
 
-          //   /* ----- Custom Type Settings ----- */
-          //   myCustomType: {
-          //     /*
-          //       * Custom Type Settings for custom `Type Class` defined below
-          //     */
-          //   }
+              /* ----- Extra default types that extend Number type ----- */
+              float: {},
+              money: {},
+              percent: {},
+            }
 
-          },
-
-          // // ----------- Custom Types Definitions ---------- //
-          // customTypes: {
-          //   /*
-          //     Define custom types on initialization of the jTree Editor
-          //       * Key must be the same as the key in the types object above
-          //       * When key matches a default `Type Class`
-          //         * The custom `Type Class` **WILL** overwrite the default
-          //       * Custom Type Config
-          //         * Passed on the instantiation of a new `Type Class Instance`
-          //         * Must be defined in the `settings.types` object above
-          //   */
-          //   myCustomType: MyCustomTypeClass
-          // }
-        
+          }
         })
       
         
