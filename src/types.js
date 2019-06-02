@@ -1,5 +1,4 @@
 import {
-  buildFlatTypes,
   clearTypeData,
   getMatchTypes,
   initTypeCache,
@@ -9,7 +8,7 @@ import {
 } from 'jTUtils'
 import { logData, isObj, mapObj } from 'jsUtils'
 import _unset from 'lodash.unset'
-import { Schema } from 'jTConstants'
+import Constants from './constants'
 import StyleLoader from 'styleloader'
 
 let STYLE_LOADER
@@ -18,8 +17,8 @@ let FLAT_TYPES
 
 export const buildTypes = (source, settings, elementCb) => {
   if(!validateBuildTypes(source, settings.Editor)) return null
-  const tree = { schema: {}, [Schema.ROOT]: source, idMap: {} }
-  const rootSchema = { value: source, key: Schema.ROOT }
+  const tree = { schema: {}, [Constants.Schema.ROOT]: source, idMap: {} }
+  const rootSchema = { value: source, key: Constants.Schema.ROOT }
 
   return loopSource(rootSchema, tree, settings, elementCb)
 }
@@ -38,14 +37,7 @@ export function TypesCls(settings){
       TYPE_CACHE = initTypeCache(this, settings)
     }
 
-    get = name => (!name && TYPE_CACHE || (this.getFlat() || {})[name])
-    
-    getFlat = (startType, opts={}) => {
-      if(!FLAT_TYPES) 
-        FLAT_TYPES = buildFlatTypes(startType || TYPE_CACHE, opts)
-
-      return FLAT_TYPES
-    }
+    get = name => (!name && TYPE_CACHE || TYPE_CACHE[name])
     
     clear = (includeClass=true) => {
       clearTypeData(this, TYPE_CACHE, includeClass)
@@ -71,7 +63,7 @@ export function TypesCls(settings){
         [
           TYPE_CACHE,
           value,
-          TYPE_CACHE.children,
+          TYPE_CACHE,
           settings,
           {}
         ]

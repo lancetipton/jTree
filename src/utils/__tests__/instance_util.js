@@ -1,4 +1,4 @@
-import { Schema } from '../../constants'
+import Constants from '../../constants'
 
 const InstanceUtil = require('../instance_util.js')
 
@@ -22,9 +22,9 @@ describe('Instance Util', () => {
     })
     
     it('should return the key when key is equal to schema root', () => {
-      const res = InstanceUtil.buildInstancePos(Schema.ROOT, { pos: 'parent'})
+      const res = InstanceUtil.buildInstancePos(Constants.Schema.ROOT, { pos: 'parent'})
 
-      expect(res).toEqual(Schema.ROOT)
+      expect(res).toEqual(Constants.Schema.ROOT)
     })
     
   })
@@ -118,7 +118,7 @@ describe('Instance Util', () => {
   // describe('buildInstance', () => {
   // })
 
-  // describe('addSchemaInstance', () => {
+  // describe('addConstants.SchemaInstance', () => {
   // })
   
   // describe('addCompProp', () => {

@@ -8,7 +8,7 @@ import {
 
 import { clearSchema } from './clean_util'
 import { clearInstance, buildInstance } from './instance_util'
-import { Schema } from 'jTConstants'
+import Constants from 'jTConstants'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
 import _unset from 'lodash.unset'
@@ -190,7 +190,7 @@ export const updateType = (tree, pos, schema, settings) => {
     ...schema,
     pending: true,
     instance: buildInstance(newType, schema, settings),
-    mode: Schema.MODES.EDIT,
+    mode: Constants.Schema.MODES.EDIT,
   }
 }
 

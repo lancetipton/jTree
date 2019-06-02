@@ -37,7 +37,7 @@ import {
   logData,
 } from 'jsUtils'
 
-import { Values, Schema, EditorConfig } from 'jTConstants'
+import Constants from './constants'
 import { buildTypes, TypesCls } from './types'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
@@ -116,7 +116,7 @@ const doKeyUpdate = (jTree, update, pos, schema, settings) => {
 const doUpdateData = (jTree, update, pos, schema, settings) => {
   let invalid
   // Loop over the allowed props to be update
-  Schema.TREE_UPDATE_PROPS
+  Constants.Schema.TREE_UPDATE_PROPS
     .map(prop => {
       // Only keep doing update when no error exists
       if(invalid) return
@@ -153,7 +153,7 @@ const addTempProp = jTree => {
     get: () => {
       return {
         ...(TEMP_ID && jTree.schema(TEMP_ID) || {}),
-        mode: Schema.MODES.TEMP
+        mode: Constants.Schema.MODES.TEMP
       }
     },
     set: id => {
@@ -196,7 +196,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
         return logData(`Could not load types for editor!`, 'error')
 
       this.element = domContainer
-      this.element.classList.add(Values.ROOT_CLASS)
+      this.element.classList.add(Constants.Values.ROOT_CLASS)
       const { source, ...config } = editorConfig
 
       this.config = config
@@ -236,6 +236,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
     update = (idOrPos, update) => {
 
       let pos = this.tree.idMap[idOrPos] || idOrPos
+
       // Ensure the passed in update object is valid
       const validData = validateUpdate(this.tree, idOrPos, update, settings)
       // And Ensure we have a schema, pos to use and there is no error
@@ -306,7 +307,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       const validData = validateUpdate(
         this.tree,
         idOrPos,
-        { mode: Schema.MODES.REPLACE },
+        { mode: Constants.Schema.MODES.REPLACE },
         settings
       )
 
@@ -333,7 +334,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       replace.id = schema.id
       addSchemaComponent(replace, replace.id)
       
-      if(replace.mode === Schema.MODES.REPLACE || replace.mode === Schema.MODES.TEMP)
+      if(replace.mode === Constants.Schema.MODES.REPLACE || replace.mode === Constants.Schema.MODES.TEMP)
         _unset(replace, 'mode')
 
       // If it's not the same instance, remove the old one
@@ -371,7 +372,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       const validData = validateUpdate(
         this.tree,
         idOrPos,
-        { mode: Schema.MODES.REMOVE },
+        { mode: Constants.Schema.MODES.REMOVE },
         settings
       )
       // And Ensure we have a schema and pos to use
@@ -421,7 +422,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       
 
-      if(schema.matchType !== Schema.EMPTY && !checkConfirm(schema, useParent.pos, `Add to parent ${useParent.pos}?`))
+      if(schema.matchType !== Constants.Schema.EMPTY && !checkConfirm(schema, useParent.pos, `Add to parent ${useParent.pos}?`))
         return
         
 
@@ -438,8 +439,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
     
     destroy = () => {
       ACT_SOURCE = undefined
-      const rootNode = this.tree.schema[Schema.ROOT].domNode
-      clearObj(this.tree[Schema.ROOT])
+      const rootNode = this.tree.schema[Constants.Schema.ROOT].domNode
+      clearObj(this.tree[Constants.Schema.ROOT])
       clearObj(this.tree.idMap)
       clearObj(this.config)
       this.Types.destroy(this)
@@ -451,7 +452,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
 
       // Remove the Root class from the parent
       rootNode.parentNode.classList &&
-        rootNode.parentNode.classList.remove(Values.ROOT_CLASS)
+        rootNode.parentNode.classList.remove(Constants.Values.ROOT_CLASS)
       // Remove the root element from the parent
       removeElement(rootNode, rootNode.parentNode)
     }
@@ -476,7 +477,7 @@ const init = (opts) => {
   opts.element = undefined
   // Build the settings by joining with the default settings
   const settings = deepMerge(DEF_SETTINGS, options)  
-  const editorConfig = deepMerge(EditorConfig, editor)
+  const editorConfig = deepMerge(Constants.EditorConfig, editor)
   
   // Enable confirm actions
   setConfirm(editorConfig.confirmActions)
@@ -487,5 +488,6 @@ const init = (opts) => {
 
 
 export {
-  init
+  init,
+  Constants,
 }

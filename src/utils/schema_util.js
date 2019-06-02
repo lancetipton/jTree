@@ -11,14 +11,11 @@ import {
   buildInstance,
   buildInstancePos,
   callInstanceUpdates,
-  clearInstanceCache,
-  getInstanceCache,
   renderInstance,
 } from './instance_util'
 import _unset from 'lodash.unset'
 import _get from 'lodash.get'
-import { Schema } from 'jTConstants'
-
+import Constants from '../constants'
 /**
  * Ensures the props object is not changed durring the render method of a Type
  * Helps to ensure props is only update through the editor
@@ -32,7 +29,7 @@ const checkPropsChange = (props, check) => (
     if(props[key] !== check[key])
       throw new Error(`Props should not be changed when rendering a domNode!`)
     
-    if(typeof props[key] === 'object' && Schema.PROPS_CHECK.indexOf(key) === -1)
+    if(typeof props[key] === 'object' && Constants.Schema.PROPS_CHECK.indexOf(key) === -1)
       checkPropsChange(props[key], check[key])
   })
 )
@@ -101,8 +98,8 @@ export const buildSchema = (curSchema, type, settings) => {
 export const loopSource = (curSchema, tree, settings, elementCb) => {
   const { value, key, parent, pos, pending, mode } = curSchema
   const Types = settings.Editor.Types
-  const isRoot = key === Schema.ROOT
-  const cutMode = mode === Schema.MODES.CUT
+  const isRoot = key === Constants.Schema.ROOT
+  const cutMode = mode === Constants.Schema.MODES.CUT
 
   // pending gets set when empty value is added, and the type was updated
   // This will switch it to edit mode, but the key and value will be empty
@@ -257,7 +254,7 @@ export const buildFromPos = (jTree, pos, settings) => {
   }
   // This method should not be called with the root schema
   // If it was, just return
-  if(pos === Schema.ROOT || Boolean(updatedEl instanceof HTMLElement) === false)
+  if(pos === Constants.Schema.ROOT || Boolean(updatedEl instanceof HTMLElement) === false)
     return
 
   // Adds the dom node to the tree

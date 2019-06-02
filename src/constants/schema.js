@@ -32,5 +32,5 @@ export const Schema = {
     'priority',
     'defaultValue',
     'eval'
-  ])
+  ]),
 }

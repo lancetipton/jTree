@@ -1,5 +1,5 @@
 import { checkCall, isObj } from 'jsUtils'
-import { Values } from '../constants'
+import Constants from '../constants'
 
 /**
  * 
@@ -9,7 +9,7 @@ import { Values } from '../constants'
  */
 const setHighestPriority = (matches, priority) => {
   if(!matches.highest || matches.highest <= priority){
-    matches.highest =  priority
+    matches.highest = priority
     return true
   }
 
@@ -27,28 +27,29 @@ const setHighestPriority = (matches, priority) => {
  */
 export const getMatchTypes = function(TYPE_CACHE, value, parent, settings, matches={}){
 
-  TYPE_CACHE.children[Values.MAP_TYPES]((name, meta) => {
+  TYPE_CACHE[Constants.Values.MAP_TYPES]((name, meta) => {
     const { factory } = meta
     // Gets the priority from the factory class
     // Or the base priority if none exists for factory
     const priority = factory.priority || this.BaseType.constructor.priority
     // Check and update the priority if needed
-    
-    // Check if the eval doesn't match, if no eval match, then return
-    if(!factory || !factory.eval || !factory.eval(value))
+    try{
+      // Check if the eval doesn't match, if no eval match, then return
+      if(!factory || !factory.eval || !factory.eval(value))
+        return
+    }
+    catch(e){
       return
+    }
 
     // Need to only set highest prioirty if there is a match
-    const updatedPriority = setHighestPriority(matches, priority)
+    setHighestPriority(matches, priority)
 
     // Sets the meta to the matches object
     matches[priority] = matches[priority] || {}
     matches[priority][name] = meta
-    // Check If the type have children, nad check them as well
-    if(isObj(meta.children))
-      getMatchTypes.apply(this, [ TYPE_CACHE, value, meta.children, settings, matches])
 
-  }, parent || TYPE_CACHE.children)
+  }, parent || TYPE_CACHE)
 
   return matches
 }

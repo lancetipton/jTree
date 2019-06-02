@@ -1,6 +1,6 @@
-import { mapObj, uuid, get, logData } from 'jsUtils'
+import { mapObj, uuid, get } from 'jsUtils'
 import { validateMatchType } from './validate_util'
-import { Values } from '../constants'
+import Constants from '../constants'
 
 const getTypeStyles = (settings, Type) => (
   Type &&
@@ -15,41 +15,43 @@ const buildStyleId = Type => {
   return Type.styleId
 }
 
-const buildSubTypes = (subTypes, parentMeta, settings) => (
-  Object
-  .values(subTypes)
-  .reduce((built, subType) => {
-    if(!validateMatchType(subType)) return built
-
-    const typeName = buildTypeName(subType.name)
-    built[typeName] = {
-      name: typeName,
-      factory: subType,
-      extends: parentMeta
-    }
-    // Ensure the styles get loaded for each sub type factory
-    getTypeStyles(settings, subType)
-
-    return built
-  }, parentMeta.subTypes || {})
-)
-
+/**
+ * Builds the passed in types to be used with the Main TypeClass
+ * @param { class instance } TypesCls - built TypeClass instance
+ * @param { object } settings - settings passed into the jTree init method
+ * 
+ * @returns { object } - built Types to use in the editor
+ */
 export const initTypeCache = (TypesCls, settings) => {
-  const { BaseType, subTypes, types } = get(settings.types, 'definitions') || {}
+  const { BaseType, ...allTypes } = get(settings.types, 'definitions') || {}
   if(!validateMatchType(BaseType)) return
-
-  const rootTypes = { ...types }
-  const joinedSubTypes = { ...subTypes }
 
   TypesCls.BaseType = new BaseType(get(settings.types, 'config.base') || {})
   return buildTypeCache(
     settings,
-    { rootTypes, subTypes: joinedSubTypes, BaseType: TypesCls.BaseType }
+    { ...allTypes, BaseType: TypesCls.BaseType }
   )
 }
 
-export const buildTypeCache = (settings, allTypes) => {
-  const { rootTypes, subTypes, BaseType } = allTypes  
+const getExtends = factory => {
+  const parent = factory.__proto__ && get(factory.__proto__, 'prototype.constructor')
+  return parent && {
+    name: parent.name,
+    base: parent,
+    factory: parent.constructor
+  }
+}
+
+/**
+ * Formats the passed in types to be used in the jTree Editpr
+ * @param { object } settings - settings passed into the jTree init method
+ * @param { object } allTypes - types to be formatted
+ * 
+ * @returns { object } - formatted Types to use in the editor
+ */
+export const buildTypeCache = (settings, types) => {
+
+  const { BaseType, ...allTypes } = types
   const BaseTypeMeta = {
     name: BaseType.constructor.name,
     base: BaseType,
@@ -59,74 +61,55 @@ export const buildTypeCache = (settings, allTypes) => {
   // Ensure the styles get loaded for the base
   getTypeStyles(settings, BaseType.constructor)
 
-
-  BaseTypeMeta.children = Object
-    .entries(rootTypes)
-    .reduce((allTypes, [ name, factory ]) => {
+  const builtTypes = Object
+    .entries(allTypes)
+    .reduce((types, [ name, factory ]) => {
+      const useName = buildTypeName(name)
       if(!validateMatchType(factory)) return allTypes
       
-      allTypes[name] = {
-        name,
+      types[useName] = {
+        name: useName,
         factory,
-        extends: BaseTypeMeta
+        extends: getExtends(factory, types) || BaseTypeMeta
       }
 
       // Ensure the styles get loaded for each type factory
       getTypeStyles(settings, factory)
 
-      if(subTypes[name])
-        allTypes[name].children = Object.freeze(
-          buildSubTypes(
-            subTypes[name],
-            allTypes[name],
-            settings
-          )
-        )
-      Object.freeze(allTypes[name])
-      
-      return allTypes
+      return types
     }, {})
 
-  Object.defineProperty(BaseTypeMeta.children, Values.MAP_TYPES, {
+  Object.defineProperty(builtTypes, Constants.Values.MAP_TYPES, {
     value: (cb, parent) => mapObj(parent, cb),
     enumerable: false,
   })
 
-  BaseTypeMeta.children = Object.freeze(BaseTypeMeta.children)
-
-  return BaseTypeMeta
+  return Object.freeze(builtTypes)
 }
 
+/**
+ * Formats the type name to not include the word `Type`
+ * @param { string } typeClsName - Name of the type class
+ * 
+ * @returns { string } - name without the word `Type`
+ */
 export const buildTypeName = typeClsName => (
   typeClsName.split('Type').join('').toLowerCase()
 )
 
-export const buildFlatTypes = (startType, opts={}, flatTypes={}) => {
-  if(!startType)
-    return flatTypes || {}
 
-  const filter = Array.isArray(opts.filter) && opts.filter || []
-  return Object
-    .entries((startType).children)
-    .reduce((flatList, [ key, obj ]) => {
-      if(filter.indexOf(key) !== -1) return flatList
-        
-      flatList[key] = obj
-      if(obj.children)
-        flatList = {
-          ...flatList,
-          ...buildFlatTypes(obj, {}, flatList)
-        }
-
-      return flatList
-    }, flatTypes)
-
-}
-
+/**
+ * Overrides a types default attribute with a custom one
+ * attribute must be included in the TYPE_OVERWRITE constant
+ * @param { class instance } typeInstance - created from a Type class
+ * @param { object } config - passed in setting for this Type
+ * 
+ * @returns { void }
+ */
 export const typesOverride = (typeInstance, config) => {
   if(!config) return null
 
-  Object.entries(Values.TYPE_OVERWRITE).map(([ key, type ]) => (
+  Object.entries(Constants.Values.TYPE_OVERWRITE).map(([ key, type ]) => (
     typeof config[key] === type &&
       typeInstance[key] !== config[key] &&
       (typeInstance[key] = config[key])

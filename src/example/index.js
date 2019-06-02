@@ -1,4 +1,7 @@
-import jtDefs from 'jtree-definitions'
+import * as jtDefs from 'jtree-definitions'
+import Constants from 'jtree-definitions/esm/constants'
+
+const { updateDefSchema, updateDefValues } = Constants
 
 
 setTimeout(() => {
@@ -36,39 +39,26 @@ setTimeout(() => {
     Editor && Editor.destroy()
   })
 
-  const onChange = (event, update, id, Editor) => {
-    console.log('on change')
-  }
-
-
-  const onSave = (event, update, id, Editor) => {
-
-  }
-
-
-  const onCancel = (event, update, id, Editor) => {
-    console.log('on cancel')
-  }
-
   const matchHelper = ({ value, key, matchTypes, tree, parent, Editor }) => {
     // Only here as a test for now.... remove later
-    const TypeTree = Editor.Types.get()
+    const AllTypes = Editor.Types.get()
     return typeof value === 'object'
-      ? TypeTree.children.map
-      : TypeTree.children.string
+      ? AllTypes.map
+      : AllTypes.string
   }
     
   const numOnChange = (event, update, id, Editor) => {
     // console.log('------------------ Num onChange ------------------');
   }
 
-
   const init = () => {
     jsonApiCall()
       .then(testData => {
         const useData = emptyObject && {} || testData
         emptyObject = false
-        
+        updateDefSchema(jTree.Constants.Schema)
+        updateDefValues(jTree.Constants.Values)
+
         return jTree.init({
           // ----------- General Settings ---------- //
           element: editorNode,
@@ -80,14 +70,13 @@ setTimeout(() => {
             confirmActions: false,
             // Called for all type events
             // Can override all types events
-            // onChange: onChange,
-            onSave: onSave,
+              // onChange: onChange,
+              // onSave: onSave,
+              // onCancel: onCancel,
             // Can override all events with 'all' ( default )
             // instance will override the event for all instances
             // After the 
             eventOverride: 'instance',
-            // onSave: onSave,
-            // onCancel: onCancel,
             source: useData,
             // Source object to be edited
             root: {
@@ -175,7 +164,6 @@ setTimeout(() => {
               money: {},
               percent: {},
             }
-
           }
         })
       

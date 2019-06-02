@@ -9,7 +9,7 @@ import {
 import { typesOverride } from './types_util'
 import { clearSchema } from './clean_util'
 import { addProp } from './object_util'
-import { Schema, Values } from '../constants'
+import Constants from '../constants'
 import _unset from 'lodash.unset'
 
 let INSTANCE_CACHE
@@ -64,7 +64,7 @@ const buildChild = (childKey, child, props, loopChildren) => {
  * @return { string } - built instance position within the source tree
  */
 export const buildInstancePos = (key, parent) => (
-  key === Schema.ROOT
+  key === Constants.Schema.ROOT
     ? key
     : `${parent.pos}.${key}`
 )
@@ -139,7 +139,7 @@ export const buildInstance = (type, schema, settings) => {
     const config = get(settings.types, `config.${matchType}`) || {}
     const editorConfig = settings.Editor.config || {}
     // Add editor methods to the instance if none defined
-    mapObj(Values.CUSTOM_EVENTS, (key, value) => (
+    mapObj(Constants.Values.CUSTOM_EVENTS, (key, value) => (
       !config[key] && editorConfig[key] && (config[key] = editorConfig[key])
     ))
 
@@ -154,7 +154,7 @@ export const buildInstance = (type, schema, settings) => {
 
       const orgMethod = instance[key]
       instance[key] = (...args) => {
-        if(!Values.CUSTOM_EVENTS[key])
+        if(!Constants.Values.CUSTOM_EVENTS[key])
           return orgMethod(...args, settings.Editor)
 
         let callOrg = false

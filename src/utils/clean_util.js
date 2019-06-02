@@ -14,7 +14,7 @@ const clearTypeCache = (typeCache) => (
       switch(key){
         case 'children':
           Object
-          .values(typeCache.children)
+          .values(typeCache)
           .map(child => clearTypeCache(child))
           break
         case 'extends':

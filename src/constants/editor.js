@@ -1,9 +1,8 @@
-import { Values } from './values'
-
+const NO_OP = () => {}
 export const EditorConfig = Object.freeze({
-  onChange: Values.NO_OP,
-  onSave: Values.NO_OP,
-  onCancel: Values.NO_OP,
+  onChange: NO_OP,
+  onSave: NO_OP,
+  onCancel: NO_OP,
   source: undefined,
   confirmActions: true,
   iconType: 'far',

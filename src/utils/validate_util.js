@@ -1,6 +1,6 @@
 import { isObj, logData } from 'jsUtils'
 import { isConstructor } from './object_util'
-import { Schema } from '../constants'
+import Constants from '../constants'
 import _get from 'lodash.get'
 import _unset from 'lodash.unset'
 
@@ -36,7 +36,7 @@ const validateKeyInArray = (key, parentVal, schema) => {
  * @return { boolean }
  */
 export const validateMatchType = (checkType, TYPE_CACHE) => {
-  const failedClsProps = Schema.TYPE_CLASS_CHECK
+  const failedClsProps = Constants.Schema.TYPE_CLASS_CHECK
     .reduce((failedCheck, prop) => {
       !(checkType.hasOwnProperty(prop)) && failedCheck.push(prop)
       return failedCheck
@@ -107,7 +107,7 @@ export const validateUpdate = (tree, idOrPos, update, settings) => {
 
   // Get the current data in the tree, and the current schema
   const schema = tree.schema[pos]
-  const isEmptyType = schema.matchType === Schema.EMPTY
+  const isEmptyType = schema.matchType === Constants.Schema.EMPTY
   //  Check if data in the tree, or if it was an empty type
   if(!schema && !isEmptyType)
     return { error: `Could not find node in tree that matches ${idOrPos}!` }
@@ -117,19 +117,19 @@ export const validateUpdate = (tree, idOrPos, update, settings) => {
     { error: `Update method third argument must be an object!`}
   
   // Finished validating for REMOVE and REPLACE updates
-  if(update.mode === Schema.MODES.REMOVE || update.mode === Schema.MODES.REPLACE)
+  if(update.mode === Constants.Schema.MODES.REMOVE || update.mode === Constants.Schema.MODES.REPLACE)
     return { schema, pos }
   
   // Check if in add more, but no match type exists
   // If adding a node to the tree, we must know what type it should be
-  if(schema.mode === Schema.MODES.ADD && !update.matchType)
+  if(schema.mode === Constants.Schema.MODES.ADD && !update.matchType)
     return { error: `A valid type is required to update the item!`}
 
   // Validate the update properties, to ensure we only update what is allowed
   const nonValid = Object
     .keys(update)
     .reduce((notValid, prop) => {
-      if(Schema.TREE_UPDATE_PROPS.indexOf(prop) == -1 )
+      if(Constants.Schema.TREE_UPDATE_PROPS.indexOf(prop) == -1 )
         notValid = prop
       
       return notValid
