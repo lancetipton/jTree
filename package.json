@@ -1,6 +1,6 @@
 {
   "name": "jtree",
-  "version": "1.2",
+  "version": "1.2.0",
   "description": "Json and Javascript object editor",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
   "main": "cjs/index.js",
