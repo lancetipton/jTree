@@ -1,7 +1,7 @@
 "use strict";
 
-var jtree = require('../index.js');
+var jTree = require('../index.js');
 
-describe('jtree', function () {
+describe('jTree', function () {
   describe('', function () {});
 });

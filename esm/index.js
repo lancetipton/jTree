@@ -52,7 +52,7 @@ var TEMP;
 /**
  * Updates the schema where the error occurred
  * Rebuilds the tree from the position the error occurred
- * @param  { object } jtree - jtree editor object
+ * @param  { object } jTree - jTree editor object
  * @param  { string } pos - location of the error
  * @param  { object } settings - config to for the tree data
  * @param  { string } prop - property where the error occurred
@@ -62,24 +62,24 @@ var TEMP;
  * @return { void }
  */
 
-var handelUpdateError = function handelUpdateError(jtree, pos, settings, prop, value, message) {
-  if (!pos || !jtree.tree.schema[pos]) return (0, _jsutils.logData)("Could not find ".concat(pos, " in the tree!")); // Update the schema for the node with the error
+var handelUpdateError = function handelUpdateError(jTree, pos, settings, prop, value, message) {
+  if (!pos || !jTree.tree.schema[pos]) return (0, _jsutils.logData)("Could not find ".concat(pos, " in the tree!")); // Update the schema for the node with the error
 
-  (0, _jTUtils.updateSchemaError)(jtree.tree, jtree.tree.schema[pos], settings, prop, value, message); // Re-render the tree from this pos, so the error is shown
+  (0, _jTUtils.updateSchemaError)(jTree.tree, jTree.tree.schema[pos], settings, prop, value, message); // Re-render the tree from this pos, so the error is shown
 
-  (0, _jTUtils.buildFromPos)(jtree, pos, settings);
+  (0, _jTUtils.buildFromPos)(jTree, pos, settings);
 };
 
-var doKeyUpdate = function doKeyUpdate(jtree, update, pos, schema, settings) {
-  var valid = (0, _jTUtils.validateKey)(update.key, jtree.tree, pos, schema); // If the key is not valid, then update the schema error
+var doKeyUpdate = function doKeyUpdate(jTree, update, pos, schema, settings) {
+  var valid = (0, _jTUtils.validateKey)(update.key, jTree.tree, pos, schema); // If the key is not valid, then update the schema error
 
-  if (!valid || valid.error) return handelUpdateError(jtree, pos, settings, 'key', update.key, valid.error);
-  var updated = (0, _jTUtils.updateKey)(jtree.tree, pos, schema, settings);
-  if (!updated || updated.error) return handelUpdateError(jtree, pos, settings, 'key', update.key, updated.error);
+  if (!valid || valid.error) return handelUpdateError(jTree, pos, settings, 'key', update.key, valid.error);
+  var updated = (0, _jTUtils.updateKey)(jTree.tree, pos, schema, settings);
+  if (!updated || updated.error) return handelUpdateError(jTree, pos, settings, 'key', update.key, updated.error);
   return updated.pos;
 };
 
-var doUpdateData = function doUpdateData(jtree, update, pos, schema, settings) {
+var doUpdateData = function doUpdateData(jTree, update, pos, schema, settings) {
   var invalid; // Loop over the allowed props to be update
 
   _constants.default.Schema.TREE_UPDATE_PROPS.map(function (prop) {
@@ -88,23 +88,23 @@ var doUpdateData = function doUpdateData(jtree, update, pos, schema, settings) {
     // and the passed in update object
     // Then call the action to update it
 
-    invalid = prop in update && (0, _jsutils.checkCall)(UPDATE_ACTIONS[prop], jtree.tree, pos, schema, settings, prop);
+    invalid = prop in update && (0, _jsutils.checkCall)(UPDATE_ACTIONS[prop], jTree.tree, pos, schema, settings, prop);
     if (!invalid) return;
     invalid.prop = prop;
     invalid.value = update[prop];
   });
 
-  if (invalid && invalid.error) return handelUpdateError(jtree, pos, settings, invalid.prop, invalid.value, invalid.error);
+  if (invalid && invalid.error) return handelUpdateError(jTree, pos, settings, invalid.prop, invalid.value, invalid.error);
   return true;
 };
 
-var addTempProp = function addTempProp(jtree) {
+var addTempProp = function addTempProp(jTree) {
   var TEMP_ID = false; // Add temp prop this way so we can set with string id
   // And when get it called, it returns with temp object
 
-  (0, _jTUtils.addProp)(jtree, 'temp', {
+  (0, _jTUtils.addProp)(jTree, 'temp', {
     get: function get() {
-      return _objectSpread({}, TEMP_ID && jtree.schema(TEMP_ID) || {}, {
+      return _objectSpread({}, TEMP_ID && jTree.schema(TEMP_ID) || {}, {
         mode: _constants.default.Schema.MODES.TEMP
       });
     },
@@ -115,7 +115,7 @@ var addTempProp = function addTempProp(jtree) {
     configurable: true
   });
 
-  jtree.hasTemp = function () {
+  jTree.hasTemp = function () {
     return Boolean(TEMP_ID);
   };
 };
@@ -132,10 +132,10 @@ var shouldShowConfirm = function shouldShowConfirm(update) {
 };
 
 var createEditor = function createEditor(settings, editorConfig, domContainer) {
-  var jtree = function jtree() {
+  var jTree = function jTree() {
     var _this = this;
 
-    _classCallCheck(this, jtree);
+    _classCallCheck(this, jTree);
 
     _defineProperty(this, "buildTypes", function (source) {
       if (source && source !== ACT_SOURCE) return _this.setSource(source);
@@ -218,7 +218,7 @@ var createEditor = function createEditor(settings, editorConfig, domContainer) {
       replace.value = (0, _jTUtils.cloneDeep)(replace.value); // Add / Remove schemas from tree
 
       var invalid = (0, _jTUtils.addRemoveSchema)(replace, schema, _this.tree);
-      if (invalid && invalid.error) return handelUpdateError(jtree, pos, settings, invalid.key, replace[invalid.key], invalid.error); // Re-render from the parentPos
+      if (invalid && invalid.error) return handelUpdateError(jTree, pos, settings, invalid.key, replace[invalid.key], invalid.error); // Re-render from the parentPos
 
       replace.parent && replace.parent.pos && (0, _jTUtils.buildFromPos)(_this, replace.parent && replace.parent.pos, settings);
     });
@@ -300,13 +300,13 @@ var createEditor = function createEditor(settings, editorConfig, domContainer) {
     return _source && this.setSource(_source, true);
   };
 
-  return new jtree();
+  return new jTree();
 };
 
 var init = function init(opts) {
   if (opts.showLogs) (0, _jsutils.setLogs)(true);
   var domContainer = (0, _jTUtils.getElement)(opts.element);
-  if (!domContainer) return (0, _jsutils.logData)("Dom node ( element ) is required when calling the jtree init method", 'error'); // Remove element, and showLogs cause we don't need them anymore
+  if (!domContainer) return (0, _jsutils.logData)("Dom node ( element ) is required when calling the jTree init method", 'error'); // Remove element, and showLogs cause we don't need them anymore
 
   var element = opts.element,
       showLogs = opts.showLogs,
@@ -319,7 +319,7 @@ var init = function init(opts) {
   var settings = (0, _jsutils.deepMerge)(_constants.DEF_SETTINGS, options);
   var editorConfig = (0, _jsutils.deepMerge)(_constants.default.EditorConfig, editor); // Enable confirm actions
 
-  (0, _jTUtils.setConfirm)(editorConfig.confirmActions); // Create the jtree Editor
+  (0, _jTUtils.setConfirm)(editorConfig.confirmActions); // Create the jTree Editor
 
   return createEditor(settings, editorConfig, domContainer);
 };

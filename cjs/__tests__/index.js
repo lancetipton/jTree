@@ -1,7 +1,7 @@
 "use strict";
 
-const jtree = require('../index.js');
+const jTree = require('../index.js');
 
-describe('jtree', () => {
+describe('jTree', () => {
   describe('', () => {});
 });
