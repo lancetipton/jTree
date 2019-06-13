@@ -11,7 +11,7 @@ var _clean_util = require("./clean_util");
 
 var _instance_util = require("./instance_util");
 
-var _jTConstants = _interopRequireDefault(require("jTConstants"));
+var _constants = _interopRequireDefault(require("../constants"));
 
 var _lodash = _interopRequireDefault(require("lodash.get"));
 
@@ -179,7 +179,7 @@ var updateType = function updateType(tree, pos, schema, settings) {
   tree.schema[pos] = _objectSpread({}, schema, {
     pending: true,
     instance: (0, _instance_util.buildInstance)(newType, schema, settings),
-    mode: _jTConstants.default.Schema.MODES.EDIT
+    mode: _constants.default.Schema.MODES.EDIT
   });
 };
 /**

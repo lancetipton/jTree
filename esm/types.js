@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.TypesCls = TypesCls;
 exports.buildTypes = void 0;
 
-var _jTUtils = require("jTUtils");
+var _utils = require("./utils");
 
 var _jsutils = require("jsutils");
 
@@ -29,7 +29,7 @@ var FLAT_TYPES;
 var buildTypes = function buildTypes(source, settings, elementCb) {
   var _tree;
 
-  if (!(0, _jTUtils.validateBuildTypes)(source, settings.Editor)) return null;
+  if (!(0, _utils.validateBuildTypes)(source, settings.Editor)) return null;
   var tree = (_tree = {
     schema: {}
   }, _defineProperty(_tree, _constants.default.Schema.ROOT, source), _defineProperty(_tree, "idMap", {}), _tree);
@@ -37,7 +37,7 @@ var buildTypes = function buildTypes(source, settings, elementCb) {
     value: source,
     key: _constants.default.Schema.ROOT
   };
-  return (0, _jTUtils.loopSource)(rootSchema, tree, settings, elementCb);
+  return (0, _utils.loopSource)(rootSchema, tree, settings, elementCb);
 };
 
 exports.buildTypes = buildTypes;
@@ -54,7 +54,7 @@ function TypesCls(settings) {
 
     _defineProperty(this, "clear", function () {
       var includeClass = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-      (0, _jTUtils.clearTypeData)(_this, TYPE_CACHE, includeClass);
+      (0, _utils.clearTypeData)(_this, TYPE_CACHE, includeClass);
       TYPE_CACHE = undefined;
       (0, _jsutils.mapObj)(FLAT_TYPES, function (key) {
         return (0, _lodash.default)(FLAT_TYPES[key]);
@@ -63,17 +63,17 @@ function TypesCls(settings) {
     });
 
     _defineProperty(this, "register", function (newType) {
-      if (!(0, _jTUtils.validateMatchType)(newType, TYPE_CACHE)) return null;
+      if (!(0, _utils.validateMatchType)(newType, TYPE_CACHE)) return null;
     });
 
     _defineProperty(this, "rebuild", function () {
       _this.clear(false);
 
-      TYPE_CACHE = (0, _jTUtils.initTypeCache)(_this, settings);
+      TYPE_CACHE = (0, _utils.initTypeCache)(_this, settings);
     });
 
     _defineProperty(this, "getValueTypes", function (value) {
-      var matchTypes = _jTUtils.getMatchTypes.apply(_this, [TYPE_CACHE, value, TYPE_CACHE, settings, {}]);
+      var matchTypes = _utils.getMatchTypes.apply(_this, [TYPE_CACHE, value, TYPE_CACHE, settings, {}]);
 
       if (matchTypes.highest && matchTypes[matchTypes.highest]) return matchTypes[matchTypes.highest];
       var firstKey = (0, _jsutils.isObj)(matchTypes) && Object.keys(matchTypes)[0];
@@ -89,7 +89,7 @@ function TypesCls(settings) {
     if (!settings.types || !settings.types.definitions) return (0, _jsutils.logData)("No types found as 'settings.types.definitions'", 'error');
     STYLE_LOADER = new _styleloader.default();
     settings.styleLoader = STYLE_LOADER;
-    TYPE_CACHE = (0, _jTUtils.initTypeCache)(this, settings);
+    TYPE_CACHE = (0, _utils.initTypeCache)(this, settings);
   };
 
   return new Types();

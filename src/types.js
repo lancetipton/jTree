@@ -5,7 +5,7 @@ import {
   loopSource,
   validateBuildTypes,
   validateMatchType,
-} from 'jTUtils'
+} from './utils'
 import { logData, isObj, mapObj } from 'jsutils'
 import _unset from 'lodash.unset'
 import Constants from './constants'

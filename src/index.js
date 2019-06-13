@@ -24,7 +24,7 @@ import {
   validateKey,
   validateSource,
   validateUpdate,
-} from 'jTUtils'
+} from './utils'
 
 import {
   capitalize,

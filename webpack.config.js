@@ -65,13 +65,6 @@ const wpConfig = {
   watchOptions: {
     aggregateTimeout: 1000,
   },
-  resolve: {
-    alias: {
-      jTConstants: path.resolve(__dirname, './src/constants'),
-      jTUtils: path.resolve(__dirname, './src/utils'),
-      jTRoot: path.resolve(__dirname, './src/'),
-    },
-  },  
   optimization: {
     nodeEnv: NODE_ENV,
     minimizer: [

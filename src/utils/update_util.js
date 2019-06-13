@@ -8,7 +8,7 @@ import {
 
 import { clearSchema } from './clean_util'
 import { clearInstance, buildInstance } from './instance_util'
-import Constants from 'jTConstants'
+import Constants from '../constants'
 import _get from 'lodash.get'
 import _set from 'lodash.set'
 import _unset from 'lodash.unset'
