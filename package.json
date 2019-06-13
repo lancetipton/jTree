@@ -1,10 +1,10 @@
 {
   "name": "jtree",
-  "version": "1.1.1",
+  "version": "1.2",
   "description": "Json and Javascript object editor",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
-  "main": "cjs/",
-  "module": "esm/",
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -37,7 +37,6 @@
     "clean": "yarn cache clean && rm -rf yarn.lock && rm -rf node_modules",
     "deploy": "gh-pages -d build",
     "dev": "NODE_ENV=development webpack --watch --progress",
-    "postinstall": "yarn build:clean && yarn build",
     "test": "NODE_ENV=test jest --verbose",
     "web": "http-server ./build -p 8888 --cors"
   },
@@ -61,6 +60,7 @@
     "jest": "^24.7.1",
     "jest-cli": "^24.7.1",
     "jsUtils": "git+https://github.com/lancetipton/jsUtils.git",
+    "jTree": "git+https://github.com/lancetipton/jTree.git",
     "jtree-definitions": "git+https://github.com/lancetipton/jtree-definitions.git",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
