@@ -1,4 +1,4 @@
-import { clearObj, isObj, mapObj, logData } from 'jsUtils'
+import { clearObj, isObj, mapObj, logData } from 'jsutils'
 import { clearInstanceCache, clearInstance } from './instance_util'
 import _unset from 'lodash.unset'
 

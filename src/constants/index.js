@@ -1,7 +1,7 @@
 export * from './diff'
 export * from './editor'
 export * from './settings'
-import { deepFreeze } from 'jsUtils'
+import { deepFreeze } from 'jsutils'
 import { Schema } from './schema'
 import { Values } from './values'
 

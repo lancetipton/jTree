@@ -1,4 +1,4 @@
-import { isObj, logData } from 'jsUtils'
+import { isObj, logData } from 'jsutils'
 import { isConstructor } from './object_util'
 import Constants from '../constants'
 import _get from 'lodash.get'

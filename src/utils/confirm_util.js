@@ -1,4 +1,4 @@
-import  { isFunc, isStr } from 'jsUtils'
+import  { isFunc, isStr } from 'jsutils'
 
 let CONFIRM_ACTION
 let CUSTOM_CONFIRM

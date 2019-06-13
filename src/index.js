@@ -35,7 +35,7 @@ import {
   setLogs,
   isObj,
   logData,
-} from 'jsUtils'
+} from 'jsutils'
 
 import Constants from './constants'
 import { buildTypes, TypesCls } from './types'

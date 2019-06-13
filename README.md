@@ -1,32 +1,32 @@
-# jTree ( JS / JSON Object Editor )
+# jtree ( JS / JSON Object Editor )
 
-jTree is a UI for manipulating javascript and JSON objects. See example [here](https://lancetipton.github.io/jTree/)
+jtree is a UI for manipulating javascript and JSON objects. See example [here](https://lancetipton.github.io/jtree/)
 
 ## Install
 
   * Download the repo
     ```js
       // Clone repo
-      git clone https://github.com/lancetipton/jTree.git
+      git clone https://github.com/lancetipton/jtree.git
       // Or Add to package.json
       "dependencies": {
-        "jTree": "git+https://github.com/lancetipton/jTree.git"
+        "jtree": "git+https://github.com/lancetipton/jtree.git"
         ...
       },
     ```
   * Add to your code
     ```js
       // * Import into code
-        import jTree from 'jTree'
+        import jtree from 'jtree'
 
       // * Require code
-        const jTree = require('jTree')
+        const jtree = require('jtree')
       
       // * Add as html script
-        <script src='/path/to/jTree/build/jTree.min.js'></script>
+        <script src='/path/to/jtree/build/jtree.min.js'></script>
         // elementR will be available on the window 
         <script>
-          const jTree = window.jTree
+          const jtree = window.jtree
         </script>
     ```
 

@@ -6,7 +6,7 @@ import {
   validateBuildTypes,
   validateMatchType,
 } from 'jTUtils'
-import { logData, isObj, mapObj } from 'jsUtils'
+import { logData, isObj, mapObj } from 'jsutils'
 import _unset from 'lodash.unset'
 import Constants from './constants'
 import StyleLoader from 'styleloader'

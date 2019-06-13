@@ -56,16 +56,16 @@ setTimeout(() => {
       .then(testData => {
         const useData = emptyObject && {} || testData
         emptyObject = false
-        updateDefSchema(jTree.Constants.Schema)
-        updateDefValues(jTree.Constants.Values)
+        updateDefSchema(jtree.Constants.Schema)
+        updateDefValues(jtree.Constants.Values)
 
-        return jTree.init({
+        return jtree.init({
           // ----------- General Settings ---------- //
           element: editorNode,
           showLogs: true,
           // ----------- Editor Config ---------- //
           editor: {
-            // Pass a custom method, or true to confirm all jTree changes
+            // Pass a custom method, or true to confirm all jtree changes
             // Defaults to showing window.confirm dialog for actions
             confirmActions: false,
             // Called for all type events

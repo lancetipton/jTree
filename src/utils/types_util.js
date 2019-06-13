@@ -1,4 +1,4 @@
-import { mapObj, uuid, get } from 'jsUtils'
+import { mapObj, uuid, get } from 'jsutils'
 import { validateMatchType } from './validate_util'
 import Constants from '../constants'
 
@@ -18,7 +18,7 @@ const buildStyleId = Type => {
 /**
  * Builds the passed in types to be used with the Main TypeClass
  * @param { class instance } TypesCls - built TypeClass instance
- * @param { object } settings - settings passed into the jTree init method
+ * @param { object } settings - settings passed into the jtree init method
  * 
  * @returns { object } - built Types to use in the editor
  */
@@ -43,8 +43,8 @@ const getExtends = factory => {
 }
 
 /**
- * Formats the passed in types to be used in the jTree Editpr
- * @param { object } settings - settings passed into the jTree init method
+ * Formats the passed in types to be used in the jtree Editpr
+ * @param { object } settings - settings passed into the jtree init method
  * @param { object } allTypes - types to be formatted
  * 
  * @returns { object } - formatted Types to use in the editor

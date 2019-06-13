@@ -5,7 +5,7 @@ import {
   mapObj,
   isFunc,
   checkCall
-} from 'jsUtils'
+} from 'jsutils'
 import { typesOverride } from './types_util'
 import { clearSchema } from './clean_util'
 import { addProp } from './object_util'

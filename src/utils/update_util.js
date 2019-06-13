@@ -4,7 +4,7 @@ import {
   uuid,
   isFunc,
   checkCall
-} from 'jsUtils'
+} from 'jsutils'
 
 import { clearSchema } from './clean_util'
 import { clearInstance, buildInstance } from './instance_util'
@@ -77,7 +77,7 @@ const buildNewPos = (pos, key, replace=true) => {
 
 /**
  * Checks if the passed in pos already exists in the tree
- * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { object } tree - object containing the entire jtree object structure 
  * @param  { string } pos - location in the tree to check
  */
 const checkSchemaPos = (tree, pos, checkExists) => (
@@ -102,7 +102,7 @@ const checkSchemaPos = (tree, pos, checkExists) => (
 
 /**
  * Updates the error field on a schema
- * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { object } tree - object containing the entire jtree object structure 
  * @param  { object } schema - current schema being updated
  * @param { object } settings - current settings of the Editor
  * @param { string } prop - prop on the schema where the error occured
@@ -144,7 +144,7 @@ export const updateSchema = (update, schema) => {
 
 /**
  * Updates the matchType of the tree node at the passed in pos
- * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { object } tree - object containing the entire jtree object structure 
  * @param  { string } pos - string position in the tree
  * @param  { object } schema - data that defines the object at the current pos
  * @return { void }
@@ -196,7 +196,7 @@ export const updateType = (tree, pos, schema, settings) => {
 
 /**
  * Updates the value of the tree node at the passed in pos
- * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { object } tree - object containing the entire jtree object structure 
  * @param  { string } pos - string position in the tree
  * @param  { object } schema - data that defines the object at the current pos
  * @return { void }
@@ -215,7 +215,7 @@ export const updateValue = (tree, pos, schema, settings) => {
 /**
  * Updates the position of an node in the tree
  * Updates the global tree object with the new position and schema
- * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { object } tree - object containing the entire jtree object structure 
  * @param  { string } pos - string position in the tree
  * @param  { object } schema - data that defines the object at the current pos
  * @return { string } - updated position based on the new key
@@ -265,7 +265,7 @@ export const updateKey = (tree, pos, schema, settings) => {
 /**
  * Updates schema.open prop of the node in the tree, to the passed in prop
  * Updates the global tree object with the new position and schema
- * @param  { object } tree - object containing the entire jTree object structure 
+ * @param  { object } tree - object containing the entire jtree object structure 
  * @param  { string } pos - string position in the tree
  * @param  { object } schema - data that defines the object at the current pos
  * @return { string } - updated position based on the new key

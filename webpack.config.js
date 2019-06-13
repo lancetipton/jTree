@@ -3,7 +3,7 @@ const CleanWebpackPlugin = require('../jtree-definitions/node_modules/clean-webp
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack')
-const libraryName = 'jTree'
+const libraryName = 'jtree'
 const NODE_ENV = process.env.NODE_ENV
 const isDev = NODE_ENV === 'development'
 const buildPath = 'build'

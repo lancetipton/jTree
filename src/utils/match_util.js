@@ -1,4 +1,4 @@
-import { checkCall, isObj } from 'jsUtils'
+import { checkCall, isObj } from 'jsutils'
 import Constants from '../constants'
 
 /**

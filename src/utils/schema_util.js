@@ -3,7 +3,7 @@ import {
   isStr,
   uuid,
   checkCall,
-} from 'jsUtils'
+} from 'jsutils'
 import { checkMultiMatches } from './match_util'
 import { upsertElement, removeElement } from './dom_util'
 import { addProp, isConstructor } from './object_util'
@@ -211,11 +211,11 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
  *
  * @return { void }
  */
-export const appendTreeHelper = (jTree, rootComp, appendTree, tree) => {
-  const res = checkCall(appendTree, rootComp, jTree, tree)
-  if(res === false || !jTree.element) return null
+export const appendTreeHelper = (jtree, rootComp, appendTree, tree) => {
+  const res = checkCall(appendTree, rootComp, jtree, tree)
+  if(res === false || !jtree.element) return null
 
-  upsertElement(rootComp, jTree.element)
+  upsertElement(rootComp, jtree.element)
   const pos = tree.idMap[rootComp.id]
   callInstanceUpdates(tree, pos)
 }
@@ -223,25 +223,25 @@ export const appendTreeHelper = (jTree, rootComp, appendTree, tree) => {
 /**
  * Rebuilds the dom from a position in the tree
  * Only that pos and it's children are re-build
- * @param  { object } jTree - jTree editor object
+ * @param  { object } jtree - jtree editor object
  * @param  { string } pos - location to start rebuild from
  * @param  { object } settings - config to for the tree data
  *
  * @return { object || dom element } - tree if root element otherwise dom element
  */
-export const buildFromPos = (jTree, pos, settings) => {
-  if(!isStr(pos) || !jTree.tree.schema[pos])
+export const buildFromPos = (jtree, pos, settings) => {
+  if(!isStr(pos) || !jtree.tree.schema[pos])
     return logData(
       `Rebuild was called, but ${pos} does not exist it the tree`,
-      jTree.tree,
+      jtree.tree,
       pos,
       'warn'
     )
   
-  const renderSchema = jTree.tree.schema[pos]
+  const renderSchema = jtree.tree.schema[pos]
   const updatedEl = loopSource(
     renderSchema,
-    jTree.tree,
+    jtree.tree,
     settings,
     appendTreeHelper
   )
@@ -260,5 +260,5 @@ export const buildFromPos = (jTree, pos, settings) => {
   // Adds the dom node to the tree
   upsertElement(updatedEl, renderSchema.domNode)
   // Calls the domNode life cycle methods
-  callInstanceUpdates(jTree.tree, renderSchema.pos)
+  callInstanceUpdates(jtree.tree, renderSchema.pos)
 }

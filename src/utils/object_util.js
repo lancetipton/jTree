@@ -1,5 +1,5 @@
 import _unset from 'lodash.unset'
-import { isObj } from 'jsUtils'
+import { isObj } from 'jsutils'
 export { default as cloneDeep } from 'lodash.clonedeep'
 
 
