@@ -1,6 +1,6 @@
 {
   "name": "jtree",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Json and Javascript object editor",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
   "main": "build/jtree.js",
