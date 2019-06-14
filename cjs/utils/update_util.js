@@ -25,12 +25,6 @@ var _instance_util = require("./instance_util");
 
 var _constants = _interopRequireDefault(require("../constants"));
 
-var _lodash = _interopRequireDefault(require("lodash.get"));
-
-var _lodash2 = _interopRequireDefault(require("lodash.set"));
-
-var _lodash3 = _interopRequireDefault(require("lodash.unset"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
@@ -151,7 +145,7 @@ const updateType = (tree, pos, schema, settings) => {
   if (!checkSchemaPos(tree, pos, true)) return; // Remove the old instance
 
   (0, _instance_util.clearInstance)(schema.id);
-  (0, _lodash3.default)(schema, 'instance'); // Get the type to switch to
+  (0, _jsutils.unset)(schema, 'instance'); // Get the type to switch to
 
   const newType = settings.Editor.Types.get(schema.matchType);
   if (!newType) return {
@@ -169,7 +163,7 @@ const updateType = (tree, pos, schema, settings) => {
     error: `'Not a valid value for ${(newType.factory.name || '').replace('Type', '')}` // If there's a value, and no error, then set it in the tree
 
   };
-  if (hasValue && !schema.error) (0, _lodash2.default)(tree, schema.pos, schema.value);
+  if (hasValue && !schema.error) (0, _jsutils.set)(tree, schema.pos, schema.value);
   tree.schema[pos] = _objectSpread({}, schema, {
     pending: true,
     instance: (0, _instance_util.buildInstance)(newType, schema, settings),
@@ -194,8 +188,8 @@ const updateValue = (tree, pos, schema, settings) => {
   if ('value' in schema && !factory.eval(schema.value)) return {
     error: `Not a valid value for ${(factory.name || '').replace('Type', '')}`
   };
-  (0, _lodash2.default)(tree, pos, schema.value);
-  (0, _lodash2.default)(tree.schema[pos], 'value', schema.value);
+  (0, _jsutils.set)(tree, pos, schema.value);
+  (0, _jsutils.set)(tree.schema[pos], 'value', schema.value);
 };
 /**
  * Updates the position of an node in the tree
@@ -214,7 +208,7 @@ const updateKey = (tree, pos, schema, settings) => {
     error: `Can not set key to a falsy value!` // Cache the current value at that pos
 
   };
-  const currentVal = (0, _lodash.default)(tree, pos); // Get the new pos based on the update key and old pos
+  const currentVal = (0, _jsutils.get)(tree, pos); // Get the new pos based on the update key and old pos
 
   const updatedPos = buildNewPos(pos, schema.key); // If the key was not actually changed, just return
 
@@ -225,12 +219,12 @@ const updateKey = (tree, pos, schema, settings) => {
     error: `Can not update key ${schema.key}, because it already exists!` // Remove the old value in the tree
 
   };
-  const unsetContent = (0, _lodash3.default)(tree, pos);
+  const unsetContent = (0, _jsutils.unset)(tree, pos);
   if (!unsetContent) return {
     error: `Could not update key, because ${pos} could not be removed!` // Set the new value in the tree
 
   };
-  (0, _lodash2.default)(tree, updatedPos, currentVal); // Set the new schema data, with the new pos
+  (0, _jsutils.set)(tree, updatedPos, currentVal); // Set the new schema data, with the new pos
 
   tree.schema[updatedPos] = _objectSpread({}, tree.schema[pos], schema, {
     // Overwrite the original pos with updated on
@@ -272,7 +266,7 @@ exports.updateSchemaProp = updateSchemaProp;
 
 const addChildSchema = (tree, schema, parent) => {
   if (!tree || !(0, _jsutils.isObj)(schema) || !(0, _jsutils.isObj)(parent)) return;
-  const parentVal = (0, _lodash.default)(tree, parent.pos);
+  const parentVal = (0, _jsutils.get)(tree, parent.pos);
   if (!parentVal || typeof parentVal !== 'object') return;
   schema.id = schema.id || (0, _jsutils.uuid)();
   if (tree.idMap[schema.id]) return (0, _jsutils.logData)(`Can not add child to tree. Schema id already exists!`, schema.id, tree.schema[tree.idMap[schema.id]], 'error');
@@ -317,7 +311,7 @@ const addRemoveSchema = (add, remove, tree) => {
       key: 'id' // Set in tree
 
     };
-    add.value && (0, _lodash2.default)(tree, add.pos, add.value); // Set in idMap
+    add.value && (0, _jsutils.set)(tree, add.pos, add.value); // Set in idMap
 
     add.id && (tree.idMap[add.id] = add.pos); // Set in schema
 

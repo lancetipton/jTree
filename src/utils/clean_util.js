@@ -1,6 +1,5 @@
-import { clearObj, isObj, mapObj, logData } from 'jsutils'
+import { clearObj, isObj, mapObj, logData, unset } from 'jsutils'
 import { clearInstanceCache, clearInstance } from './instance_util'
-import _unset from 'lodash.unset'
 
 const cleanSettingsObj = settings => {
   clearObj(settings.Editor.config)
@@ -20,10 +19,10 @@ const clearTypeCache = (typeCache) => (
         case 'extends':
           Object
           .keys(typeCache.extends)
-          .map(key => _unset(typeCache.extends, key))
+          .map(key => unset(typeCache.extends, key))
           break
       }
-      _unset(typeCache, key)
+      unset(typeCache, key)
     }).length || (typeCache = undefined)
 )
 
@@ -50,16 +49,16 @@ export const clearSchema = (schema, tree, removeInstance=true) => {
   // Sometimes the instance is re-used, so check before removing. I.E. replace
   removeInstance && clearInstance(schema.id)
   // Remove ref in the tree idMap
-  _unset(tree.idMap, schema.id)
+  unset(tree.idMap, schema.id)
   
   // Remove all references to clear out potential memory leaks
-  _unset(schema, 'domNode')
-  _unset(schema, 'parent')
-  _unset(schema, 'instance')
-  _unset(schema, 'value')
+  unset(schema, 'domNode')
+  unset(schema, 'parent')
+  unset(schema, 'instance')
+  unset(schema, 'value')
 
   // Remove the schema from the tree of schemas
-  _unset(tree.schema, schema.pos)
+  unset(tree.schema, schema.pos)
   clearObj(schema)
 
   // Loop over the tree schema and clear out any child schemas to the current schema
@@ -72,7 +71,7 @@ export const clearSchema = (schema, tree, removeInstance=true) => {
 
 export const clearTypeData = (TypeCls, typeCache, includeClass=true) => {
   clearTypeCache(typeCache)
-  _unset(TypeCls, 'BaseType')
+  unset(TypeCls, 'BaseType')
   includeClass && clearObj(TypeCls)
 }
 

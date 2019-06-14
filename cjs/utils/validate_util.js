@@ -13,10 +13,6 @@ var _object_util = require("./object_util");
 
 var _constants = _interopRequireDefault(require("../constants"));
 
-var _lodash = _interopRequireDefault(require("lodash.get"));
-
-var _lodash2 = _interopRequireDefault(require("lodash.unset"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 /**

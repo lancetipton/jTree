@@ -1,21 +1,16 @@
-import { buildTypeName } from './types_util'
-import {
-  isStr,
-  uuid,
-  checkCall,
-} from 'jsutils'
-import { checkMultiMatches } from './match_util'
-import { upsertElement, removeElement } from './dom_util'
-import { addProp, isConstructor } from './object_util'
 import {
   buildInstance,
   buildInstancePos,
   callInstanceUpdates,
   renderInstance,
 } from './instance_util'
-import _unset from 'lodash.unset'
-import _get from 'lodash.get'
+import { checkCall, get, isStr, uuid } from 'jsutils'
+import { buildTypeName } from './types_util'
+import { checkMultiMatches } from './match_util'
+import { upsertElement, removeElement } from './dom_util'
+import { addProp, isConstructor } from './object_util'
 import Constants from '../constants'
+
 /**
  * Ensures the props object is not changed durring the render method of a Type
  * Helps to ensure props is only update through the editor
@@ -158,8 +153,8 @@ export const loopSource = (curSchema, tree, settings, elementCb) => {
   }
 
   if(isRoot && !curSchema.id){
-    props.schema.open = _get(settings, 'Editor.config.root.start') === 'open'
-    props.schema.keyText = _get(settings, 'Editor.config.root.title', schema.key)
+    props.schema.open = get(settings, 'Editor.config.root.start') === 'open'
+    props.schema.keyText = get(settings, 'Editor.config.root.title', schema.key)
   }
 
   // Render the domNode and it's children

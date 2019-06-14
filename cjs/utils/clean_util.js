@@ -15,10 +15,6 @@ var _jsutils = require("jsutils");
 
 var _instance_util = require("./instance_util");
 
-var _lodash = _interopRequireDefault(require("lodash.unset"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 const cleanSettingsObj = settings => {
   (0, _jsutils.clearObj)(settings.Editor.config);
   (0, _jsutils.clearObj)(settings);
@@ -31,11 +27,11 @@ const clearTypeCache = typeCache => (0, _jsutils.isObj)(typeCache) && Object.key
       break;
 
     case 'extends':
-      Object.keys(typeCache.extends).map(key => (0, _lodash.default)(typeCache.extends, key));
+      Object.keys(typeCache.extends).map(key => (0, _jsutils.unset)(typeCache.extends, key));
       break;
   }
 
-  (0, _lodash.default)(typeCache, key);
+  (0, _jsutils.unset)(typeCache, key);
 }).length || (typeCache = undefined);
 
 const cleanTreeSchema = tree => Object.keys(tree.schema).map(key => tree.schema[key] && (clearSchema(tree.schema[key], tree) || (tree.schema[key] = undefined)));
@@ -52,14 +48,14 @@ const clearSchema = (schema, tree, removeInstance = true) => {
 
   removeInstance && (0, _instance_util.clearInstance)(schema.id); // Remove ref in the tree idMap
 
-  (0, _lodash.default)(tree.idMap, schema.id); // Remove all references to clear out potential memory leaks
+  (0, _jsutils.unset)(tree.idMap, schema.id); // Remove all references to clear out potential memory leaks
 
-  (0, _lodash.default)(schema, 'domNode');
-  (0, _lodash.default)(schema, 'parent');
-  (0, _lodash.default)(schema, 'instance');
-  (0, _lodash.default)(schema, 'value'); // Remove the schema from the tree of schemas
+  (0, _jsutils.unset)(schema, 'domNode');
+  (0, _jsutils.unset)(schema, 'parent');
+  (0, _jsutils.unset)(schema, 'instance');
+  (0, _jsutils.unset)(schema, 'value'); // Remove the schema from the tree of schemas
 
-  (0, _lodash.default)(tree.schema, schema.pos);
+  (0, _jsutils.unset)(tree.schema, schema.pos);
   (0, _jsutils.clearObj)(schema); // Loop over the tree schema and clear out any child schemas to the current schema
   // tree.idMap will also be cleared out for each cleared schema
 
@@ -72,7 +68,7 @@ exports.clearSchema = clearSchema;
 
 const clearTypeData = (TypeCls, typeCache, includeClass = true) => {
   clearTypeCache(typeCache);
-  (0, _lodash.default)(TypeCls, 'BaseType');
+  (0, _jsutils.unset)(TypeCls, 'BaseType');
   includeClass && (0, _jsutils.clearObj)(TypeCls);
 };
 

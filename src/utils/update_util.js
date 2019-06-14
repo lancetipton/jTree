@@ -1,17 +1,16 @@
 import {
+  checkCall,
+  get,
+  isFunc,
   isObj,
   logData,
-  uuid,
-  isFunc,
-  checkCall
+  set,
+  unset,
+  uuid
 } from 'jsutils'
-
 import { clearSchema } from './clean_util'
 import { clearInstance, buildInstance } from './instance_util'
 import Constants from '../constants'
-import _get from 'lodash.get'
-import _set from 'lodash.set'
-import _unset from 'lodash.unset'
 
 /**
  * Checks if the schemas current value matches any allowed types for the new type
@@ -158,7 +157,7 @@ export const updateType = (tree, pos, schema, settings) => {
   
   // Remove the old instance
   clearInstance(schema.id)
-  _unset(schema, 'instance')
+  unset(schema, 'instance')
 
   // Get the type to switch to
   const newType = settings.Editor.Types.get(schema.matchType)
@@ -184,7 +183,7 @@ export const updateType = (tree, pos, schema, settings) => {
   
   // If there's a value, and no error, then set it in the tree
   if(hasValue && !schema.error)
-    _set(tree, schema.pos, schema.value)
+    set(tree, schema.pos, schema.value)
   
   tree.schema[pos] = {
     ...schema,
@@ -208,8 +207,8 @@ export const updateValue = (tree, pos, schema, settings) => {
   if('value' in schema && !factory.eval(schema.value))
     return { error: `Not a valid value for ${(factory.name || '').replace('Type', '')}` }
 
-  _set(tree, pos, schema.value)
-  _set(tree.schema[pos], 'value', schema.value)
+  set(tree, pos, schema.value)
+  set(tree.schema[pos], 'value', schema.value)
 }
 
 /**
@@ -225,7 +224,7 @@ export const updateKey = (tree, pos, schema, settings) => {
     return { error: `Can not set key to a falsy value!` }
     
   // Cache the current value at that pos
-  const currentVal = _get(tree, pos)
+  const currentVal = get(tree, pos)
   // Get the new pos based on the update key and old pos
   const updatedPos = buildNewPos(pos, schema.key)
   
@@ -239,12 +238,12 @@ export const updateKey = (tree, pos, schema, settings) => {
     return { error: `Can not update key ${schema.key}, because it already exists!` }
 
   // Remove the old value in the tree
-  const unsetContent = _unset(tree, pos)
+  const unsetContent = unset(tree, pos)
   if(!unsetContent)
     return { error: `Could not update key, because ${pos} could not be removed!` }
 
   // Set the new value in the tree
-  _set(tree, updatedPos, currentVal)
+  set(tree, updatedPos, currentVal)
   
   // Set the new schema data, with the new pos
   tree.schema[updatedPos] = {
@@ -283,7 +282,7 @@ export const updateSchemaProp = (tree, pos, schema, settings, prop) => {
  */
 export const addChildSchema = (tree, schema, parent) => {
   if(!tree || !isObj(schema) || !isObj(parent)) return
-  const parentVal = _get(tree, parent.pos)
+  const parentVal = get(tree, parent.pos)
   if(!parentVal || typeof parentVal !== 'object') return
   
   schema.id = schema.id || uuid()
@@ -336,7 +335,7 @@ export const addRemoveSchema = (add, remove, tree) => {
       return { error: `Can not add to schema, id is required!`, key: 'id' }
       
     // Set in tree
-    add.value && _set(tree, add.pos, add.value)
+    add.value && set(tree, add.pos, add.value)
     // Set in idMap
     add.id && (tree.idMap[add.id] = add.pos)
     // Set in schema

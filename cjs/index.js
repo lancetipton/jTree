@@ -31,14 +31,6 @@ var _constants = _interopRequireWildcard(require("./constants"));
 
 var _types = require("./types");
 
-var _lodash = _interopRequireDefault(require("lodash.get"));
-
-var _lodash2 = _interopRequireDefault(require("lodash.set"));
-
-var _lodash3 = _interopRequireDefault(require("lodash.unset"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
@@ -170,7 +162,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
         pos = validData.pos || pos;
         if (shouldShowConfirm(update) && !(0, _utils.checkConfirm)(validData.schema, pos, update, `${update.mode && (0, _jsutils.capitalize)(update.mode) || 'Update'} node at ${pos}?`)) return; // Remove the current error, if one exists
 
-        validData.schema.error && (0, _lodash3.default)(validData.schema, 'error'); // Update the schema to ensure we are working with the updated data
+        validData.schema.error && (0, _jsutils.unset)(validData.schema, 'error'); // Update the schema to ensure we are working with the updated data
         // Creates a copy of the current schema, with updated values
 
         let schema = (0, _utils.updateSchema)(update, _objectSpread({}, validData.schema)); // Check for an update to the key and handel it
@@ -186,7 +178,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
         // Remove it, pending only gets set on matchType update
 
 
-        this.tree.schema[pos].pending && !update.matchType && (0, _lodash3.default)(this.tree.schema[pos], 'pending'); // Update the schema data, if nothing is returned,
+        this.tree.schema[pos].pending && !update.matchType && (0, _jsutils.unset)(this.tree.schema[pos], 'pending'); // Update the schema data, if nothing is returned,
         // then the update failed, so just return
 
         if (!doUpdateData(this, update, pos, schema, settings)) return;
@@ -214,10 +206,10 @@ const createEditor = (settings, editorConfig, domContainer) => {
         replace.parent = schema.parent;
         replace.id = schema.id;
         (0, _utils.addSchemaComponent)(replace, replace.id);
-        if (replace.mode === _constants.default.Schema.MODES.REPLACE || replace.mode === _constants.default.Schema.MODES.TEMP) (0, _lodash3.default)(replace, 'mode'); // If it's not the same instance, remove the old one
+        if (replace.mode === _constants.default.Schema.MODES.REPLACE || replace.mode === _constants.default.Schema.MODES.TEMP) (0, _jsutils.unset)(replace, 'mode'); // If it's not the same instance, remove the old one
         // New one will be re-built on next render
 
-        schema.instance !== replace.instance && (0, _lodash3.default)(replace, 'instance'); // Do deep clone of value to ensure it's not a ref to other object
+        schema.instance !== replace.instance && (0, _jsutils.unset)(replace, 'instance'); // Do deep clone of value to ensure it's not a ref to other object
         // Ensures it's not a ref pointer
 
         replace.value = (0, _utils.cloneDeep)(replace.value); // Add / Remove schemas from tree
@@ -239,8 +231,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
               schema = validData.schema;
         if (!(0, _utils.checkConfirm)(schema, pos, `Remove ${pos}?`)) return; // Clear the data from the tree
 
-        (0, _lodash3.default)(this.tree, pos);
-        (0, _lodash3.default)(this.tree.idMap, schema.id); // If parent is an array, Update the parent in place,
+        (0, _jsutils.unset)(this.tree, pos);
+        (0, _jsutils.unset)(this.tree.idMap, schema.id); // If parent is an array, Update the parent in place,
         // and remove the value from it
 
         Array.isArray(schema.parent.value) && schema.parent.value.splice(pos.split('.').pop(), 1); // Remove move the element from the dom
@@ -267,7 +259,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
         (0, _utils.buildFromPos)(this, useParent.pos, settings);
       });
 
-      _defineProperty(this, "schema", idOrPos => (0, _lodash.default)(this, ['tree', 'schema', (0, _lodash.default)(this, `tree.idMap.${idOrPos}`, idOrPos)]));
+      _defineProperty(this, "schema", idOrPos => (0, _jsutils.get)(this, ['tree', 'schema', (0, _jsutils.get)(this, `tree.idMap.${idOrPos}`, idOrPos)]));
 
       _defineProperty(this, "destroy", () => {
         ACT_SOURCE = undefined;
@@ -276,8 +268,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
         (0, _jsutils.clearObj)(this.tree.idMap);
         (0, _jsutils.clearObj)(this.config);
         this.Types.destroy(this);
-        (0, _lodash3.default)(this, 'Types');
-        (0, _lodash3.default)(this, 'element');
+        (0, _jsutils.unset)(this, 'Types');
+        (0, _jsutils.unset)(this, 'element');
         (0, _utils.cleanUp)(settings, this.tree);
         (0, _jsutils.clearObj)(this);
         if (!rootNode || !rootNode.parentNode) return; // Remove the Root class from the parent

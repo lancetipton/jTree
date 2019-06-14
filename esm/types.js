@@ -10,8 +10,6 @@ var _utils = require("./utils");
 
 var _jsutils = require("jsutils");
 
-var _lodash = _interopRequireDefault(require("lodash.unset"));
-
 var _constants = _interopRequireDefault(require("./constants"));
 
 var _styleloader = _interopRequireDefault(require("styleloader"));
@@ -57,7 +55,7 @@ function TypesCls(settings) {
       (0, _utils.clearTypeData)(_this, TYPE_CACHE, includeClass);
       TYPE_CACHE = undefined;
       (0, _jsutils.mapObj)(FLAT_TYPES, function (key) {
-        return (0, _lodash.default)(FLAT_TYPES[key]);
+        return (0, _jsutils.unset)(FLAT_TYPES[key]);
       });
       FLAT_TYPES = undefined;
     });

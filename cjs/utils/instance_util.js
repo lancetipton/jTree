@@ -29,8 +29,6 @@ var _object_util = require("./object_util");
 
 var _constants = _interopRequireDefault(require("../constants"));
 
-var _lodash = _interopRequireDefault(require("lodash.unset"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
@@ -128,7 +126,7 @@ const clearInstance = (id, instance) => {
   id = id || INSTANCE_CACHE && Object.keys(INSTANCE_CACHE)[Object.values(INSTANCE_CACHE).indexOf(instance)];
   if (!id) return false;
   INSTANCE_CACHE[id] && (INSTANCE_CACHE[id] = undefined);
-  (0, _lodash.default)(INSTANCE_CACHE, id);
+  (0, _jsutils.unset)(INSTANCE_CACHE, id);
   instance = undefined;
   return true;
 };
@@ -188,7 +186,7 @@ const buildInstance = (type, schema, settings) => {
     get: () => NEW_INSTANCE,
     set: update => {
       NEW_INSTANCE = undefined;
-      (0, _lodash.default)(schema, 'newInstance');
+      (0, _jsutils.unset)(schema, 'newInstance');
     },
     enumerable: true,
     configurable: true
@@ -199,7 +197,7 @@ const buildInstance = (type, schema, settings) => {
     set: instance => {
       if (!instance) {
         clearInstance(id);
-        (0, _lodash.default)(schema, 'instance');
+        (0, _jsutils.unset)(schema, 'instance');
       } else INSTANCE_CACHE[id] = instance;
     },
     enumerable: true,

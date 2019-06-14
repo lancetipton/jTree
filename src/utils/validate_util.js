@@ -1,8 +1,6 @@
 import { isObj, logData } from 'jsutils'
 import { isConstructor } from './object_util'
 import Constants from '../constants'
-import _get from 'lodash.get'
-import _unset from 'lodash.unset'
 
 /**
  * Validates a key in the context of an Array

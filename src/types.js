@@ -6,8 +6,7 @@ import {
   validateBuildTypes,
   validateMatchType,
 } from './utils'
-import { logData, isObj, mapObj } from 'jsutils'
-import _unset from 'lodash.unset'
+import { logData, isObj, mapObj, unset } from 'jsutils'
 import Constants from './constants'
 import StyleLoader from 'styleloader'
 
@@ -43,7 +42,7 @@ export function TypesCls(settings){
       clearTypeData(this, TYPE_CACHE, includeClass)
       TYPE_CACHE = undefined
 
-      mapObj(FLAT_TYPES, key => _unset(FLAT_TYPES[key]))
+      mapObj(FLAT_TYPES, key => unset(FLAT_TYPES[key]))
       FLAT_TYPES = undefined
     }
     

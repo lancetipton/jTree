@@ -5,21 +5,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.buildFromPos = exports.appendTreeHelper = exports.loopSource = exports.buildSchema = exports.addSchemaComponent = void 0;
 
-var _types_util = require("./types_util");
+var _instance_util = require("./instance_util");
 
 var _jsutils = require("jsutils");
+
+var _types_util = require("./types_util");
 
 var _match_util = require("./match_util");
 
 var _dom_util = require("./dom_util");
 
 var _object_util = require("./object_util");
-
-var _instance_util = require("./instance_util");
-
-var _lodash = _interopRequireDefault(require("lodash.unset"));
-
-var _lodash2 = _interopRequireDefault(require("lodash.get"));
 
 var _constants = _interopRequireDefault(require("../constants"));
 
@@ -161,8 +157,8 @@ var loopSource = function loopSource(curSchema, tree, settings, elementCb) {
   }
 
   if (isRoot && !curSchema.id) {
-    props.schema.open = (0, _lodash2.default)(settings, 'Editor.config.root.start') === 'open';
-    props.schema.keyText = (0, _lodash2.default)(settings, 'Editor.config.root.title', schema.key);
+    props.schema.open = (0, _jsutils.get)(settings, 'Editor.config.root.start') === 'open';
+    props.schema.keyText = (0, _jsutils.get)(settings, 'Editor.config.root.title', schema.key);
   } // Render the domNode and it's children
 
 

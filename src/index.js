@@ -31,18 +31,16 @@ import {
   checkCall,
   clearObj,
   deepMerge,
+  get,
   parseJSON,
   setLogs,
   isObj,
   logData,
+  unset,
 } from 'jsutils'
 
 import Constants from './constants'
 import { buildTypes, TypesCls } from './types'
-import _get from 'lodash.get'
-import _set from 'lodash.set'
-import _unset from 'lodash.unset'
-
 import { DEF_SETTINGS } from './constants'
 
 const UPDATE_ACTIONS = {
@@ -265,7 +263,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       
 
       // Remove the current error, if one exists
-      validData.schema.error && _unset(validData.schema, 'error')
+      validData.schema.error && unset(validData.schema, 'error')
 
       // Update the schema to ensure we are working with the updated data
       // Creates a copy of the current schema, with updated values
@@ -286,7 +284,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
       // Remove it, pending only gets set on matchType update
       this.tree.schema[pos].pending &&
         !update.matchType &&
-        _unset(this.tree.schema[pos], 'pending')
+        unset(this.tree.schema[pos], 'pending')
 
       // Update the schema data, if nothing is returned,
       // then the update failed, so just return
@@ -336,11 +334,11 @@ const createEditor = (settings, editorConfig, domContainer) => {
       addSchemaComponent(replace, replace.id)
       
       if(replace.mode === Constants.Schema.MODES.REPLACE || replace.mode === Constants.Schema.MODES.TEMP)
-        _unset(replace, 'mode')
+        unset(replace, 'mode')
 
       // If it's not the same instance, remove the old one
       // New one will be re-built on next render
-      schema.instance !== replace.instance && _unset(replace, 'instance')
+      schema.instance !== replace.instance && unset(replace, 'instance')
       
       // Do deep clone of value to ensure it's not a ref to other object
       // Ensures it's not a ref pointer
@@ -392,8 +390,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
       if(!checkConfirm(schema, pos, `Remove ${pos}?`)) return
       
       // Clear the data from the tree
-      _unset(this.tree, pos)
-      _unset(this.tree.idMap, schema.id)
+      unset(this.tree, pos)
+      unset(this.tree.idMap, schema.id)
       
       // If parent is an array, Update the parent in place,
       // and remove the value from it
@@ -435,7 +433,7 @@ const createEditor = (settings, editorConfig, domContainer) => {
     }
     
     schema = (idOrPos) => (
-      _get(this, [ 'tree', 'schema',  _get(this, `tree.idMap.${idOrPos}`, idOrPos) ])
+      get(this, [ 'tree', 'schema',  get(this, `tree.idMap.${idOrPos}`, idOrPos) ])
     )
     
     destroy = () => {
@@ -445,8 +443,8 @@ const createEditor = (settings, editorConfig, domContainer) => {
       clearObj(this.tree.idMap)
       clearObj(this.config)
       this.Types.destroy(this)
-      _unset(this, 'Types')
-      _unset(this, 'element')
+      unset(this, 'Types')
+      unset(this, 'element')
       cleanUp(settings, this.tree)
       clearObj(this)
       if(!rootNode || !rootNode.parentNode) return

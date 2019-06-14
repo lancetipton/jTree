@@ -1,6 +1,6 @@
 {
   "name": "jtree",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Json and Javascript object editor",
   "author": "Lance Tipton <ltipton@tiptondigital.com>",
   "main": "build/jtree.js",
@@ -62,9 +62,6 @@
     "jsutils": "git+https://github.com/lancetipton/jsutils.git",
     "jtree-definitions": "git+https://github.com/lancetipton/jtree-definitions.git",
     "lodash.clonedeep": "^4.5.0",
-    "lodash.get": "^4.4.2",
-    "lodash.set": "^4.3.2",
-    "lodash.unset": "^4.5.2",
     "raw-loader": "^2.0.0",
     "remove-comments-loader": "^0.1.2",
     "styleloader": "git+https://github.com/lancetipton/StyleLoader.git",
@@ -74,7 +71,10 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.1"
+    "@fortawesome/fontawesome-free": "^5.8.1",
+    "jsutils": "git+https://github.com/lancetipton/jsutils.git",
+    "jtree-definitions": "git+https://github.com/lancetipton/jtree-definitions.git",
+    "styleloader": "git+https://github.com/lancetipton/StyleLoader.git"
   },
   "jest": {
     "transform": {

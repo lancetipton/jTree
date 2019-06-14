@@ -1,16 +1,16 @@
 import {
+  checkCall,
   clearObj,
   get,
+  isFunc,
   isObj,
   mapObj,
-  isFunc,
-  checkCall
+  unset
 } from 'jsutils'
 import { typesOverride } from './types_util'
 import { clearSchema } from './clean_util'
 import { addProp } from './object_util'
 import Constants from '../constants'
-import _unset from 'lodash.unset'
 
 let INSTANCE_CACHE
 
@@ -112,7 +112,7 @@ export const clearInstance = (id, instance) => {
   if(!id) return false
   
   INSTANCE_CACHE[id] && (INSTANCE_CACHE[id] = undefined)
-  _unset(INSTANCE_CACHE, id)
+  unset(INSTANCE_CACHE, id)
   instance = undefined
   
   return true
@@ -181,7 +181,7 @@ export const buildInstance = (type, schema, settings) => {
     get: () => NEW_INSTANCE,
     set: update => {
       NEW_INSTANCE = undefined
-      _unset(schema, 'newInstance')
+      unset(schema, 'newInstance')
     },
     enumerable: true,
     configurable: true,
@@ -193,7 +193,7 @@ export const buildInstance = (type, schema, settings) => {
     set: instance => {
       if(!instance){
         clearInstance(id)
-        _unset(schema, 'instance')
+        unset(schema, 'instance')
       }
       else INSTANCE_CACHE[id] = instance
     },
