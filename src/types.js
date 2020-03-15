@@ -8,7 +8,7 @@ import {
 } from './utils'
 import { logData, isObj, mapObj, unset } from 'jsutils'
 import Constants from './constants'
-import StyleLoader from 'styleloader'
+import StyleLoader from 'styleloader/build/styleloader.min.js'
 
 let STYLE_LOADER
 let TYPE_CACHE

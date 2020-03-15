@@ -9,7 +9,6 @@ import {
   buildFromPos,
   checkConfirm,
   cleanUp,
-  cloneDeep,
   clearSchema,
   getElement,
   removeElement,
@@ -35,6 +34,7 @@ import {
   parseJSON,
   setLogs,
   isObj,
+  deepClone,
   logData,
   unset,
 } from 'jsutils'
@@ -223,7 +223,7 @@ const createEditor = async (settings, editorConfig, domContainer) => {
 
       if(!validateSource(source)) return undefined
 
-      ACT_SOURCE = cloneDeep(source)
+      ACT_SOURCE = deepClone(source)
       return update && this.buildTypes()
     }
 
@@ -342,7 +342,7 @@ const createEditor = async (settings, editorConfig, domContainer) => {
       
       // Do deep clone of value to ensure it's not a ref to other object
       // Ensures it's not a ref pointer
-      replace.value = cloneDeep(replace.value)
+      replace.value = deepClone(replace.value)
       
       // Add / Remove schemas from tree
       const invalid = addRemoveSchema(replace, schema, this.tree)

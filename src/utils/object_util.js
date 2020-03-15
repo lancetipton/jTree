@@ -1,5 +1,4 @@
-import { isObj } from 'jsutils'
-export { default as cloneDeep } from 'lodash.clonedeep'
+import { isObj, deepClone } from 'jsutils'
 
 export const addProp = (obj, name, def) => (
   isObj(obj) && Object.defineProperty(obj, name, def)
