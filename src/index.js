@@ -184,7 +184,7 @@ const shouldShowConfirm = (update) => {
     return false
 }
 
-const createEditor = (settings, editorConfig, domContainer) => {
+const createEditor = async (settings, editorConfig, domContainer) => {
 
   class jTree {
     
@@ -457,12 +457,18 @@ const createEditor = (settings, editorConfig, domContainer) => {
     }
   }
   
-  return new jTree()
+  const buildJTree = () => {
+    return new jTree()
+  }
+  
+  const jTreeEditor = await buildJTree()
+  
+  return jTreeEditor
 }
 
 
 
-const init = (opts) => {
+const init = async (opts) => {
   if(opts.showLogs) setLogs(true)
   const domContainer = getElement(opts.element)
   if(!domContainer)
@@ -480,9 +486,12 @@ const init = (opts) => {
   
   // Enable confirm actions
   setConfirm(editorConfig.confirmActions)
-
+  const builtEditor = await createEditor(settings, editorConfig, domContainer)
+  console.log(`---------- builtEditor ----------`)
+  console.log(builtEditor)
+  
   // Create the jTree Editor
-  return createEditor(settings, editorConfig, domContainer)
+  return builtEditor
 }
 
 

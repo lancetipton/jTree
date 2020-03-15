@@ -29,18 +29,53 @@ jtree is a UI for manipulating javascript and JSON objects. See example [here](h
           const jtree = window.jtree
         </script>
     ```
+## Initialize
+
+* Once imported into the project, call `jtree.init(<options object>)`
+* This will build the tree editor
+  * The tree editor will be appended to the element given from the `<options object>`
+  * `<options object>` is **Required**
+
+
+## Options Object
+
+
 
 ## Types
 
-### Dynamically Loaded
+### Setup
 
-* Installed as a node_module
-* Must follow strict path
-  * Loaded module must be located at
-    `node_modules/jtree-definitions/build/<name of types js file>`
-  * All different types of definitions should follow this pattern
+* Installed as a separate dependency
 * Current libraries
-  * [Javascript](https://github.com/lancetipton/jtree-definitions)
+  * [Javascript](https://github.com/lancetipton/jt-js-defs)
+    ```js
+      // Clone repo
+      git clone https://github.com/lancetipton/jt-js-defs.git
+      // Or Add to package.json
+      "dependencies": {
+        "jt-js-defs": "git+https://github.com/lancetipton/jt-js-defs.git"
+        ...
+      },
+    ```
+* After installed, import into your project 
+    ```js
+      // * Import into code
+        import * as jtDefs from 'jt-js-defs'
+
+      // * Require code
+        const jtDefs = require('jt-js-defs')
+
+      // Pass into jTree when initializin
+        jtree.init({
+          ...
+          types: {
+            definitions: jtDefs,
+            ...
+          },
+          ...
+        })
+        
+    ```
 
 ### Priority
   * In matching value to `Type Class Instance` and more then one match is found
@@ -53,4 +88,3 @@ jtree is a UI for manipulating javascript and JSON objects. See example [here](h
           * The `Base Parent Type Class` `matchHelper` method will be called
   
 
-### More docs coming soon

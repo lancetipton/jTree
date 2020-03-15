@@ -1,5 +1,5 @@
-import * as jtDefs from 'jtree-definitions'
-import Constants from 'jtree-definitions/esm/constants'
+import * as jtDefs from 'jt-js-defs'
+import Constants from 'jt-js-defs/esm/constants'
 
 const { updateDefSchema, updateDefValues } = Constants
 

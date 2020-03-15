@@ -1,5 +1,5 @@
 const path = require('path')
-const CleanWebpackPlugin = require('../jtree-definitions/node_modules/clean-webpack-plugin')
+const CleanWebpackPlugin = require('../jt-js-defs/node_modules/clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack')
