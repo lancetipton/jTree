@@ -1,13 +1,14 @@
-{
-  "presets": [ 
+
+module.exports = {
+  presets: [
     [
       "@babel/preset-env"
     ]
   ],
-  "plugins": [
+  plugins: [
     ["transform-runtime", {
-      "polyfill": false,
-      "regenerator": true
+      polyfill: false,
+      regenerator: true
     }],
     "@babel/plugin-transform-property-literals",
     "@babel/plugin-proposal-object-rest-spread",
@@ -16,27 +17,27 @@
     "babel-plugin-import-css-to-jss",
     [ "@babel/plugin-proposal-class-properties" ]
   ],
-  "env": {
-    "cjs": {
-      "presets": [
+  env: {
+    cjs: {
+      presets: [
         [
           "@babel/env",
           {
-            "targets": { "node": 6 },
-            "useBuiltIns": "usage",
-            "corejs": 3
+            targets: { node: 6 },
+            useBuiltIns: "usage",
+            corejs: 3
           }
         ]
       ]
     },
-    "esm": {
-      "presets": [
+    esm: {
+      presets: [
         [
           "@babel/env",
           {
-            "targets": { "node": 6 },
-            "useBuiltIns": "usage",
-            "corejs": 3
+            targets: { node: 6 },
+            useBuiltIns: "usage",
+            corejs: 3
           }
         ]
       ]
