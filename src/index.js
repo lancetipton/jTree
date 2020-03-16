@@ -462,11 +462,8 @@ const createEditor = async (settings, editorConfig, domContainer) => {
   }
   
   const jTreeEditor = await buildJTree()
-  
   return jTreeEditor
 }
-
-
 
 const init = async (opts) => {
   if(opts.showLogs) setLogs(true)
@@ -487,9 +484,7 @@ const init = async (opts) => {
   // Enable confirm actions
   setConfirm(editorConfig.confirmActions)
   const builtEditor = await createEditor(settings, editorConfig, domContainer)
-  console.log(`---------- builtEditor ----------`)
-  console.log(builtEditor)
-  
+
   // Create the jTree Editor
   return builtEditor
 }

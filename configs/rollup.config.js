@@ -34,7 +34,7 @@ export default {
       file: `./build/esm/jTree.js`,
       format: 'esm',
       sourcemaps: true
-    },
+    }
   ],
   plugins: [
    DEV_MODE && buildHook(DEV_MODE),

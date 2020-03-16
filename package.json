@@ -34,7 +34,6 @@
   },
   "scripts": {
     "build": "yarn clean:build; NODE_ENV=production rollup -c ./configs/rollup.config.js",
-    "build:modules": "yarn build:esm && yarn build:cjs",
     "clean": "yarn cache clean && rimraf yarn.lock && rimraf node_modules",
     "clean:build": "rimraf ./build/esm && rimraf ./build/cjs",
     "deploy": "gh-pages -d build",
