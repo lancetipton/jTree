@@ -1,4 +1,4 @@
-import { isObj, deepFreeze, logData as logData$1, get, mapObj, uuid, isFunc, clearObj, unset, checkCall, isStr, set, setLogs, deepMerge, parseJSON, deepClone, capitalize } from 'jsutils';
+import { isObj, deepFreeze, logData as logData$1, get, mapObj, uuid, isFunc, clearObj, unset, checkCall, isStr, set, setLogs, parseJSON, deepClone, capitalize } from 'jsutils';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -2111,17 +2111,15 @@ var init = function () {
           case 4:
             element = opts.element, showLogs = opts.showLogs, editor = opts.editor, options = objectWithoutProperties(opts, ["element", "showLogs", "editor"]);
             opts.element = undefined;
-            settings = deepMerge(DEF_SETTINGS, options);
-            editorConfig = deepMerge(Constants.EditorConfig, editor);
+            settings = objectSpread({}, DEF_SETTINGS, options);
+            editorConfig = objectSpread({}, Constants.EditorConfig, editor);
             setConfirm(editorConfig.confirmActions);
             _context2.next = 11;
             return createEditor(settings, editorConfig, domContainer);
           case 11:
             builtEditor = _context2.sent;
-            console.log("---------- builtEditor ----------");
-            console.log(builtEditor);
             return _context2.abrupt("return", builtEditor);
-          case 15:
+          case 13:
           case "end":
             return _context2.stop();
         }

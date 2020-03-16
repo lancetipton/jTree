@@ -1,8 +1,7 @@
 import * as jtDefs from 'jt-js-defs'
 import Constants from 'jt-js-defs/esm/constants'
-
+import * as jtree from 'jtree/build/esm/jTree'
 const { updateDefSchema, updateDefValues } = Constants
-
 
 setTimeout(() => {
 
@@ -54,7 +53,7 @@ setTimeout(() => {
   const init = () => {
     jsonApiCall()
       .then(testData => {
-        const useData = emptyObject && {} || testData
+        const useData = emptyObject ? {} : testData
         emptyObject = false
         updateDefSchema(jtree.Constants.Schema)
         updateDefValues(jtree.Constants.Values)

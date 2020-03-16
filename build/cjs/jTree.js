@@ -2115,17 +2115,15 @@ var init = function () {
           case 4:
             element = opts.element, showLogs = opts.showLogs, editor = opts.editor, options = objectWithoutProperties(opts, ["element", "showLogs", "editor"]);
             opts.element = undefined;
-            settings = jsutils.deepMerge(DEF_SETTINGS, options);
-            editorConfig = jsutils.deepMerge(Constants.EditorConfig, editor);
+            settings = objectSpread({}, DEF_SETTINGS, options);
+            editorConfig = objectSpread({}, Constants.EditorConfig, editor);
             setConfirm(editorConfig.confirmActions);
             _context2.next = 11;
             return createEditor(settings, editorConfig, domContainer);
           case 11:
             builtEditor = _context2.sent;
-            console.log("---------- builtEditor ----------");
-            console.log(builtEditor);
             return _context2.abrupt("return", builtEditor);
-          case 15:
+          case 13:
           case "end":
             return _context2.stop();
         }

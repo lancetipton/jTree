@@ -30,8 +30,6 @@ window.TEST_DOM_DATA = {
           '1': {
             'id': 'b13b2c43-39c3-49d5-bdb4-63fc4d56e069',
             class: 'td-wrapped btn btn-primary',
-            'td-wrapped': true,
-            id: 'b13b2c43-39c3-49d5-bdb4-63fc4d56e069',
           },
           '2': [ 'Button Text' ],
         },

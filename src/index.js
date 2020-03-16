@@ -478,8 +478,11 @@ const init = async (opts) => {
   // Clean up the opts.element so we don't have a memory leak
   opts.element = undefined
   // Build the settings by joining with the default settings
-  const settings = deepMerge(DEF_SETTINGS, options)  
-  const editorConfig = deepMerge(Constants.EditorConfig, editor)
+  // const settings = deepMerge(DEF_SETTINGS, options)
+  // const editorConfig = deepMerge(Constants.EditorConfig, editor)
+  
+  const settings = { ...DEF_SETTINGS, ...options }
+  const editorConfig = { ...Constants.EditorConfig, ...editor }
   
   // Enable confirm actions
   setConfirm(editorConfig.confirmActions)
