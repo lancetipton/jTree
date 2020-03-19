@@ -6,7 +6,7 @@ const cleanSettingsObj = settings => {
   clearObj(settings)
 }
 
-const clearTypeCache = (typeCache) => (
+const clearTypeCache = (typeCache) => {
   isObj(typeCache) && Object
     .keys(typeCache)
     .map(key => {
@@ -22,9 +22,8 @@ const clearTypeCache = (typeCache) => (
           .map(key => unset(typeCache.extends, key))
           break
       }
-      unset(typeCache, key)
     }).length || (typeCache = undefined)
-)
+}
 
 const cleanTreeSchema = tree => (
   Object

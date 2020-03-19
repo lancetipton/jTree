@@ -411,19 +411,16 @@ const createEditor = async (settings, editorConfig, domContainer) => {
     }
     
     add = (schema, parent) => {
-        
+
       const useParent = schema.parent || parent || this.tree.schema
-        
+
       // Validate the passed in data
       const isValid = validateAdd(schema, useParent)
       if(!isValid || isValid.error)
         return logData(isValid.error, schema, parent, this.tree, 'warn')
 
-      
-
       if(schema.matchType !== Constants.Schema.EMPTY && !checkConfirm(schema, useParent.pos, `Add to parent ${useParent.pos}?`))
         return
-        
 
       // Add the child schema to the parent / tree
       if(!addChildSchema(this.tree, schema, useParent)) return
@@ -438,20 +435,23 @@ const createEditor = async (settings, editorConfig, domContainer) => {
     
     destroy = () => {
       ACT_SOURCE = undefined
-      const rootNode = this.tree.schema[Constants.Schema.ROOT].domNode
+      const rootNode = get(this, `tree.schema.${Constants.Schema.ROOT}.domNode`)
       clearObj(this.tree[Constants.Schema.ROOT])
       clearObj(this.tree.idMap)
+
+      checkCall(get(this, 'Types.destroy'), this)
+      clearObj(this.tree)
       clearObj(this.config)
-      this.Types.destroy(this)
       unset(this, 'Types')
       unset(this, 'element')
+      unset(this, 'temp')
       cleanUp(settings, this.tree)
       clearObj(this)
-      if(!rootNode || !rootNode.parentNode) return
 
+      if(!rootNode || !rootNode.parentNode) return
       // Remove the Root class from the parent
-      rootNode.parentNode.classList &&
-        rootNode.parentNode.classList.remove(Constants.Values.ROOT_CLASS)
+      const classList = get(rootNode, 'parentNode.classList')
+      classList && classList.remove(Constants.Values.ROOT_CLASS)
       // Remove the root element from the parent
       removeElement(rootNode, rootNode.parentNode)
     }
